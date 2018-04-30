@@ -1,4 +1,4 @@
-package com.example.helen.fridgemate_mobile;
+package com.fm_cool.fridgematebeta;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.helen.fridgemate_mobile", appContext.getPackageName());
+        assertEquals("com.fm_cool.fridgematebeta", appContext.getPackageName());
     }
 }

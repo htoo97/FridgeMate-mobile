@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">FridgeMate-mobile</string>
-    <string name="action_settings">Settings</string>
-    <string name="app_title">Fridge Mate</string>
-    <string name="user_email">Enter your email</string>
-    <string name="user_password">Enter your password</string>
-</resources>

@@ -1,4 +1,4 @@
-package com.example.helen.fridgemate_mobile;
+package com.fm_cool.fridgematebeta;
 
 import org.junit.Test;
 
