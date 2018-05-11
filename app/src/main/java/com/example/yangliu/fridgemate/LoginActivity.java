@@ -36,6 +36,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -81,6 +83,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -193,6 +196,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
+        } else if (!isPasswordValid(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
         }
 
         if (cancel) {
@@ -227,7 +234,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                             }
                             else { // Display error message if cannot login
-                                Toast.makeText(getApplication(), R.string.error_login,
+                                int errorMessage = R.string.error_login;
+
+                                try {
+                                    throw task.getException();
+                                } catch(Exception e) {
+                                    String errorCode = ((FirebaseAuthException)e).getErrorCode();
+                                    Log.d("login_failed","Exception: " + e.getMessage()
+                                        + ", Error code: " + errorCode);
+
+                                    if (errorCode.equals("ERROR_USER_NOT_FOUND")) {
+                                        errorMessage = R.string.error_no_such_email;
+                                    }
+                                    else if (errorCode.equals("ERROR_INVALID_EMAIL")) {
+                                        errorMessage = R.string.error_invalid_email;
+                                    }
+                                }
+
+                                Toast.makeText(getApplication(), errorMessage,
                                         Toast.LENGTH_LONG).show();
                                 showProgress(false);
                             }

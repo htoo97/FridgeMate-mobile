@@ -1,5 +1,7 @@
 package com.example.yangliu.fridgemate;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -13,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        // Slide Menu set up
+        // Navigation drawer set up
         profileImg = findViewById(R.id.profile_image);
         mDrawLayout = findViewById(R.id.drawerLayout);
         mToggle = new ActionBarDrawerToggle(this,mDrawLayout,R.string.open,R.string.close);
@@ -53,22 +56,29 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.main_container, new ScrollingFragment());
         fragmentTransaction.commit();
 
-        // slide menu options function
+        // Navigation drawer option functionality
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
                 switch (item.getItemId()) {
                     case R.id.profile_settings:
                         //TODO::settings
                         return true;
                     case R.id.log_out:
                         // Sign out user from database and go back to signin screen
-                        mAuth.signOut();
-                        Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(i);
-                        finish();
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Logout")
+                                .setMessage("Are you sure you want to log out?")
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        mAuth.signOut();
+                                        Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                                        startActivity(i);
+                                        finish();
+                                    }})
+                                .setNegativeButton(android.R.string.no, null).show();
                     case R.id.action_settings:
                         //TODO::settings
                         return true;
@@ -110,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // Open/close the slide menu by clicking action button onthe tool bar
+    // Open/close the navigation drawer by clicking the action button on the tool bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -127,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-    // Close the slide menu by pressing Back
+    // Close the navigation drawer by pressing Back
     @Override
     public void onBackPressed() {
         if (this.mDrawLayout.isDrawerOpen(GravityCompat.START)) {

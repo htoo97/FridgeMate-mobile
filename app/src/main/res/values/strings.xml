@@ -6,13 +6,14 @@
     <string name="prompt_password">Password</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="Register">Create New Account</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="action_log_out">Log out</string>
+    <string name="action_sign_in_short">Sign In</string>
+    <string name="action_log_out">Log Out</string>
     <string name="error_invalid_email">Format: example@ucsd.edu</string>
     <string name="error_invalid_password">Passwords must be a minimum of 6 characters.</string>
     <string name="error_duplicate_email">This email is already registered with an account.</string>
     <string name="error_email_not_validated">Please check your email for an account validation link.</string>
     <string name="error_general">An error has occurred.</string>
+    <string name="error_no_such_email">The entered email is connected to an account.</string>
     <string name="error_login">The following email and password could not be validated.</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required.</string>

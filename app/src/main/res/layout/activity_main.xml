@@ -58,8 +58,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            app:headerLayout="@layout/slide_menu"
-            app:menu="@menu/menu_scrolling">
+            app:headerLayout="@layout/drawer_header"
+            app:menu="@menu/nav_drawer">
 
         </android.support.design.widget.NavigationView>
 
