@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1083148255837",
+    "firebase_url": "https://fridgemate-d8895.firebaseio.com",
+    "project_id": "fridgemate-d8895",
+    "storage_bucket": "fridgemate-d8895.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083148255837:android:5d147eb3fb429903",
+        "android_client_info": {
+          "package_name": "com.example.yangliu.fridgemate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1083148255837-hp4cts74k4psb433bb3jd6qvkcs8nfsp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yangliu.fridgemate",
+            "certificate_hash": "9e2f11271cd6e335b207cba6bf67e1ecd6743d51"
+          }
+        },
+        {
+          "client_id": "1083148255837-f6of0jkhfq2idpkh5fv56b1rt6sr0t0g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPBHjZFUsF6CLNMs4Vk0lhf2iKkrQwHAw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1083148255837-f6of0jkhfq2idpkh5fv56b1rt6sr0t0g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
