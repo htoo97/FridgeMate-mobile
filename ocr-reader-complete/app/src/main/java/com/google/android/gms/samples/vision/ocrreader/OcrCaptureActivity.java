@@ -20,7 +20,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentProvider;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -37,6 +39,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -77,8 +80,6 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
 
-    // A TextToSpeech engine for speaking a String value.
-    private TextToSpeech tts;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -88,8 +89,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         super.onCreate(bundle);
         setContentView(R.layout.ocr_capture);
 
-        preview = (CameraSourcePreview) findViewById(R.id.preview);
-        graphicOverlay = (GraphicOverlay<OcrGraphic>) findViewById(R.id.graphicOverlay);
+        preview = findViewById(R.id.preview);
+        graphicOverlay = findViewById(R.id.graphicOverlay);
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -111,20 +112,6 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                 Snackbar.LENGTH_LONG)
                 .show();
 
-        // Set up the Text To Speech engine.
-        /*TextToSpeech.OnInitListener listener =
-                new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(final int status) {
-                        if (status == TextToSpeech.SUCCESS) {
-                            Log.d("OnInitListener", "Text to speech engine started successfully.");
-                            tts.setLanguage(Locale.US);
-                        } else {
-                            Log.d("OnInitListener", "Error starting the text to speech engine.");
-                        }
-                    }
-                };
-        tts = new TextToSpeech(this.getApplicationContext(), listener);*/
     }
 
     /**
@@ -332,7 +319,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     }
 
     /**
-     * onTap is called to speak the tapped TextBlock, if any, out loud.
+     * onTap is called to add the tapped item, if any
      *
      * @param rawX - the raw position of the tap
      * @param rawY - the raw position of the tap.
@@ -341,20 +328,28 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     private boolean onTap(float rawX, float rawY) {
         OcrGraphic graphic = graphicOverlay.getGraphicAtLocation(rawX, rawY);
         TextBlock text = null;
-        /*if (graphic != null) {
+        if (graphic != null) {
             text = graphic.getTextBlock();
             if (text != null && text.getValue() != null) {
-                Log.d(TAG, "text data is being spoken! " + text.getValue());
-                // Speak the string.
-                tts.speak(text.getValue(), TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+                System.out.print("item to be added------------------------------: " + text.getValue());
+                AlertDialog.Builder dialog = new AlertDialog.Builder(OcrCaptureActivity.this);
+                dialog.setTitle("Adding Item");
+                dialog.setMessage("Trying to add:"+text.getValue());
+                dialog.setNegativeButton("Cancel", null);
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+                dialog.show();
             }
-            else {
-                Log.d(TAG, "text data is null");
-            }
+            else Log.d(TAG, "text data is null");
         }
         else {
             Log.d(TAG,"no text detected");
-        }*/
+        }
         return text != null;
     }
 

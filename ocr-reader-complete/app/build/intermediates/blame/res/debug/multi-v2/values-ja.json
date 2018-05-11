@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ja/values-ja.xml",
+            "outputFile": "/Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ja/values-ja.xml",
             "map": [
                 {
                     "source": "/Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-basement-15.0.1.aar/b614c52676e848192a9fb4a1f810ffc1/res/values-ja/values.xml",

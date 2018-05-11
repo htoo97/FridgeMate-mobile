@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
 MERGED from [com.google.android.gms:play-services-vision:15.0.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-vision-15.0.0.aar/699f078c61930e5210e8947192fd9ba6/AndroidManifest.xml:2:1-9:12
 MERGED from [com.android.support:design:27.1.1] /Users/helen/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/5e92a6d874f15dcb05fc728c2b92a6b7/AndroidManifest.xml:17:1-22:12
 MERGED from [com.google.android.gms:play-services-vision-common:15.0.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-vision-common-15.0.0.aar/b5e8a08f54dce75b07f31005c12bcc7f/AndroidManifest.xml:2:1-9:12
@@ -28,35 +28,35 @@ MERGED from [android.arch.lifecycle:livedata-core:1.1.0] /Users/helen/.gradle/ca
 MERGED from [android.arch.lifecycle:viewmodel:1.1.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.0.aar/e0f94c9149dbd48e5cdc26db7cc56736/AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.lifecycle:runtime:1.1.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/639b3ee6760595e220e62d207e72acb4/AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.core:runtime:1.1.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/e9b13f53bc0563988a5a90bab7954983/AndroidManifest.xml:17:1-22:12
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
 	package
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:3:5-62
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:3:5-62
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
 	android:versionName
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
 	android:versionCode
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:1-34:12
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:11-69
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:2:11-69
 	android:installLocation
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:4:5-35
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:4:5-35
 uses-feature#android.hardware.camera
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:6:5-60
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:6:5-60
 	android:name
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:6:19-57
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:6:19-57
 uses-permission#android.permission.CAMERA
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:8:5-65
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:8:5-65
 	android:name
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:8:22-62
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:8:22-62
 application
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:10:5-32:19
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:10:5-32:19
 MERGED from [com.google.android.gms:play-services-vision:15.0.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-vision-15.0.0.aar/699f078c61930e5210e8947192fd9ba6/AndroidManifest.xml:7:5-20
 MERGED from [com.google.android.gms:play-services-vision:15.0.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-vision-15.0.0.aar/699f078c61930e5210e8947192fd9ba6/AndroidManifest.xml:7:5-20
 MERGED from [com.google.android.gms:play-services-vision-common:15.0.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-vision-common-15.0.0.aar/b5e8a08f54dce75b07f31005c12bcc7f/AndroidManifest.xml:7:5-20
@@ -72,53 +72,53 @@ MERGED from [com.google.android.gms:play-services-tasks:15.0.1] /Users/helen/.gr
 MERGED from [com.google.android.gms:play-services-basement:15.0.1] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-basement-15.0.1.aar/b614c52676e848192a9fb4a1f810ffc1/AndroidManifest.xml:22:5-26:19
 MERGED from [com.google.android.gms:play-services-basement:15.0.1] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-basement-15.0.1.aar/b614c52676e848192a9fb4a1f810ffc1/AndroidManifest.xml:22:5-26:19
 	android:supportsRtl
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:16:9-37
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:16:9-37
 	android:label
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:15:9-37
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:15:9-37
 	android:hardwareAccelerated
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:13:9-43
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:13:9-43
 	android:fullBackupContent
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:12:9-42
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:12:9-42
 	android:icon
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:14:9-38
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:14:9-38
 	android:allowBackup
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:11:9-35
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:11:9-35
 	android:theme
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:17:9-47
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:17:9-47
 meta-data#com.google.android.gms.version
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:18:9-20:69
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:18:9-20:69
 MERGED from [com.google.android.gms:play-services-basement:15.0.1] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-basement-15.0.1.aar/b614c52676e848192a9fb4a1f810ffc1/AndroidManifest.xml:23:9-25:69
 MERGED from [com.google.android.gms:play-services-basement:15.0.1] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-basement-15.0.1.aar/b614c52676e848192a9fb4a1f810ffc1/AndroidManifest.xml:23:9-25:69
 	android:value
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:20:13-66
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:20:13-66
 	android:name
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:19:13-58
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:19:13-58
 meta-data#com.google.android.gms.vision.DEPENDENCIES
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:21:9-23:35
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:21:9-23:35
 	android:value
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:23:13-32
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:23:13-32
 	android:name
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:22:13-70
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:22:13-70
 activity#com.google.android.gms.samples.vision.ocrreader.OcrCaptureActivity
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:25:9-31:20
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:25:9-31:20
 	android:label
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:26:13-38
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:26:13-38
 	android:name
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:25:19-100
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:25:19-100
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:27:13-30:29
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:27:13-30:29
 action#android.intent.action.MAIN
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:28:17-69
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:28:17-69
 	android:name
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:28:25-66
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:28:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:29:17-77
+ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:29:17-77
 	android:name
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml:29:27-74
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml:29:27-74
 uses-sdk
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
 MERGED from [com.google.android.gms:play-services-vision:15.0.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-vision-15.0.0.aar/699f078c61930e5210e8947192fd9ba6/AndroidManifest.xml:5:5-44
 MERGED from [com.google.android.gms:play-services-vision:15.0.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-vision-15.0.0.aar/699f078c61930e5210e8947192fd9ba6/AndroidManifest.xml:5:5-44
 MERGED from [com.android.support:design:27.1.1] /Users/helen/.gradle/caches/transforms-1/files-1.1/design-27.1.1.aar/5e92a6d874f15dcb05fc728c2b92a6b7/AndroidManifest.xml:20:5-44
@@ -167,16 +167,16 @@ MERGED from [android.arch.lifecycle:runtime:1.1.0] /Users/helen/.gradle/caches/t
 MERGED from [android.arch.lifecycle:runtime:1.1.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/639b3ee6760595e220e62d207e72acb4/AndroidManifest.xml:20:5-44
 MERGED from [android.arch.core:runtime:1.1.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/e9b13f53bc0563988a5a90bab7954983/AndroidManifest.xml:20:5-44
 MERGED from [android.arch.core:runtime:1.1.0] /Users/helen/.gradle/caches/transforms-1/files-1.1/runtime-1.1.0.aar/e9b13f53bc0563988a5a90bab7954983/AndroidManifest.xml:20:5-44
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
-INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
+INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
-		ADDED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
-		INJECTED from /Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		ADDED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/src/main/AndroidManifest.xml
 activity#com.google.android.gms.common.api.GoogleApiActivity
 ADDED from [com.google.android.gms:play-services-base:15.0.1] /Users/helen/.gradle/caches/transforms-1/files-1.1/play-services-base-15.0.1.aar/fa07b90ac1d30b1b7d0b728bfa307034/AndroidManifest.xml:23:9-26:75
 	android:exported

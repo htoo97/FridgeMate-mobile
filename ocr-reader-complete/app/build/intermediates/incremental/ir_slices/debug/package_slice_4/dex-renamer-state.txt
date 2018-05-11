@@ -1,4 +1,4 @@
-#Tue May 08 09:43:11 PDT 2018
-base.0=/Users/helen/Projects/android-vision/visionSamples/ocr-codelab/ocr-reader-complete/app/build/intermediates/transforms/dexMerger/debug/4
+#Fri May 11 15:24:31 PDT 2018
+base.0=/Users/helen/Projects/FridgeMate-mobile/ocr-reader-complete/app/build/intermediates/transforms/dexMerger/debug/5
 path.0=classes.dex
 renamed.0=classes.dex
