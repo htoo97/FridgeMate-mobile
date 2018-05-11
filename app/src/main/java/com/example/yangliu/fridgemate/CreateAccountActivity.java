@@ -167,8 +167,6 @@ public class CreateAccountActivity extends AppCompatActivity {
                             }
                         }
                     });
-
-            SaveSharedPreference.setUserName(CreateAccountActivity.this, email);
             return true;
         }
         return false;

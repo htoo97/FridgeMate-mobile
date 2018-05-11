@@ -69,7 +69,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Automatically go to user home if already logged in (and email verified)
         FirebaseUser user = mAuth.getCurrentUser();
-        Log.d("autologin","Current user: " + user.getEmail());
+
+        if (user != null) {
+            Log.d("autologin","Current user: " + user.getEmail());
+        }
         if (user != null && user.isEmailVerified()) {
             Intent i = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(i);
@@ -235,7 +238,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO:: what to store to stay login
             // Store a local copy of the account email
             // TODO:: decide whether to repopulate database
-            SaveSharedPreference.setUserName(LoginActivity.this, email);
             return true;
         }
         return false;

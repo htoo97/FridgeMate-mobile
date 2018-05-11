@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,9 +27,12 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     FragmentTransaction fragmentTransaction;
 
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_main);
 
 
@@ -59,11 +64,11 @@ public class MainActivity extends AppCompatActivity {
                         //TODO::settings
                         return true;
                     case R.id.log_out:
-                        //TODO:: log out
-                        SaveSharedPreference.clearUserName(MainActivity.this);
+                        // Sign out user from database and go back to signin screen
+                        mAuth.signOut();
                         Intent i = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(i);
-                        return true;
+                        finish();
                     case R.id.action_settings:
                         //TODO::settings
                         return true;
