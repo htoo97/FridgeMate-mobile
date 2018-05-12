@@ -13,7 +13,7 @@
     <string name="error_duplicate_email">This email is already registered with an account.</string>
     <string name="error_email_not_validated">Please check your email for an account validation link.</string>
     <string name="error_general">An error has occurred.</string>
-    <string name="error_no_such_email">The entered email is connected to an account.</string>
+    <string name="error_no_such_email">The email you have entered is not connected to an account.</string>
     <string name="error_login">The following email and password could not be validated.</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required.</string>
