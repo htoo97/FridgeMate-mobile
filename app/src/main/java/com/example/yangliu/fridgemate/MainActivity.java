@@ -89,8 +89,6 @@ public class MainActivity extends AppCompatActivity {
 
                         // TODO: store local account data?
                         // SaveSharedPreference.clearUserName(MainActivity.this);
-                        Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(i);
                         return true;
                     case R.id.action_settings:
                         //TODO::settings
