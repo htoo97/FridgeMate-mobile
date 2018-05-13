@@ -1,21 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.yangliu.fridgemate">
+    package="com.example.yangliu.fridgemate"
+    android:installLocation="auto">
+
+    <uses-feature android:name="android.hardware.camera" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- <searchable xmlns:android="http://schemas.android.com/apk/res/android" -->
+    <!-- android:label="@string/FridgeMate" -->
+    <!-- android:hint="Search what you need here" /> -->
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="false"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.AppCompat">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="ocr" />
+
         <activity
-            android:name=".LoginActivity"
+            android:name=".current_contents.receipt_scan.OcrCaptureActivity"
+            android:label="Read Text"></activity>
+        <activity
+            android:name=".authentication.LoginActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,14 +46,20 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
         <activity
-            android:name=".CreateAccountActivity"
+            android:name=".authentication.CreateAccountActivity"
             android:label="@string/title_activity_create_account" />
-        <activity android:name=".AddItemManual" />
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
+        <activity android:name=".current_contents.AddItemManual" />
+        <activity android:name=".EditProfile"></activity>
     </application>
 
 </manifest>

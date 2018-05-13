@@ -1,22 +1,27 @@
 package com.example.yangliu.fridgemate;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import com.example.yangliu.fridgemate.authentication.LoginActivity;
+import com.example.yangliu.fridgemate.current_contents.ContentScrollingFragment;
+import com.example.yangliu.fridgemate.fridge_family.FridgeFamilyFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -31,15 +36,14 @@ public class MainActivity extends AppCompatActivity {
     FragmentTransaction fragmentTransaction;
 
     private FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_main);
 
+        mAuth = FirebaseAuth.getInstance();
 
-        // Navigation drawer set up
+        // Slide Menu set up
         profileImg = findViewById(R.id.profile_image);
         mDrawLayout = findViewById(R.id.drawerLayout);
         mToggle = new ActionBarDrawerToggle(this,mDrawLayout,R.string.open,R.string.close);
@@ -53,17 +57,20 @@ public class MainActivity extends AppCompatActivity {
 
         // initialize the first tab pagg
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.main_container, new ScrollingFragment());
+        fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
         fragmentTransaction.commit();
 
-        // Navigation drawer option functionality
+        // slide menu options function
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
                 switch (item.getItemId()) {
                     case R.id.profile_settings:
                         //TODO::settings
+                        Intent intent = new Intent(MainActivity.this, EditProfile.class);
+                        startActivity(intent);
                         return true;
                     case R.id.log_out:
                         // Sign out user from database and go back to signin screen
@@ -79,12 +86,14 @@ public class MainActivity extends AppCompatActivity {
                                         finish();
                                     }})
                                 .setNegativeButton(android.R.string.no, null).show();
+
+                        // TODO: store local account data?
+                        // SaveSharedPreference.clearUserName(MainActivity.this);
+                        Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(i);
+                        return true;
                     case R.id.action_settings:
                         //TODO::settings
-                        return true;
-                    case R.id.menu_refresh:
-                        //TODO: refresh here
-                        //adapter.notifyDataSetChanged();
                         return true;
                 }
                 return true;
@@ -97,6 +106,30 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
+
+    // Search button set up
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_menu, menu);
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(MainActivity.this.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+//        searchView.setSubmitButtonEnabled(true);
+        return true;
+    }
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String keyword = intent.getStringExtra(SearchManager.QUERY);
+            // TODO:: use this key word filtered list
+        }
+    }
+
+
     // bottom view navigation option function
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -106,21 +139,25 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.current_fridge:
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.main_container, new ScrollingFragment());
+                    fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
                     fragmentTransaction.commit();
+                    mToolbar.setTitle("Current Contents");
                     return true;
                 case R.id.navigation_dashboard:
-
+                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.main_container, new FridgeFamilyFragment());
+                    fragmentTransaction.commit();
+                    mToolbar.setTitle("Fridge Family");
                     return true;
                 case R.id.shopping_list:
-
+                    mToolbar.setTitle("Shopping List");
                     return true;
             }
             return false;
         }
     };
 
-    // Open/close the navigation drawer by clicking the action button on the tool bar
+    // Open/close the slide menu by clicking action button onthe tool bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -137,12 +174,13 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-    // Close the navigation drawer by pressing Back
+    // Close the slide menu by pressing Back
     @Override
     public void onBackPressed() {
         if (this.mDrawLayout.isDrawerOpen(GravityCompat.START)) {
             this.mDrawLayout.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else {
             super.onBackPressed();
         }
     }

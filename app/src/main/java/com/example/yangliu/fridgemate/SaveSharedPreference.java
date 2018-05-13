@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 public class SaveSharedPreference
 {
     static final String email= "email";
-    private static final String SHOP_LIST_TEXT_KEY = "shoplisttext";
+    private static final String currentFridge = "currentFridge";
 
     static SharedPreferences getSharedPreferences(Context ctx) {
         return PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -20,16 +20,16 @@ public class SaveSharedPreference
         editor.commit();
     }
 
-    public static void setShopList(Context ctx, String shopList)
+    public static void setCurrentFridge(Context ctx, int num)
     {
         SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
-        editor.putString(SHOP_LIST_TEXT_KEY, shopList);
+        editor.putInt(currentFridge,num);
         editor.commit();
     }
 
-    public static String getShopList(Context ctx)
+    public static int getCurrentFridge(Context ctx)
     {
-        return getSharedPreferences(ctx).getString(SHOP_LIST_TEXT_KEY, "");
+        return getSharedPreferences(ctx).getInt(currentFridge, 1);
     }
 
     public static String getUserName(Context ctx)

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/one_item_frame"
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    android:layout_marginBottom="2dp"
+    android:layout_marginTop="2dp"
+    android:paddingLeft="@dimen/padd_10"
+    android:paddingRight="@dimen/padd_10">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="45dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="fill_horizontal"
+            android:paddingStart="30dp">
+
+            <!--android:id="@+id/member_image"-->
+            <ImageView
+                android:id="@+id/member_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:layout_gravity="center"
+                android:layout_weight="15"
+                android:contentDescription="ItemImage"
+                android:elevation="4dp"
+                android:requiresFadingEdge="none"
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_person_black_24dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="5"
+                android:background="?android:attr/colorButtonNormal"
+                android:orientation="vertical"
+                android:paddingLeft="4dp">
+
+                <TextView
+                    android:id="@+id/name_view"
+                    style="@android:style/TextAppearance.DeviceDefault.Large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:layout_weight="4"
+                    android:gravity="left|center"
+                    android:paddingStart="@dimen/padd_10"
+                    android:text="Jack White" />
+
+                <!--android:id="@+id/status"-->
+                <TextView
+                    android:id="@+id/status_view"
+                    style="@android:style/TextAppearance.DeviceDefault.Small"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_margin="0dp"
+                    android:layout_weight="1"
+                    android:gravity="left|center"
+                    android:paddingLeft="@dimen/padd_10"
+                    android:text="This is my status hey" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

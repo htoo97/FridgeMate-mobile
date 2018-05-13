@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1083148255837-2lfd9jdtlq7nih6r6mhdjkfg0q4hf1mk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yangliu.fridgemate",
+            "certificate_hash": "a959bd2e8e68b94b7951bb2ea72ee0d388e8f1cc"
+          }
+        },
+        {
           "client_id": "1083148255837-hp4cts74k4psb433bb3jd6qvkcs8nfsp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
