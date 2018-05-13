@@ -63,7 +63,11 @@ public class AddItemManual extends AppCompatActivity {
         // TODO:: DATABASE receive item info by item id
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        String itemId = getIntent().getExtras().getString(ITEM_ID);
+        String itemId = null;
+        if (extras != null) {
+            itemId = getIntent().getExtras().getString(ITEM_ID);
+        }
+
         // TODO:: DATABASE receive item info by item id
 //        if(item has a name) {
 //            mEditNameView.setText(item's name);
