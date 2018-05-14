@@ -1,9 +1,6 @@
 package com.example.yangliu.fridgemate.fridge_family;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 
 import android.support.v4.app.Fragment;
@@ -16,16 +13,9 @@ import android.view.ViewGroup;
 
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
-import com.example.yangliu.fridgemate.current_contents.ContentListAdapter;
 import com.example.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
-import com.example.yangliu.fridgemate.Fridge;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-
-
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
 
 
 public class FridgeFamilyFragment extends Fragment {
@@ -43,7 +33,7 @@ public class FridgeFamilyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_fridgefamily_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_fridge_family, container, false);
 
         // TODO:: DATABASE:: if user doesn't have a fridge, create one and set current fridge globally
         // checking if user has a fridge, if not, creating a new fridge

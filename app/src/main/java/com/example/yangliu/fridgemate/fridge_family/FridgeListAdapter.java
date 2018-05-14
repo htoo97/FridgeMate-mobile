@@ -17,7 +17,7 @@ import com.example.yangliu.fridgemate.Fridge;
 
 import java.util.List;
 
-public class FridgeListAdapter extends RecyclerView.Adapter<FridgeListAdapter.ItemViewHolder> {
+public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
 
@@ -54,36 +54,74 @@ public class FridgeListAdapter extends RecyclerView.Adapter<FridgeListAdapter.It
         selectedItemPos = SaveSharedPreference.getCurrentFridge(context);
     }
 
-    @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.fridge_list_item, parent, false);
-        return new ItemViewHolder(itemView);
-    }
-
-    @Override
-    public void onBindViewHolder(ItemViewHolder holder, int position) {
-        if (mFridges != null) {
-            Fridge current = mFridges.get(position);
-
-            // focus on the current fridge
-            if (position != selectedItemPos) {
-                holder.frame.setBackground(holder.unpressed);
-            }
-            else{
-                holder.frame.setBackground(holder.pressed);
-            }
-            // set name by name
-            String name = current.getFridgeName();
-            if (name!= null)
-                holder.name.setText(name);
-            else {// set name by id
-                holder.name.setText(current.getFridgeid());
-            }
+    private static final int FOOTER_VIEW = 1;
+    public class FooterViewHolder extends RecyclerView.ViewHolder {
+        public FooterViewHolder(View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO:: DATABASE:: add a fridge (if we are not using the floating add button)
+                }
+            });
         }
-        //holder.progressBar.setProgress();
-         else {
-            // Covers the case of data not being ready yet.
-            holder.name.setText("No String");
+    }
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        View itemView;
+        if (viewType == FOOTER_VIEW) {
+            itemView = mInflater.inflate(R.layout.fridge_list_add_footer, parent, false);
+            return new FooterViewHolder(itemView);
+        }
+        else {
+            itemView = mInflater.inflate(R.layout.fridge_list_item, parent, false);
+            return new ItemViewHolder(itemView);
+        }
+    }
+    @Override
+    public int getItemViewType(int position) {
+        // TODO:: add one to the list
+        if (mFridges == null || position == mFridges.size()) {
+            // This is where we'll add footer.
+            return FOOTER_VIEW;
+        }
+        return super.getItemViewType(position);
+    }
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+        try {
+            if (holder instanceof ItemViewHolder) {
+                ItemViewHolder iholder = (ItemViewHolder) holder;
+                if (mFridges != null) {
+
+                    Fridge current = mFridges.get(position);
+
+                    if (position != selectedItemPos) {
+                        iholder.frame.setBackground(iholder.unpressed);
+                    } else {
+                        iholder.frame.setBackground(iholder.pressed);
+                    }
+                    // set name by name
+                    String name = current.getFridgeName();
+                    if (name != null)
+                        iholder.name.setText(name);
+                    else {// set name by id
+                        iholder.name.setText(current.getFridgeid());
+                    }
+                }
+                //TODO:: holder.progressBar.setProgress();
+                else {
+                    // Covers the case of data not being ready yet.
+                    iholder.name.setText("No String");
+                }
+            }
+            else if (holder instanceof FooterViewHolder){
+                // TODO
+            }
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -92,13 +130,12 @@ public class FridgeListAdapter extends RecyclerView.Adapter<FridgeListAdapter.It
         notifyDataSetChanged();
     }
 
-    //TODO:: list management
     // getItemCount() is called many times, and when it is first called,
     // mItems has not been updated (means initially, it's null, and we can't return null).
     @Override
     public int getItemCount() {
         if (mFridges != null)
-            return mFridges.size();
-        else return 0;
+            return mFridges.size()+ 1;
+        else return 1;
     }
 }
