@@ -72,7 +72,6 @@ public class FridgeFamilyFragment extends Fragment {
                         public boolean onMenuItemClick(MenuItem item) {
                             // TODO:: DATABASE: delete fridge
                             // position is the index of the fridge (to be deleted)
-
                             // call sync()
                             return true;
                         }

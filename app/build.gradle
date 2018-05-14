@@ -52,6 +52,8 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.github.clans:fab:1.6.2'
 
+    // profile image bottom up menu
+    api 'com.cocosw:bottomsheet:1.+@aar'
 
 }
 

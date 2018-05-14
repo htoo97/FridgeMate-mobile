@@ -9,12 +9,6 @@
         android:title="Edit Profile"
         />
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        android:icon="@drawable/ic_settings_black_24dp"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/log_out"
         android:orderInCategory="101"
         android:icon="@drawable/ic_power_settings_new_black_24dp"

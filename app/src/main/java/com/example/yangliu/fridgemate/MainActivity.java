@@ -18,6 +18,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
 import com.example.yangliu.fridgemate.current_contents.ContentScrollingFragment;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private CircleImageView profileImg;
+    private TextView name;
     private DrawerLayout mDrawLayout;
     private ActionBarDrawerToggle mToggle;
     NavigationView navigationView;
@@ -44,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // Slide Menu set up
-        profileImg = findViewById(R.id.profile_image);
         mDrawLayout = findViewById(R.id.drawerLayout);
         mToggle = new ActionBarDrawerToggle(this,mDrawLayout,R.string.open,R.string.close);
         mToggle.setDrawerIndicatorEnabled(true);
@@ -55,7 +57,13 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         mToggle.syncState();
 
-        // initialize the first tab pagg
+        profileImg = findViewById(R.id.profile_image);
+        name = findViewById(R.id.user_name);
+        // TODO:: DATABASE:: get profile image and name from
+        // profileImg.setImageBitmap();
+        // name.setText();
+
+        // initialize the first tab page
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
         fragmentTransaction.commit();
@@ -89,9 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
                         // TODO: store local account data?
                         // SaveSharedPreference.clearUserName(MainActivity.this);
-                        return true;
-                    case R.id.action_settings:
-                        //TODO::settings
                         return true;
                 }
                 return true;
