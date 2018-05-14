@@ -6,8 +6,10 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -82,7 +84,18 @@ public class FridgeFamilyFragment extends Fragment {
 
             @Override
             public void onItemLongClick(View view, int position) {
-                // ...
+                PopupMenu popup = new PopupMenu(getContext(),view);
+                popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        // TODO:: DATABASE: delete fridge
+                        // position is the index of the fridge (to be deleted)
+
+                        // sync()
+                        return true;
+                    }
+                });
+                popup.show();
             }
         }));
 
@@ -100,7 +113,17 @@ public class FridgeFamilyFragment extends Fragment {
 
             @Override
             public void onItemLongClick(View view, int position) {
-                // ...
+                PopupMenu popup = new PopupMenu(getContext(),view);
+                popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        // TODO:: DATABASE: delete member
+                        // position is the index of the member (to be deleted)
+                        // sync()
+                        return true;
+                    }
+                });
+                popup.show();
             }
         }));
 
