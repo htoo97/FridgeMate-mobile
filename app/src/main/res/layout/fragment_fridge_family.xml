@@ -31,6 +31,7 @@
         android:id="@+id/swiperefresh"
         android:layout_width="wrap_content"
         android:layout_height="325dp"
+        android:layout_marginTop="5dp"
         android:foregroundGravity="center_horizontal"
         android:paddingTop="@dimen/padd_10"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -94,10 +95,5 @@
         app:layout_constraintTop_toTopOf="@+id/divider"
         app:layout_constraintVertical_bias="0.0" />
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/fridge_family_fab"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

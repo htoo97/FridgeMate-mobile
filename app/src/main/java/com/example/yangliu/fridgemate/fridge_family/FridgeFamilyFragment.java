@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +17,6 @@ import android.view.ViewGroup;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
 import com.example.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 
 
 public class FridgeFamilyFragment extends Fragment {
@@ -25,8 +24,6 @@ public class FridgeFamilyFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ConstraintLayout constraintLayout;
 
-    FloatingActionMenu materialDesignFAM;
-    FloatingActionButton addFridge, addMembers;
     private MemberListAdapter memberListAdapter;
     private FridgeListAdapter fridgeListAdapter;
 
@@ -40,22 +37,6 @@ public class FridgeFamilyFragment extends Fragment {
         // TODO:: DATABASE:: if user doesn't have a fridge, create one and set current fridge globally
         // checking if user has a fridge, if not, creating a new fridge
         // SaveSharedPreference.setCurrentFridge(this, 0); // 0 means the first index in the fridges array
-
-        // floating button menu
-        materialDesignFAM = (FloatingActionMenu) view.findViewById(R.id.material_design_android_floating_action_menu);
-        addFridge= (FloatingActionButton) view.findViewById(R.id.material_design_floating_action_menu_item1);
-        addMembers= (FloatingActionButton) view.findViewById(R.id.material_design_floating_action_menu_item2);
-        addFridge.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-            }
-        });
-        addMembers.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // TODO:: DATABASE:: add a member to the current fridge
-            }
-        });
-
 
         constraintLayout = view.findViewById(R.id.cl);
 
@@ -83,19 +64,21 @@ public class FridgeFamilyFragment extends Fragment {
             }
 
             @Override
-            public void onItemLongClick(View view, int position) {
-                PopupMenu popup = new PopupMenu(getContext(),view);
-                popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        // TODO:: DATABASE: delete fridge
-                        // position is the index of the fridge (to be deleted)
+            public void onItemLongClick(View view, final int position) {
+                if (position != fridgeListAdapter.getItemCount() - 1) {
+                    PopupMenu popup = new PopupMenu(getContext(), view);
+                    popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
+                            // TODO:: DATABASE: delete fridge
+                            // position is the index of the fridge (to be deleted)
 
-                        // sync()
-                        return true;
-                    }
-                });
-                popup.show();
+                            // call sync()
+                            return true;
+                        }
+                    });
+                    popup.show();
+                }
             }
         }));
 
@@ -112,18 +95,22 @@ public class FridgeFamilyFragment extends Fragment {
             }
 
             @Override
-            public void onItemLongClick(View view, int position) {
-                PopupMenu popup = new PopupMenu(getContext(),view);
-                popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        // TODO:: DATABASE: delete member
-                        // position is the index of the member (to be deleted)
-                        // sync()
-                        return true;
-                    }
-                });
-                popup.show();
+            public void onItemLongClick(View view, final int position) {
+                if (position != memberListAdapter.getItemCount() - 1) {
+                    PopupMenu popup = new PopupMenu(getContext(), view);
+                    popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
+                            // TODO:: DATABASE: delete member
+                            // position is the index of the member (to be deleted)
+
+
+                            // call sync()
+                            return true;
+                        }
+                    });
+                    popup.show();
+                }
             }
         }));
 
