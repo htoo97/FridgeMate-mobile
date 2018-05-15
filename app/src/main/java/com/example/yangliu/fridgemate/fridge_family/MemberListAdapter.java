@@ -1,6 +1,7 @@
 package com.example.yangliu.fridgemate.fridge_family;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -53,12 +54,14 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private static final int FOOTER_VIEW = 1;
     public class FooterViewHolder extends RecyclerView.ViewHolder {
-        public FooterViewHolder(View itemView) {
+        public FooterViewHolder(final View itemView) {
             super(itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO:: DATABASE:: add a fridge member (if we are not using the floating add button)
+                    Intent intent = new Intent(v.getContext(), InviteFridgeMateActivity.class);
+                    v.getContext().startActivity(intent);
+                    notifyDataSetChanged();
                 }
             });
         }
@@ -77,7 +80,6 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
     @Override
     public int getItemViewType(int position) {
-        // TODO:: add one to the list
         if (currentFridge == -1 || (names == null || position == names.length)) {
             // This is where we'll add footer.
             return FOOTER_VIEW;
@@ -98,14 +100,10 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     // TODO:: DATABASE set up user's image
                     //holder.imageView.setImageBitmap(images[position]);
                 }
-                //holder.progressBar.setProgress();
                 else {
                     // Covers the case of data not being ready yet.
                     iholder.name.setText("No user");
                 }
-            }
-            else if (holder instanceof FooterViewHolder){
-                // if it is a footer, now what to change?
             }
         }catch (Exception e){
             e.printStackTrace();

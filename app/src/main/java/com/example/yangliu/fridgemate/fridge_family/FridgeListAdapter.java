@@ -1,6 +1,7 @@
 package com.example.yangliu.fridgemate.fridge_family;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -56,12 +57,14 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private static final int FOOTER_VIEW = 1;
     public class FooterViewHolder extends RecyclerView.ViewHolder {
-        public FooterViewHolder(View itemView) {
+        public FooterViewHolder(final View itemView) {
             super(itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO:: DATABASE:: add a fridge (if we are not using the floating add button)
+                    Intent intent = new Intent(v.getContext(), CreateJoinFridgeActivity.class);
+                    itemView.getContext().startActivity(intent);
+                    notifyDataSetChanged();
                 }
             });
         }
@@ -81,9 +84,7 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
     @Override
     public int getItemViewType(int position) {
-        // TODO:: add one to the list
         if (mFridges == null || position == mFridges.size()) {
-            // This is where we'll add footer.
             return FOOTER_VIEW;
         }
         return super.getItemViewType(position);
@@ -111,14 +112,10 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         iholder.name.setText(current.getFridgeid());
                     }
                 }
-                //TODO:: holder.progressBar.setProgress();
                 else {
                     // Covers the case of data not being ready yet.
                     iholder.name.setText("No String");
                 }
-            }
-            else if (holder instanceof FooterViewHolder){
-                // TODO
             }
         }catch(Exception e){
             e.printStackTrace();
