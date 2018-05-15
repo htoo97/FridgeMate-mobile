@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -12,6 +13,9 @@ import com.bumptech.glide.Glide;
 import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -25,7 +29,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         private final CircleImageView itemImageView;
         private final TextView wordItemView;
         private final TextView dateItemView;
-        //private final ProgressBar progressBar;
+        private ProgressBar progressBar;
         public RelativeLayout viewBackground, viewForeground;
 
         private ItemViewHolder(View itemView) {
@@ -38,17 +42,19 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             itemImageView = itemView.findViewById(R.id.item_image);
             viewBackground = itemView.findViewById(R.id.view_background);
             viewForeground = itemView.findViewById(R.id.view_foreground);
+            progressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 
     private final LayoutInflater mInflater;
     public List<FridgeItem> mItems; // Cached copy of items' info
     private Context context;
-
+    int today;
 
     public ContentListAdapter(Context context) {
         this.context = context;
         mInflater = LayoutInflater.from(context);
+        today = (int) (System.currentTimeMillis() / (86400000));
     }
 
     @Override
@@ -83,8 +89,20 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             // set name
             holder.wordItemView.setText(current.getItemName());
 
-            //TODO:: base of the progress bar for now is 10 days
-            //holder.progressBar.setProgress();
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+            Date strDate = null;
+            try {
+                strDate = sdf.parse(expDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (strDate != null) {
+                int dayDiff = (int) (strDate.getTime() / (86400000)) - today;
+                if (dayDiff < 0)
+                    holder.progressBar.setProgress(0);
+                else
+                    holder.progressBar.setProgress(dayDiff);
+            }
         } else {
             // Covers the case of data not being ready yet.
             holder.wordItemView.setText("No Word");
