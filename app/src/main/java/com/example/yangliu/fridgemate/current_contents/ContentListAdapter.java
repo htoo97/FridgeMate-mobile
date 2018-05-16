@@ -16,6 +16,7 @@ import com.example.yangliu.fridgemate.R;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -47,7 +48,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     }
 
     private final LayoutInflater mInflater;
-    public List<FridgeItem> mItems; // Cached copy of items' info
+    public List<FridgeItem> mItems, mItemsOnDisplay;
     private Context context;
     int today;
 
@@ -55,6 +56,27 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         this.context = context;
         mInflater = LayoutInflater.from(context);
         today = (int) (System.currentTimeMillis() / (86400000));
+    }
+
+    public void filterList(CharSequence keyWord){
+        List<FridgeItem> filteredList = new LinkedList<FridgeItem>();
+
+        if (mItems != null) {
+            if (keyWord == null || keyWord.length() == 0) {
+                // set the display item as everything
+                mItemsOnDisplay = mItems;
+            } else {
+                String constraint = (keyWord.toString().toLowerCase());
+                for (int i = 0; i < mItems.size(); i++) {
+                    String data = (mItems.get(i)).getItemName().toLowerCase();
+                    if (data.startsWith(constraint)) {
+                        filteredList.add(new FridgeItem(mItems.get(i)));
+                    }
+                }
+                mItemsOnDisplay = filteredList;
+            }
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -65,8 +87,8 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int position) {
-        if (mItems != null) {
-            FridgeItem current = mItems.get(position);
+        if (mItemsOnDisplay != null) {
+            FridgeItem current = mItemsOnDisplay.get(position);
 
             // set date
             String expDate = current.getExpDate();
@@ -91,10 +113,13 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
 
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
             Date strDate = null;
-            try {
-                strDate = sdf.parse(expDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
+            // if item has a expdate
+            if (expDate.length() == 8) {
+                try {
+                    strDate = sdf.parse(expDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
             if (strDate != null) {
                 int dayDiff = (int) (strDate.getTime() / (86400000)) - today;
@@ -112,19 +137,16 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
 
     void setItems(List<FridgeItem> items){
         mItems = items;
+        mItemsOnDisplay = items;
         notifyDataSetChanged();
     }
 
-    // TODO:: clear items
-
-
-    //TODO:: list management
     // getItemCount() is called many times, and when it is first called,
     // mItems has not been updated (means initially, it's null, and we can't return null).
     @Override
     public int getItemCount() {
-        if (mItems != null)
-            return mItems.size();
+        if (mItemsOnDisplay != null)
+            return mItemsOnDisplay.size();
         else return 0;
     }
 }

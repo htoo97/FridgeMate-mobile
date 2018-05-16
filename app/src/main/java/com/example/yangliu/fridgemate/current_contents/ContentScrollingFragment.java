@@ -1,5 +1,6 @@
 package com.example.yangliu.fridgemate.current_contents;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -7,10 +8,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.R;
@@ -124,10 +129,41 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // set up the search button for content list view
+        setHasOptionsMenu(true);
+        // the fragment won't get pushed up by the keyboard
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_scrolling, container, false);
     }
 
+    // Search button set up
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.search_menu, menu);
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(ContentScrollingFragment.this.getActivity().SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+//        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Toast.makeText(getContext(), "Searching for " + query, Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        adapter.filterList(newText);
+                        return false;
+                    }
+
+                }
+        );
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     // Define what a delete swipe on an item does
     @Override

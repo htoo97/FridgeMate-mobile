@@ -60,6 +60,8 @@
             android:label="@string/title_activity_create_account" />
         <activity android:name=".current_contents.AddItemManual" />
         <activity android:name=".EditProfile"></activity>
+        <activity android:name=".fridge_family.InviteFridgeMateActivity"/>
+        <activity android:name=".fridge_family.CreateJoinFridgeActivity"/>
     </application>
 
 </manifest>

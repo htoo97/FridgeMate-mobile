@@ -33,6 +33,13 @@ public class FridgeItem {
         this.expDate = "";
     }
 
+    public FridgeItem(@NonNull FridgeItem item) {
+        this.itemName = item.getItemName();
+        this.expDate = item.getExpDate();
+        this.image = item.getImage();
+        this.itemId= item.getItemId();
+    }
+
     public int getItemId() {
         return itemId;
     }
