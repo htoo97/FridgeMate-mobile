@@ -39,12 +39,18 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.FridgeItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.example.yangliu.fridgemate.current_contents.ContentListAdapter;
 
 /**
  * Activity for the Ocr Detecting app.  This app detects text and displays the value with the
@@ -74,6 +80,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
 
 
+
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -100,6 +108,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
 
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+
+
 
 
     }
@@ -320,17 +330,24 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         TextBlock text = null;
         if (graphic != null) {
             text = graphic.getTextBlock();
-            if (text != null && text.getValue() != null) {
-                System.out.print("item to be added------------------------------: " + text.getValue());
+            final List<? extends Text> currentComponents = text.getComponents();
+            if (currentComponents != null && text.getValue() != null) {
+                final String name = text.getValue();
                 AlertDialog.Builder dialog = new AlertDialog.Builder(OcrCaptureActivity.this);
                 dialog.setTitle("Adding Item");
-                dialog.setMessage("Trying to add:"+text.getValue());
+                dialog.setMessage("Trying to add: "+name);
                 dialog.setNegativeButton("Cancel", null);
-                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        for(Text currentText: currentComponents){
+                            addFridgeItemtoDatabase(new FridgeItem(currentText.getValue()));
+                        }
+                    }
 
+                    private void addFridgeItemtoDatabase(FridgeItem fridgeItem) {
+                        //TODO add fridgeitem to database
                     }
                 });
                 dialog.show();
