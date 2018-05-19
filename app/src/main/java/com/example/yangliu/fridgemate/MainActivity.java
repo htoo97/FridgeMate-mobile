@@ -110,29 +110,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // Search button set up
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.search_menu, menu);
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getSystemService(MainActivity.this.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-//        searchView.setSubmitButtonEnabled(true);
-        return true;
-    }
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String keyword = intent.getStringExtra(SearchManager.QUERY);
-            // TODO:: use this key word filtered list
-        }
-    }
-
-
     // bottom view navigation option function
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {

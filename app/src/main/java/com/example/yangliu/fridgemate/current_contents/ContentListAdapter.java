@@ -36,7 +36,6 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         private ItemViewHolder(View itemView) {
             super(itemView);
 
-            //progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
             wordItemView = itemView.findViewById(R.id.name_view);
             dateItemView = itemView.findViewById(R.id.date_view);
 

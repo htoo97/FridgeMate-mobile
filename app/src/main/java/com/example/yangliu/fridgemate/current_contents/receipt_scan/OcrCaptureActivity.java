@@ -347,7 +347,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                     }
 
                     private void addFridgeItemtoDatabase(FridgeItem fridgeItem) {
-                        //TODO add fridgeitem to database
+                        //TODO:: Database add fridgeitem to database
                     }
                 });
                 dialog.show();
