@@ -30,18 +30,17 @@
 
         <activity
             android:name=".current_contents.receipt_scan.OcrCaptureActivity"
-            android:label="Read Text"></activity>
+            android:label="Read Text" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".authentication.LoginActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:label="@string/app_name"></activity>
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -57,9 +56,10 @@
             android:name=".authentication.CreateAccountActivity"
             android:label="@string/title_activity_create_account" />
         <activity android:name=".current_contents.AddItemManual" />
-        <activity android:name=".EditProfile"></activity>
-        <activity android:name=".fridge_family.InviteFridgeMateActivity"/>
-        <activity android:name=".fridge_family.CreateJoinFridgeActivity"/>
+        <activity android:name=".EditProfile" />
+        <activity android:name=".fridge_family.InviteFridgeMateActivity" />
+        <activity android:name=".fridge_family.CreateJoinFridgeActivity" />
+        <activity android:name=".authentication.ForgotPasswordActivity"></activity>
     </application>
 
 </manifest>

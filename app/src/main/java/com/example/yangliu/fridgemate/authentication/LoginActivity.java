@@ -45,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Button forgotPasswordBtn;
 
 
     @Override
@@ -100,6 +101,15 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        forgotPasswordBtn = findViewById(R.id.forgot_password);
+        forgotPasswordBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), ForgotPasswordActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     /**
