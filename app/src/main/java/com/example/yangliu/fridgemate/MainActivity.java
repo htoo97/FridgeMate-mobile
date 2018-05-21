@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
 import com.example.yangliu.fridgemate.current_contents.ContentScrollingFragment;
 import com.example.yangliu.fridgemate.fridge_family.FridgeFamilyFragment;
+import com.example.yangliu.fridgemate.shop_list.ShoppingListFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -130,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
                     mToolbar.setTitle("Fridge Family");
                     return true;
                 case R.id.shopping_list:
+                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.main_container, new ShoppingListFragment());
+                    fragmentTransaction.commit();
                     mToolbar.setTitle("Shopping List");
                     return true;
             }
