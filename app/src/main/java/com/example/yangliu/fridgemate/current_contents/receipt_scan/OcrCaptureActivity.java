@@ -15,6 +15,22 @@
  */
 package com.example.yangliu.fridgemate.current_contents.receipt_scan;
 
+/*
+ * Copyright (C) The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -31,33 +47,31 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
+import android.support.v7.widget.RecyclerView;
 
 import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.FridgeItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
-
-import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
-import com.example.yangliu.fridgemate.current_contents.ContentListAdapter;
+import java.io.IOException;
 
 /**
  * Activity for the Ocr Detecting app.  This app detects text and displays the value with the
  * rear facing camera. During detection overlay graphics are drawn to indicate the position,
  * size, and contents of each TextBlock.
  */
-public final class OcrCaptureActivity extends AppCompatActivity {
+public final class OcrCaptureActivity extends AppCompatActivity  {
     private static final String TAG = "OcrCaptureActivity";
 
     // Intent request code to handle updating play services if needed.
@@ -80,7 +94,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
 
 
-
+    OcrItemListAdapter adapter;
+    private Button addListToFridgeBtn;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -97,6 +112,23 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         boolean autoFocus = true;
         boolean useFlash = false;
 
+        // set up ocr items
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvNumbers);
+        int numberOfColumns = 3;
+        recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
+        adapter = new OcrItemListAdapter(this);
+        recyclerView.setAdapter(adapter);
+
+//        addListToFridgeBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                List<String> toBeAdded = adapter.mData;
+//                for (String s: toBeAdded){
+//                    // TODO:: DATABASE add these names to the fridge
+//                }
+//            }
+//        });
+
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
@@ -109,8 +141,9 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-
-
+        Snackbar.make(graphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
+                Snackbar.LENGTH_LONG)
+                .show();
 
     }
 
@@ -201,12 +234,12 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         // to other detection examples to enable the text recognizer to detect small pieces of text.
         cameraSource =
                 new CameraSource.Builder(getApplicationContext(), textRecognizer)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(1280, 1024)
-                .setRequestedFps(2.0f)
-                .setFlashMode(useFlash ? Camera.Parameters.FLASH_MODE_TORCH : null)
-                .setFocusMode(autoFocus ? Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO : null)
-                .build();
+                        .setFacing(CameraSource.CAMERA_FACING_BACK)
+                        .setRequestedPreviewSize(1280, 1024)
+                        .setRequestedFps(2.0f)
+                        .setFlashMode(useFlash ? Camera.Parameters.FLASH_MODE_TORCH : null)
+                        .setFocusMode(autoFocus ? Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO : null)
+                        .build();
     }
 
     /**
@@ -330,27 +363,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         TextBlock text = null;
         if (graphic != null) {
             text = graphic.getTextBlock();
-            final List<? extends Text> currentComponents = text.getComponents();
-            if (currentComponents != null && text.getValue() != null) {
-                final String name = text.getValue();
-                AlertDialog.Builder dialog = new AlertDialog.Builder(OcrCaptureActivity.this);
-                dialog.setTitle("Adding Item");
-                dialog.setMessage("Trying to add: "+name);
-                dialog.setNegativeButton("Cancel", null);
-                dialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        for(Text currentText: currentComponents){
-                            addFridgeItemtoDatabase(new FridgeItem(currentText.getValue()));
-                        }
-                    }
-
-                    private void addFridgeItemtoDatabase(FridgeItem fridgeItem) {
-                        //TODO:: Database add fridgeitem to database
-                    }
-                });
-                dialog.show();
+            if (text != null && text.getValue() != null) {
+                adapter.addItem(text.getValue());
             }
             else Log.d(TAG, "text data is null");
         }

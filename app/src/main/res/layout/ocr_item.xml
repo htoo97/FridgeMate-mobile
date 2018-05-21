@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="100dp"
+    android:layout_height="30dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginEnd="@dimen/padd_10"
+    android:layout_marginStart="@dimen/padd_10"
+    android:layout_marginTop="5dp"
+    android:background="?attr/colorButtonNormal"
+    app:cardCornerRadius="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp">
+
+        <TextView
+            android:id="@+id/ocr_item"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:ems="10"
+            android:gravity="left|center"
+            android:inputType="text"
+            android:text="@string/itemName"
+            android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small" />
+
+        <Button
+            android:id="@+id/delete_ocr_item"
+            android:layout_width="20dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_weight="1"
+            android:background="@drawable/ic_clear_black_24dp"
+            android:backgroundTint="@android:color/black" />
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
