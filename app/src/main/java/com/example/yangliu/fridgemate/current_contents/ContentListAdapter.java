@@ -15,6 +15,7 @@ import com.example.yangliu.fridgemate.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -135,6 +136,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     }
 
     void setItems(List<FridgeItem> items){
+        Collections.sort(items);
         mItems = items;
         mItemsOnDisplay = items;
         notifyDataSetChanged();

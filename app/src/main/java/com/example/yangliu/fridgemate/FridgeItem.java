@@ -2,7 +2,11 @@ package com.example.yangliu.fridgemate;
 
 import android.support.annotation.NonNull;
 
-public class FridgeItem {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class FridgeItem  implements Comparable<FridgeItem>{
     private int itemId;
 
     private String itemName;
@@ -68,5 +72,40 @@ public class FridgeItem {
 
     public void setExpDate(String expDate) {
         this.expDate = expDate;
+    }
+
+    @Override
+    public int compareTo(@NonNull FridgeItem o) {
+
+        if (expDate.length() == 8 && o.expDate.length() == 8){
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+            Date thisDate = null, dateCompareTo = null;
+            try {
+                thisDate = sdf.parse(expDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            try {
+                dateCompareTo = sdf.parse(o.expDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (thisDate.after(dateCompareTo))
+                return 1;
+            if (dateCompareTo.after(thisDate))
+                return -1;
+            else
+                return 0;
+        }
+        else{
+            if (expDate == "" && o.expDate == "")
+                return 0;
+            if (expDate == "")
+                return 1;
+            else
+                return -1;
+
+        }
     }
 }
