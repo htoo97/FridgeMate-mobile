@@ -5,6 +5,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="forgot_password">Forgot password?</string>
+    <string name="reset_password">Reset Password</string>
     <string name="Register">Create New Account</string>
     <string name="action_sign_in_short">Sign In</string>
     <string name="action_log_out">Log Out</string>
