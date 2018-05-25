@@ -7,6 +7,18 @@
     android:layout_height="match_parent"
     android:layout_marginTop="@dimen/padd_10">
 
+    <ProgressBar
+        android:id="@+id/load_fridge_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintEnd_toStartOf="@+id/fridgeList"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/fridgeList"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
     <View
         android:id="@+id/divider2"
         android:layout_width="match_parent"

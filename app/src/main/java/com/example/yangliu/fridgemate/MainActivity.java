@@ -28,6 +28,7 @@ import com.example.yangliu.fridgemate.current_contents.ContentScrollingFragment;
 import com.example.yangliu.fridgemate.fridge_family.FridgeFamilyFragment;
 import com.example.yangliu.fridgemate.shop_list.ShoppingListFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,7 +36,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -72,6 +75,51 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             finish();
         }
+
+        final String email = user.getEmail();
+
+        // Create fridge if user has no fridges
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+
+                    // Perform first-time fridge setup
+                    if(userData.get("currentFridge") == null
+                            && ( userData.get("fridges") == null || ((List)userData.get("fridges")).isEmpty() )) {
+                        Toast.makeText(MainActivity.this, R.string.fridge_setup_message, Toast.LENGTH_SHORT).show();
+                        Map<String, Object> fridgeData = new HashMap<>();
+                        fridgeData.put("fridgeName", "My Fridge");
+                        fridgeData.put("owner", userDoc);
+
+                        db.collection("Fridges")
+                            .add(fridgeData)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                public void onSuccess(DocumentReference documentReference) {
+                                    List<DocumentReference> fridges = new ArrayList<DocumentReference>();
+                                    if(userData.get("fridges") != null){
+                                        fridges = (List)userData.get("fridges");
+                                    }
+
+                                    fridges.add(documentReference);
+
+                                    userDoc.update(
+                                        "currentFridge", documentReference,
+                                        "fridges", fridges)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(MainActivity.this,
+                                                    R.string.fridge_setup_complete, Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                }
+                            });
+                    }
+                }
+            }
+        });
+
 
         // Slide Menu set up
         mDrawLayout = findViewById(R.id.drawerLayout);

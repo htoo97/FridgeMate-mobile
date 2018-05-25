@@ -37,7 +37,7 @@
             android:layout_marginTop="16dp"
             android:layout_weight="3"
             android:gravity="center"
-            android:text="Nothing Here"
+            android:text="@string/no_items"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,8 +1,12 @@
 package com.example.yangliu.fridgemate.fridge_family;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -46,6 +50,8 @@ public class FridgeFamilyFragment extends Fragment {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ConstraintLayout constraintLayout;
+    private View mProgressView;
+    private RecyclerView mfridgeListView;
 
     private MemberListAdapter memberListAdapter;
     private FridgeListAdapter fridgeListAdapter;
@@ -77,7 +83,8 @@ public class FridgeFamilyFragment extends Fragment {
                 final DocumentSnapshot userData = task.getResult();
 
                 // Perform first-time fridge setup
-                if(userData.get("currentFridge") == null) {
+                if(userData.get("currentFridge") == null
+                        && ( userData.get("fridges") == null || ((List)userData.get("fridges")).isEmpty() )) {
                     Toast.makeText(getContext(), R.string.fridge_setup_message, Toast.LENGTH_SHORT).show();
                     Map<String, Object> fridgeData = new HashMap<>();
                     fridgeData.put("fridgeName", "My Fridge");
@@ -100,6 +107,8 @@ public class FridgeFamilyFragment extends Fragment {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+                                                    Toast.makeText(getContext(),
+                                                            R.string.fridge_setup_complete, Toast.LENGTH_LONG).show();
                                                     syncList();
                                                 }
                                             });
@@ -111,10 +120,11 @@ public class FridgeFamilyFragment extends Fragment {
         });
 
 
+        mProgressView = view.findViewById(R.id.load_fridge_progress);
         constraintLayout = view.findViewById(R.id.cl);
 
         // fridge list set up
-        RecyclerView mfridgeListView = (RecyclerView) view.findViewById(R.id.fridgeList);
+        mfridgeListView = (RecyclerView) view.findViewById(R.id.fridgeList);
         mfridgeListView.setHasFixedSize(true);
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -281,6 +291,7 @@ public class FridgeFamilyFragment extends Fragment {
     }
 
     public void syncList(){
+        showProgress(true);
         // TODO:: DATABASE: populate fridge member list
         int currentFridge = SaveSharedPreference.getCurrentFridge(getContext());
         final List<Fridge> userFridges = new ArrayList<>();
@@ -313,6 +324,8 @@ public class FridgeFamilyFragment extends Fragment {
                                     if(currentFridge.equals(ref)){
                                         fridgeListAdapter.selectedItemPos = userFridges.size() - 1;
                                     }
+
+                                    showProgress(false);
                                 }
                             });
 
@@ -331,4 +344,39 @@ public class FridgeFamilyFragment extends Fragment {
         syncList();
     }
 
+    /**
+     * Hide fridge interface while loading fridges.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mfridgeListView.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+            mfridgeListView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mfridgeListView.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mfridgeListView.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+        }
+    }
 }
