@@ -26,6 +26,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         email = findViewById(R.id.email_address_find);
 
 
@@ -57,5 +59,14 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private boolean isEmailValid(String email) {
         return email.contains("@");
+    }
+
+
+    // Return to previous screen on back button
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+
+        return true;
     }
 }

@@ -64,6 +64,8 @@ public class EditProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
@@ -212,6 +214,14 @@ public class EditProfile extends AppCompatActivity {
 
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // Return to previous screen on back button
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+
+        return true;
     }
 
 

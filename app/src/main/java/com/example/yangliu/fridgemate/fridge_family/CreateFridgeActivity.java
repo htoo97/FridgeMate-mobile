@@ -37,6 +37,9 @@ public class CreateFridgeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_fridge);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
@@ -50,7 +53,7 @@ public class CreateFridgeActivity extends AppCompatActivity {
 
         setTitle("Create Your Fridge Family");
 
-
+        // Create new fridge
         createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +61,13 @@ public class CreateFridgeActivity extends AppCompatActivity {
                 Map<String, Object> fridgeData = new HashMap<>();
 
                 final String name = fridgeName.getText().toString();
+
+                if(name.equals("")){
+                    fridgeName.setError(getString(R.string.error_field_required));
+                    fridgeName.requestFocus();
+                    return;
+                }
+
 
                 final DocumentReference userDoc = db.collection("Users").document(email);
                 userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -69,26 +79,40 @@ public class CreateFridgeActivity extends AppCompatActivity {
                         fridgeData.put("owner", userDoc);
 
                         db.collection("Fridges")
-                                .add(fridgeData)
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        List<DocumentReference> fridges = new ArrayList<DocumentReference>();
-                                        if (userData.get("fridges") != null) {
-                                            fridges = (List) userData.get("fridges");
-                                        }
-
-                                        fridges.add(documentReference);
-
-                                        userDoc.update(
-                                                "currentFridge", documentReference,
-                                                "fridges", fridges);
+                            .add(fridgeData)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                public void onSuccess(DocumentReference documentReference) {
+                                    List<DocumentReference> fridges = new ArrayList<DocumentReference>();
+                                    if (userData.get("fridges") != null) {
+                                        fridges = (List) userData.get("fridges");
                                     }
-                                });
+
+                                    fridges.add(documentReference);
+
+                                    userDoc.update(
+                                        "currentFridge", documentReference,
+                                        "fridges", fridges)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                finish();
+                                            }
+                                        });
+                                }
+                            });
                     }
                 });
-
-                finish();
             }
         });
+    }
+
+    // Return to previous screen on back button
+    @Override
+    public boolean onSupportNavigateUp(){
+        Intent i = new Intent(CreateFridgeActivity.this, CreateJoinFridgeActivity.class);
+        startActivity(i);
+        finish();
+
+        return true;
     }
 }

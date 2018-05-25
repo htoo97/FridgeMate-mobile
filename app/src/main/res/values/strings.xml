@@ -43,8 +43,11 @@
 
 
     <string name="create_fridge">Create Fridge Family</string>
+    <string name="leave_fridge">Leave Fridge</string>
 
-
+    <string name="fridge_setup_message">Performing first-time fridge setup...</string>
+    <string name="delete_fridge_warning">Warning: You are the owner of this fridge. If you leave this fridge, it will be permanently deleted!</string>
+    <string name="leave_fridge_warning">Are you sure you want to leave this fridge?</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>

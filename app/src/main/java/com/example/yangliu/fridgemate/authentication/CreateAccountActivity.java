@@ -62,6 +62,8 @@ public class CreateAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -195,6 +197,15 @@ public class CreateAccountActivity extends AppCompatActivity {
     private boolean isEmailValid(String email) { return email.contains("@"); }
 
     private boolean isPasswordValid(String password) { return password.length() >= 6; }
+
+    // Return to previous screen on back button
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+
+        return true;
+    }
+
 
     /**
      * Shows the progress UI and hides the login form.

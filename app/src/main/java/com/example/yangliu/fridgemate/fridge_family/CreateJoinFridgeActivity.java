@@ -20,6 +20,8 @@ public class CreateJoinFridgeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_join_fridge);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         setTitle("Create/Join a Fridge Family!");
         id = findViewById(R.id.editText);
@@ -45,5 +47,14 @@ public class CreateJoinFridgeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    // Return to previous screen on back button
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+
+        return true;
     }
 }
