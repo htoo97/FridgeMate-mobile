@@ -1,5 +1,6 @@
 package com.example.yangliu.fridgemate.fridge_family;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 
@@ -13,10 +14,29 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.yangliu.fridgemate.Fridge;
+import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
+import com.example.yangliu.fridgemate.authentication.LoginActivity;
 import com.example.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.w3c.dom.Document;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class FridgeFamilyFragment extends Fragment {
@@ -27,6 +47,10 @@ public class FridgeFamilyFragment extends Fragment {
     private MemberListAdapter memberListAdapter;
     private FridgeListAdapter fridgeListAdapter;
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private FirebaseFirestore db;
+
     public FridgeFamilyFragment() {}
 
     @Override
@@ -34,9 +58,49 @@ public class FridgeFamilyFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_fridge_family, container, false);
 
-        // TODO:: DATABASE:: if user doesn't have a fridge, create one and set current fridge globally
-        // checking if user has a fridge, if not, creating a new fridge
-        // SaveSharedPreference.setCurrentFridge(this, 0); // 0 means the first index in the fridges array
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+
+        final String email = user.getEmail();
+
+        // Create fridge if user has no fridges
+        final DocumentReference userDoc = db.collection("Users").document(email);
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+
+                    if(userData.get("currentFridge") == null) {
+                        Map<String, Object> fridgeData = new HashMap<>();
+                        fridgeData.put("fridgeName", "My Fridge");
+                        fridgeData.put("owner", userDoc);
+
+                        db.collection("Fridges")
+                            .add(fridgeData)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                public void onSuccess(DocumentReference documentReference) {
+                                    List<DocumentReference> fridges = new ArrayList<DocumentReference>();
+                                    if(userData.get("fridges") != null){
+                                        fridges = (List)userData.get("fridges");
+                                    }
+
+                                    fridges.add(documentReference);
+
+                                    userDoc.update(
+                                            "currentFridge", documentReference,
+                                            "fridges", fridges);
+                                }
+                            });
+                    }
+                }
+                else {
+                    Log.d("set_up_database", "get failed with ", task.getException());
+                }
+            }
+        });
+
 
         constraintLayout = view.findViewById(R.id.cl);
 
@@ -58,9 +122,14 @@ public class FridgeFamilyFragment extends Fragment {
                 fridgeListAdapter.selectedItemPos = position;
                 if (oldSelectedPos != -1)  fridgeListAdapter.notifyItemChanged(oldSelectedPos);
                 fridgeListAdapter.notifyItemChanged(position);
-                // update the global current fridge
                 SaveSharedPreference.setCurrentFridge(getContext(),position);
-                // TODO:: DATABASE:: call syncList()
+
+                // Update current fridge in database
+                if(position < fridgeListAdapter.mFridges.size()){
+                    DocumentReference newCurrentFridge = db.collection("Fridges")
+                            .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
+                    userDoc.update("currentFridge", newCurrentFridge);
+                }
             }
 
             @Override
@@ -121,21 +190,61 @@ public class FridgeFamilyFragment extends Fragment {
             public void onRefresh() {
                 // TODO:: refresh adapter set data to something
                 swipeRefreshLayout.setRefreshing(true);
-                // TODO:: DATABASE:: call syncList()
+                syncList();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
 
 
-        // TODO:: DATABASE:: call syncList()
+        syncList();
         return view;
     }
 
     public void syncList(){
-        // TODO:: DATABASE: populate the fridge list and fridge member list
-        // global current fridge position in the fridge list
+        // TODO:: DATABASE: populate fridge member list
         int currentFridge = SaveSharedPreference.getCurrentFridge(getContext());
-        //fridgeListAdapter.setItems(List<Fridge> blabla);
+        final List<Fridge> userFridges = new ArrayList<>();
+
+        DocumentReference userDoc = db.collection("Users").document(user.getEmail());
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+                    final DocumentReference currentFridge = userData.getDocumentReference("currentFridge");
+
+                    List<DocumentReference> fridges;
+
+                    if(userData.get("fridges") != null){
+                        fridges = (List)userData.get("fridges");
+
+                        for(final DocumentReference ref : fridges){
+                            ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                public void onComplete(Task<DocumentSnapshot> task) {
+
+                                    DocumentSnapshot fridgeData = task.getResult();
+
+                                    userFridges.add(new Fridge(fridgeData.getId(),
+                                        fridgeData.getString("fridgeName"),
+                                        "test"));
+
+                                    fridgeListAdapter.setItems(userFridges);
+
+                                    // Highlight current fridge
+                                    if(currentFridge.equals(ref)){
+                                        fridgeListAdapter.selectedItemPos = userFridges.size() - 1;
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                }
+                else {
+                    Log.d("set_up_database", "get failed with ", task.getException());
+                }
+            }
+        });
+
     }
 
 }

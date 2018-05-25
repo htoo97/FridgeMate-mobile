@@ -43,7 +43,8 @@
             android:label="@string/app_name"></activity>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -54,14 +55,24 @@
         </activity>
         <activity
             android:name=".authentication.CreateAccountActivity"
-            android:label="@string/title_activity_create_account" />
-        <activity android:name=".current_contents.AddItemManual" />
+            android:label="@string/title_activity_create_account"
+            android:screenOrientation="portrait" />
+        <activity android:name=".current_contents.AddItemManual"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".EditProfile"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".fridge_family.InviteFridgeMateActivity" />
-        <activity android:name=".fridge_family.CreateJoinFridgeActivity" />
-        <activity android:name=".authentication.ForgotPasswordActivity"></activity>
+        <activity android:name=".fridge_family.InviteFridgeMateActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".fridge_family.CreateJoinFridgeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged|adjustResize" />
+        <activity android:name=".fridge_family.CreateFridgeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".authentication.ForgotPasswordActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

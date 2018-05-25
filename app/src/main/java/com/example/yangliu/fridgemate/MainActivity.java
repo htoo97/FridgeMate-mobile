@@ -163,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (!document.exists()) {
                         Map<String, Object> userData = new HashMap<>();
-                        userData.put("displayName", email);
                         userData.put("email", email);
 
                         db.collection("Users").document(email)

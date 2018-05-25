@@ -1,5 +1,6 @@
 package com.example.yangliu.fridgemate.fridge_family;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -38,9 +39,8 @@ public class CreateJoinFridgeActivity extends AppCompatActivity {
         createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:: DATABASE create a fridge, add the current user
-
-
+                Intent i = new Intent(CreateJoinFridgeActivity.this, CreateFridgeActivity.class);
+                startActivity(i);
                 finish();
             }
         });

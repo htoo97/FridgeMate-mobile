@@ -39,6 +39,13 @@
     <string name="menu_refresh">Refresh</string>
     <!-- Strings related to Settings -->
 
+
+
+
+    <string name="create_fridge">Create Fridge Family</string>
+
+
+
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 

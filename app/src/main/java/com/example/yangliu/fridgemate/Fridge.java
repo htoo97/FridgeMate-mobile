@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 public class Fridge {
 
-    private int fridgeid;
+    private String fridgeid;
 
     private String fridgeName;
 
@@ -16,17 +16,17 @@ public class Fridge {
 
     // Getters and setters
     // NonNull: -> return value can never be null.
-    public Fridge(@NonNull int fridgeid, String name, String memberList) {
+    public Fridge(@NonNull String fridgeid, String name, String memberList) {
         this.fridgeName = name;
         this.fridgeid = fridgeid;
         this.memberList = memberList;
     }
 
-    public int getFridgeid() {
+    public String getFridgeid() {
         return fridgeid;
     }
 
-    public void setFridgeid(int itemId) {
+    public void setFridgeid(String itemId) {
         this.fridgeid = itemId;
     }
 

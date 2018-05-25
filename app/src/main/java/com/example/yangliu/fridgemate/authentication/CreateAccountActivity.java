@@ -150,7 +150,6 @@ public class CreateAccountActivity extends AppCompatActivity {
 
                                 // Add user to database
                                 Map<String, Object> userData = new HashMap<>();
-                                userData.put("displayName", email);
                                 userData.put("email", email);
 
                                 db.collection("Users").document(email)
