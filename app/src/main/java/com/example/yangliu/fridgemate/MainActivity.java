@@ -15,17 +15,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
 import com.example.yangliu.fridgemate.current_contents.ContentScrollingFragment;
 import com.example.yangliu.fridgemate.fridge_family.FridgeFamilyFragment;
 import com.example.yangliu.fridgemate.shop_list.ShoppingListFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,12 +51,27 @@ public class MainActivity extends AppCompatActivity {
     FragmentTransaction fragmentTransaction;
 
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private DocumentReference userDoc;
+    private FirebaseUser user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+
+        userDoc = setUpDatabase();
+
+        // Return to login screen if cannot verify user identity
+        if(userDoc == null){
+            Intent i = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        }
 
         // Slide Menu set up
         mDrawLayout = findViewById(R.id.drawerLayout);
@@ -58,11 +84,19 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         mToggle.syncState();
 
-        profileImg = findViewById(R.id.profile_image);
-        name = findViewById(R.id.user_name);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        View headerView = navigationView.getHeaderView(0);
+        profileImg = headerView.findViewById(R.id.profile_image);
+        name = (TextView)headerView.findViewById(R.id.user_name);
         // TODO:: DATABASE:: get profile image and name from
         // profileImg.setImageBitmap();
-        // name.setText();
+
+        String displayName = user.getDisplayName();
+        if(displayName == null || displayName.equals("")){
+            displayName = user.getEmail();
+        }
+
+        name.setText(displayName);
 
         // initialize the first tab page
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -108,6 +142,40 @@ public class MainActivity extends AppCompatActivity {
         //mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    // Set up database functions when app opened
+    private DocumentReference setUpDatabase(){
+        if (user == null){
+            Toast.makeText(getApplication(), R.string.error_load_data,
+                    Toast.LENGTH_LONG).show();
+            mAuth.signOut();
+            return null;
+        }
+
+        final String email = user.getEmail();
+
+        DocumentReference documentReference = db.collection("Users").document(email);
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    // Create document for user if doesn't already exist
+                    DocumentSnapshot document = task.getResult();
+                    if (!document.exists()) {
+                        Map<String, Object> userData = new HashMap<>();
+                        userData.put("displayName", email);
+                        userData.put("email", email);
+
+                        db.collection("Users").document(email)
+                                .set(userData);
+                    }
+                } else {
+                    Log.d("set_up_database", "get failed with ", task.getException());
+                }
+            }
+        });
+
+        return documentReference;
     }
 
 

@@ -55,6 +55,7 @@ dependencies {
     // profile image bottom up menu
     api 'com.cocosw:bottomsheet:1.+@aar'
 
+    implementation 'com.google.firebase:firebase-firestore:16.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

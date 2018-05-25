@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.support.v7.widget.PopupMenu;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,6 +33,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.cocosw.bottomsheet.BottomSheet;
+import com.example.yangliu.fridgemate.authentication.LoginActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -48,10 +56,27 @@ public class EditProfile extends AppCompatActivity {
     private TextView email;
     private Button saveBtn;
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
+        // Return to login screen if cannot verify user identity
+        if(user == null){
+            Toast.makeText(getApplication(), R.string.error_load_data,
+                    Toast.LENGTH_LONG).show();
+            mAuth.signOut();
+
+            Intent i = new Intent(EditProfile.this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        }
 
         mEditFormView = findViewById(R.id.edit_profile_form);
         mProgressView = findViewById(R.id.progress);
@@ -61,29 +86,42 @@ public class EditProfile extends AppCompatActivity {
         profilePhoto = findViewById(R.id.profile_image);
         email = findViewById(R.id.email);
 
-        // TODO:: DATABASE get name, profile pic, email
-//        name.setText();
-//        profilePhoto.setImageBitmap();
-//        email.setText();
+        name.setInputType(InputType.TYPE_CLASS_TEXT);
 
-        // TODO implement save button's function
+        // TODO:: DATABASE get profile pic
+        name.setText(user.getDisplayName());
+//        profilePhoto.setImageBitmap();
+        email.setText(user.getEmail());
+
         saveBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 showProgress(true);
 
-                String nickName = String.valueOf(name.getText());
+                String displayName = String.valueOf(name.getText());
                 if (profilePhoto.getDrawingCache() != null) {
                     Bitmap profileImg  = Bitmap.createScaledBitmap(profilePhoto.getDrawingCache(),
                         200,200, true);
                 }
-                String newEmail = String.valueOf(email.getText());
-                // TODO:: DATABASE verify and update the user profile.
 
+                // TODO:: DATABASE save profile picture, implement change email
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(displayName)
+                    .build();
 
+                user.updateProfile(profileUpdates)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getApplication(),R.string.profile_updated,
+                                        Toast.LENGTH_LONG).show();
+                                }
 
-                Intent i = new Intent(EditProfile.this, MainActivity.class);
-                startActivity(i);
-                finish();
+                                Intent i = new Intent(EditProfile.this, MainActivity.class);
+                                startActivity(i);
+                                finish();
+                            }
+                        });
             }
         });
     }

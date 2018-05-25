@@ -23,6 +23,7 @@
     </string>
     <string name="email_verification">An email containing a verification link has been sent.</string>
     <string name="delete">DELETE</string>
+    <string name="error_load_data">Your user data could not be verified. Please login again.</string>
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_create_account">Signup</string>
@@ -60,6 +61,8 @@
         <item>0</item>
         <item>-1</item>
     </string-array>
+
+    <string name="profile_updated">"User profile updated."</string>
 
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
