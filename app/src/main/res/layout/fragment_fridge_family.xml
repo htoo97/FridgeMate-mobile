@@ -24,7 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -32,25 +31,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Families"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintBottom_toTopOf="@+id/fridgeList"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/divider2"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh"
         android:layout_width="wrap_content"
-        android:layout_height="325dp"
+        android:layout_height="0dp"
         android:layout_marginTop="5dp"
         android:foregroundGravity="center_horizontal"
-        android:paddingTop="@dimen/padd_10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fridgeList">
+        app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fridgeMemberList"
@@ -69,15 +65,15 @@
         android:id="@+id/fridgeList"
         android:name="com.example.yangliu.fridgemate.FridgeFamilyFragment"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:foregroundGravity="center"
-        android:paddingBottom="15dp"
-        android:paddingTop="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/swiperefresh"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
         tools:context=".fridge_family.FridgeFamilyFragment"
         tools:listitem="@layout/fridge_list_item">
         <!--android:orientation="horizontal"-->
@@ -91,21 +87,18 @@
         android:layout_height="1dp"
         android:layout_marginBottom="@dimen/padd_10"
         android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="@+id/swiperefresh"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/fridgeList" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/padd_10"
         android:text="Members"
         app:layout_constraintBottom_toTopOf="@+id/swiperefresh"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/divider"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="@+id/divider" />
 
 
 </android.support.constraint.ConstraintLayout>

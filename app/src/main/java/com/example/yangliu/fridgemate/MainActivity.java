@@ -16,8 +16,6 @@ import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -26,7 +24,7 @@ import android.widget.Toast;
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
 import com.example.yangliu.fridgemate.current_contents.ContentScrollingFragment;
 import com.example.yangliu.fridgemate.fridge_family.FridgeFamilyFragment;
-import com.example.yangliu.fridgemate.shop_list.ShoppingListFragment;
+import com.example.yangliu.fridgemate.shop_list.ShopListFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -247,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.shopping_list:
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.main_container, new ShoppingListFragment());
+                    fragmentTransaction.replace(R.id.main_container, new ShopListFragment());
                     fragmentTransaction.commit();
                     mToolbar.setTitle("Shopping List");
                     return true;
