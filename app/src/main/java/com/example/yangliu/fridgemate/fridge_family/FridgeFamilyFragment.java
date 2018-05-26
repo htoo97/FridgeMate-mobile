@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -61,7 +62,9 @@ public class FridgeFamilyFragment extends Fragment {
     private FirebaseFirestore db;
     private DocumentReference userDoc;
 
-    public FridgeFamilyFragment() {}
+    private int shortAnimTime;
+
+    public FridgeFamilyFragment() {  }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,6 +77,7 @@ public class FridgeFamilyFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         final String email = user.getEmail();
+        shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         // Create fridge if user has no fridges
         userDoc = db.collection("Users").document(email);
@@ -344,6 +348,13 @@ public class FridgeFamilyFragment extends Fragment {
         syncList();
     }
 
+    // Cancel active tasks when fragment is detached
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        showProgress(false);
+    }
+
     /**
      * Hide fridge interface while loading fridges.
      */
@@ -353,8 +364,6 @@ public class FridgeFamilyFragment extends Fragment {
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
             mfridgeListView.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
             mfridgeListView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {

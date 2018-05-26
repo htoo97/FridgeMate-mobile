@@ -62,13 +62,14 @@ public class CreateFridgeActivity extends AppCompatActivity {
 
                 final String name = fridgeName.getText().toString();
 
+                // Error if name is blank
                 if(name.equals("")){
                     fridgeName.setError(getString(R.string.error_field_required));
                     fridgeName.requestFocus();
                     return;
                 }
 
-
+                // Create fridge document in database
                 final DocumentReference userDoc = db.collection("Users").document(email);
                 userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     public void onComplete(Task<DocumentSnapshot> task) {
@@ -82,6 +83,7 @@ public class CreateFridgeActivity extends AppCompatActivity {
                             .add(fridgeData)
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 public void onSuccess(DocumentReference documentReference) {
+                                    // Add newly-created fridge to user's list of fridges
                                     List<DocumentReference> fridges = new ArrayList<DocumentReference>();
                                     if (userData.get("fridges") != null) {
                                         fridges = (List) userData.get("fridges");
@@ -89,6 +91,8 @@ public class CreateFridgeActivity extends AppCompatActivity {
 
                                     fridges.add(documentReference);
 
+
+                                    // Set as current fridge
                                     userDoc.update(
                                         "currentFridge", documentReference,
                                         "fridges", fridges)
