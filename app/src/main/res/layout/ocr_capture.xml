@@ -22,7 +22,7 @@
 
     </RelativeLayout>
 
-    <Button
+    <Button style="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/button"
         android:layout_width="159dp"
         android:layout_height="45dp"

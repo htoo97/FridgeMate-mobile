@@ -98,10 +98,12 @@
                     <ProgressBar
                         android:id="@+id/progressBar"
                         style="?android:attr/progressBarStyleHorizontal"
+                        android:color="@color/red"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:progress="100" />
+                        android:progress="100"
+                        android:progressDrawable="@drawable/greenprogress"/>
 
                 </LinearLayout>
 

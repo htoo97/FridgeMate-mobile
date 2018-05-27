@@ -48,7 +48,7 @@
                 android:id="@+id/fridge_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Fridge Name"
+                android:hint="@string/fridge_name"
                 android:inputType="textCapWords"
                 android:maxLines="1"
                 android:singleLine="true" />
@@ -69,7 +69,7 @@
                 android:id="@+id/fridge_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password (optional)"
+                android:hint="@string/fridge_password"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
@@ -78,10 +78,13 @@
 
         <Button
             android:id="@+id/create_fridge_button"
-            style="?android:textAppearanceSmall"
-            android:layout_width="379dp"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:text="@string/create_fridge"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/guideline" />

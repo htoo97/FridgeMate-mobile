@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">FridgeMate</string>
-
+    <string name="fridge_name">Fridge Name</string>
+    <string name="fridge_password">Password (optional)</string>
+    <string name="forget_password">An link will be sent to reset your password.</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
