@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="170dp"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/background"
     android:orientation="vertical"
     android:padding="20dp">
 
@@ -15,8 +15,8 @@
         android:layout_height="100dp"
 
         android:layout_gravity="center"
-        android:src="@drawable/ic_person_black_24dp"
-        app:border_width="2dp" />
+        android:src="@drawable/default_profile_image"
+        app:border_width="0dp" />
 
     <TextView
         android:id="@+id/user_name"
