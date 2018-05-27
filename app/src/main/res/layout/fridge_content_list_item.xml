@@ -58,11 +58,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:layout_margin="7dp"
                     android:layout_weight="15"
                     android:background="@android:color/transparent"
                     android:contentDescription="ItemImage"
                     android:elevation="4dp"
                     android:requiresFadingEdge="none"
+                    android:src="@drawable/default_item_image"
                     android:visibility="visible" />
 
 
@@ -77,7 +79,7 @@
                         android:id="@+id/name_view"
                         style="@android:style/TextAppearance.DeviceDefault.Large"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="14dp"
                         android:layout_margin="0dp"
                         android:layout_weight="20"
                         android:gravity="center_vertical"
@@ -98,12 +100,12 @@
                     <ProgressBar
                         android:id="@+id/progressBar"
                         style="?android:attr/progressBarStyleHorizontal"
-                        android:color="@color/red"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_height="10dp"
+                        android:layout_weight="0"
+                        android:color="@color/red"
                         android:progress="100"
-                        android:progressDrawable="@drawable/greenprogress"/>
+                        android:progressDrawable="@drawable/greenprogress" />
 
                 </LinearLayout>
 
