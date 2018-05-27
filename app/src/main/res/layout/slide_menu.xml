@@ -15,7 +15,7 @@
         android:layout_height="100dp"
 
         android:layout_gravity="center"
-        android:src="@drawable/default_profile_image"
+        android:src="@drawable/profile"
         app:border_width="0dp" />
 
     <TextView
