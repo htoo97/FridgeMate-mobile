@@ -203,6 +203,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             // Three edit cases:
             if (requestCode == NEW_ITEM_ACTIVITY_REQUEST_CODE) {
                 // TODO:: DATABASE added a new item
+
                 // note this function can be implemented in AddItemManual.class too
             } else if (requestCode == EDIT_ITEM_ACTIVITY_REQUEST_CODE) {
                 // TODO:: DATABASE edited a new item
@@ -211,8 +212,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             else if (requestCode == NEW_OCR_ACTIVITY_REQUEST_CODE) {
                 // TODO:: haven't implemented yet
             }
-
-            // TODO:: DATABASE:: call syncList()
+            syncList();
         }
         else {
             Toast.makeText(getContext(), R.string.empty_not_saved, Toast.LENGTH_LONG).show();
