@@ -52,7 +52,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.yangliu.fridgemate.R.id.local;
 
-public class EditProfile extends AppCompatActivity {
+public class EditProfile extends TitleWithButtonsActivity {
 
     private ConstraintLayout mEditFormView;
     private ProgressBar mProgressView;
@@ -69,9 +69,11 @@ public class EditProfile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile);
+        setContentLayout(R.layout.activity_edit_profile);
+        setBackArrow();
+        setTitle("Edit Profile");
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
