@@ -167,6 +167,10 @@ public class FridgeFamilyFragment extends Fragment {
                             DocumentReference selectedFridge = db.collection("Fridges")
                                     .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
 
+                            if(fridgeListAdapter.getItemCount() == 2){
+                                Toast.makeText(getContext(), "Cannot leave your only fridge", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
                             leaveFridge(selectedFridge);
 
                             return true;
