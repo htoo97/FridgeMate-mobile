@@ -58,6 +58,7 @@ import android.widget.Toast;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.text.TextBlock;
@@ -71,7 +72,7 @@ import java.io.IOException;
  * rear facing camera. During detection overlay graphics are drawn to indicate the position,
  * size, and contents of each TextBlock.
  */
-public final class OcrCaptureActivity extends AppCompatActivity  {
+public final class OcrCaptureActivity extends TitleWithButtonsActivity {
     private static final String TAG = "OcrCaptureActivity";
 
     // Intent request code to handle updating play services if needed.
@@ -103,7 +104,9 @@ public final class OcrCaptureActivity extends AppCompatActivity  {
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        setContentView(R.layout.ocr_capture);
+        setContentLayout(R.layout.ocr_capture);
+        setBackArrow();
+        setTitle("OCR Capture");
 
         preview = findViewById(R.id.preview);
         graphicOverlay = findViewById(R.id.graphicOverlay);

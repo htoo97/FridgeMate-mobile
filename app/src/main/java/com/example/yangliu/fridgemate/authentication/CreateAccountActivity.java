@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,7 +49,7 @@ import java.util.Map;
 /**
  * A login screen that offers login via email/password.
  */
-public class CreateAccountActivity extends AppCompatActivity {
+public class CreateAccountActivity extends TitleWithButtonsActivity {
     private FirebaseAuth mAuth;
 
     // UI references.
@@ -61,7 +62,7 @@ public class CreateAccountActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_account);
+        setContentLayout(R.layout.activity_create_account);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();

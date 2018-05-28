@@ -40,11 +40,11 @@
         </activity>
         <activity
             android:name=".authentication.LoginActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -57,22 +57,28 @@
             android:name=".authentication.CreateAccountActivity"
             android:label="@string/title_activity_create_account"
             android:screenOrientation="portrait" />
-        <activity android:name=".current_contents.AddItemManual"
+        <activity
+            android:name=".current_contents.AddItemManual"
             android:screenOrientation="portrait" />
         <activity
             android:name=".EditProfile"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".fridge_family.InviteFridgeMateActivity"
+        <activity
+            android:name=".fridge_family.InviteFridgeMateActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".fridge_family.CreateJoinFridgeActivity"
+        <activity
+            android:name=".fridge_family.CreateJoinFridgeActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".fridge_family.CreateFridgeActivity"
+        <activity
+            android:name=".fridge_family.CreateFridgeActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".authentication.ForgotPasswordActivity"
+        <activity
+            android:name=".authentication.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".TitleWithButtonsActivity"></activity>
     </application>
 
 </manifest>

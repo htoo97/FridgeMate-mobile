@@ -23,6 +23,7 @@ import android.widget.ImageView;
 
 import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -30,7 +31,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class AddItemManual extends AppCompatActivity {
+public class AddItemManual extends TitleWithButtonsActivity {
 
     public static final String NAME_KEY = "name";
     public static final String DATE_KEY = "date";
@@ -51,7 +52,9 @@ public class AddItemManual extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_item_manual);
+        setContentLayout(R.layout.activity_add_item_manual);
+        setBackArrow();
+        setTitle("Add Item");
 
         mCameraButton = (ImageButton) findViewById(R.id.cameraButton);
         itemProfile = (ImageView) findViewById(R.id.imageView);

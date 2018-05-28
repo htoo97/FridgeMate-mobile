@@ -8,8 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 
-public class CreateJoinFridgeActivity extends AppCompatActivity {
+public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
 
     private EditText id;
     private Button createBtn;
@@ -18,7 +19,9 @@ public class CreateJoinFridgeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_join_fridge);
+        setContentLayout(R.layout.activity_create_join_fridge);
+        setBackArrow();
+        setTitle("Join Fridge");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

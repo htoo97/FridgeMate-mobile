@@ -9,12 +9,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 
-public class ForgotPasswordActivity extends AppCompatActivity {
+public class ForgotPasswordActivity extends TitleWithButtonsActivity {
 
 
     private EditText email;
@@ -24,7 +25,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forgot_password);
+        setContentLayout(R.layout.activity_forgot_password);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
