@@ -94,7 +94,6 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
 
                                     fridges.add(documentReference);
 
-
                                     // Set as current fridge
                                     userDoc.update(
                                         "currentFridge", documentReference,

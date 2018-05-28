@@ -4,7 +4,11 @@
     tools:context="com.example.yangliu.fridgemate.ContentScrollingFragment">
 
     <item
-        android:id="@+id/delete"
+        android:id="@+id/rename_fridge"
+        android:title="Rename" />
+
+    <item
+        android:id="@+id/leave_fridge"
         android:title="@string/leave_fridge" />
 
 </menu>

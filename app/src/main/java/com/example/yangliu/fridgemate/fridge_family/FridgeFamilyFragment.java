@@ -4,9 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,18 +15,17 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.Fridge;
-import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
-import com.example.yangliu.fridgemate.authentication.LoginActivity;
 import com.example.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -38,8 +35,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -160,20 +155,56 @@ public class FridgeFamilyFragment extends Fragment {
             public void onItemLongClick(View view, final int position) {
                 if (position != fridgeListAdapter.getItemCount() - 1) {
                     PopupMenu popup = new PopupMenu(getContext(), view);
-                    popup.getMenuInflater().inflate(R.menu.menu_leave, popup.getMenu());
+                    popup.getMenuInflater().inflate(R.menu.menu_fridge, popup.getMenu());
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                        DocumentReference selectedFridge = db.collection("Fridges")
+                                .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
                         public boolean onMenuItemClick(MenuItem item) {
                             // Get reference to selected fridge
-                            DocumentReference selectedFridge = db.collection("Fridges")
-                                    .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
-
-                            if(fridgeListAdapter.getItemCount() == 2){
-                                Toast.makeText(getContext(), "Cannot leave your only fridge", Toast.LENGTH_SHORT).show();
-                                return false;
+                            switch (item.getItemId()) {
+                                case R.id.leave_fridge:
+                                    if(fridgeListAdapter.getItemCount() == 2){
+                                        Toast.makeText(getContext(), "Cannot leave your only fridge", Toast.LENGTH_SHORT).show();
+                                        return false;
+                                    }
+                                    leaveFridge(selectedFridge);
+                                    return true;
+                                case R.id.rename_fridge:
+                                    String oldName = fridgeListAdapter.mFridges.get(position).getFridgeName();
+                                    final String[] newName = new String[1];
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                    builder.setTitle("Rename your " + oldName);
+                                    // Set up the input
+                                    final EditText input = new EditText(getContext());
+                                    LinearLayout linearLayout = new LinearLayout(getContext());
+                                    LinearLayout.LayoutParams layoutParams =
+                                            new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                                    input.setLayoutParams(layoutParams);
+                                    //layoutParams.gravity = Gravity.CENTER;
+                                    linearLayout.addView(input);
+                                    linearLayout.setPadding(40, 0, 40, 0);
+                                    builder.setView(linearLayout);
+                                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            newName[0] = input.getText().toString();
+                                            selectedFridge.update("fridgeName",newName[0]);
+                                            syncList();
+                                        }
+                                    });
+                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                                    builder.show();
+                                    return true;
+                                default:
+                                    return true;
                             }
-                            leaveFridge(selectedFridge);
 
-                            return true;
                         }
                     });
                     popup.show();
@@ -202,7 +233,6 @@ public class FridgeFamilyFragment extends Fragment {
                         public boolean onMenuItemClick(MenuItem item) {
                             // TODO:: DATABASE: delete member
                             // position is the index of the member (to be deleted)
-
 
                             // call sync()
                             return true;
