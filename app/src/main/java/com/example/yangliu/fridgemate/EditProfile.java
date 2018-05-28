@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -22,6 +23,7 @@ import android.os.Bundle;
 
 import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,11 +43,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.yangliu.fridgemate.R.id.local;
 
-public class EditProfile extends AppCompatActivity {
+public class EditProfile extends TitleWithButtonsActivity {
 
     private ConstraintLayout mEditFormView;
     private ProgressBar mProgressView;
@@ -62,9 +69,11 @@ public class EditProfile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile);
+        setContentLayout(R.layout.activity_edit_profile);
+        setBackArrow();
+        setTitle("Edit Profile");
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -193,19 +202,26 @@ public class EditProfile extends AppCompatActivity {
             case LOAD_IMAGE_REQUEST:
                 if (resultCode == RESULT_OK) {
                     Uri selectedImageUri = data.getData();
-                    profilePhoto.setImageURI(selectedImageUri);
+                    InputStream imageStream = null;
+                    try {
+                        imageStream = getContentResolver().openInputStream(selectedImageUri);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    Bitmap bmp = BitmapFactory.decodeStream(imageStream);
+                    byte[] byteArray = getBitmapAsByteArray(bmp);
+                    bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                    profilePhoto.setImageBitmap(bmp);
                 }
                 break;
 
             case CAMERA_REQUEST:
                 if (resultCode == RESULT_OK) {
                     Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    // TODO
-                    Matrix matrix = new Matrix();
-                    // clockwise by 90 degrees becaues some weird issue on emulator
-                    matrix.postRotate(90);
-                    Bitmap rotatedBitmap = Bitmap.createBitmap(photo  , 0, 0, photo.getWidth(), photo  .getHeight(), matrix, true);
-                    profilePhoto.setImageBitmap(rotatedBitmap);
+                    byte[] byteArray = getBitmapAsByteArray(photo);
+                    photo = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                    Log.d("Img size: " ,String.valueOf(byteArray.length) + "b");
+                    profilePhoto.setImageBitmap(photo);
                 }
 
                 break;
@@ -216,6 +232,13 @@ public class EditProfile extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public byte[] getBitmapAsByteArray(Bitmap bitmap) {
+        if (bitmap == null) return null;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        return outputStream.toByteArray();
+    }
+
     // Return to previous screen on back button
     @Override
     public boolean onSupportNavigateUp(){
@@ -223,8 +246,6 @@ public class EditProfile extends AppCompatActivity {
 
         return true;
     }
-
-
     /**
      * Shows the progress UI and hides the login form.
      */

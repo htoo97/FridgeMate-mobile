@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.R;
+<<<<<<< HEAD
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,6 +40,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+=======
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
+>>>>>>> 8b00bfd49fd9394dc6538e8f502d7dfd919c2fc9
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -49,7 +53,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class AddItemManual extends AppCompatActivity {
+public class AddItemManual extends TitleWithButtonsActivity {
 
     public static final String NAME_KEY = "name";
     public static final String DATE_KEY = "date";
@@ -75,7 +79,9 @@ public class AddItemManual extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_item_manual);
+        setContentLayout(R.layout.activity_add_item_manual);
+        setBackArrow();
+        setTitle("Add Item");
 
         mCameraButton = (ImageButton) findViewById(R.id.cameraButton);
         itemProfile = (ImageView) findViewById(R.id.imageView);
