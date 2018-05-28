@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -33,7 +34,7 @@ import com.google.firebase.auth.FirebaseUser;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends TitleWithButtonsActivity {
     private FirebaseAuth mAuth;
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -51,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentLayout(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
 
         // Automatically go to user home if already logged in (and email verified)

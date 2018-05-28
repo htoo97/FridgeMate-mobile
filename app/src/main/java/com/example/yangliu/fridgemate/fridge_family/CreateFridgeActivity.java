@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CreateFridgeActivity extends AppCompatActivity {
+public class CreateFridgeActivity extends TitleWithButtonsActivity {
 
     private EditText fridgeName;
     private EditText fridgePassword;
@@ -35,7 +36,9 @@ public class CreateFridgeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_fridge);
+        setContentLayout(R.layout.activity_create_fridge);
+        setBackArrow();
+        setTitle("Create Fridge");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -90,7 +93,6 @@ public class CreateFridgeActivity extends AppCompatActivity {
                                     }
 
                                     fridges.add(documentReference);
-
 
                                     // Set as current fridge
                                     userDoc.update(

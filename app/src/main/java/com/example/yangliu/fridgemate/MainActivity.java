@@ -41,7 +41,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends TitleWithButtonsActivity {
 
     private Toolbar mToolbar;
     private CircleImageView profileImg;
@@ -59,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentLayout(R.layout.activity_main);
+        setTitle("FridgeMate");
+
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();

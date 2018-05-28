@@ -7,8 +7,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 
-public class InviteFridgeMateActivity extends AppCompatActivity {
+public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
 
     private EditText id;
     private Button inviteBtn;
@@ -16,7 +17,9 @@ public class InviteFridgeMateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_invite_fridge_mate);
+        setContentLayout(R.layout.activity_invite_fridge_mate);
+        setBackArrow();
+        setTitle("Invite Friends");
 
 
         setTitle("Invite a Fridge Mate!");

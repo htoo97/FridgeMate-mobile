@@ -64,8 +64,9 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <Button style="@style/Widget.AppCompat.Button.Colored"
+            <Button
                 android:id="@+id/email_sign_in_button"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="16dp"
@@ -82,14 +83,15 @@
                 <Button
                     android:id="@+id/forgot_password"
                     style="@style/Widget.AppCompat.Button.Borderless"
-                    android:textColor="@color/colorPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
                     android:padding="5dp"
                     android:text="@string/forgot_password"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="15sp" />
+
                 <Button
                     android:id="@+id/create_account"
                     style="@style/Widget.AppCompat.Button.Borderless"
