@@ -202,7 +202,9 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                                     .add(itemData)
                                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                         public void onSuccess(DocumentReference documentReference) {
-                                                            // TODO: update the list of items
+                                                            Intent replyIntent = new Intent();
+                                                            setResult(RESULT_OK, replyIntent);
+                                                            finish();
                                                         }
                                                     });
                                         } else {
