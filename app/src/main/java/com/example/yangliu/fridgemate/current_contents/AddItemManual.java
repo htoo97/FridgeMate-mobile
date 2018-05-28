@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.R;
-<<<<<<< HEAD
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,10 +39,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-=======
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
->>>>>>> 8b00bfd49fd9394dc6538e8f502d7dfd919c2fc9
-
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
