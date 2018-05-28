@@ -32,7 +32,7 @@
     <string name="action_sign_in">Sign in or register</string>
 
     <string name="hint_name">Item Name...</string>
-    <string name="hint_date">Item Date...</string>
+    <string name="hint_date">Item Expiration Date... </string>
     <string name="button_save">Save</string>
     <string name="empty_not_saved">Item not saved.</string>
     <string name="title_activity_settings">Settings</string>
