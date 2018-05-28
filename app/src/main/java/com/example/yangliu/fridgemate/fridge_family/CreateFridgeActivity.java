@@ -91,7 +91,6 @@ public class CreateFridgeActivity extends AppCompatActivity {
 
                                     fridges.add(documentReference);
 
-
                                     // Set as current fridge
                                     userDoc.update(
                                         "currentFridge", documentReference,

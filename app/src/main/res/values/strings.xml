@@ -45,7 +45,8 @@
 
 
     <string name="create_fridge">Create Fridge Family</string>
-    <string name="leave_fridge">Leave Fridge</string>
+    <string name="leave_fridge">Leave</string>
+    <string name="rename_fridge">Rename</string>
 
     <string name="fridge_setup_message">Setting up your very own fridge...</string>
     <string name="fridge_setup_complete">Complete! View your newly-created fridge in the "Dashboard" tab.</string>
