@@ -8,8 +8,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,15 +22,32 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.R;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class AddItemManual extends AppCompatActivity {
 
@@ -48,6 +67,11 @@ public class AddItemManual extends AppCompatActivity {
     private ImageButton mCameraButton;
     private ImageView itemProfile;
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private FirebaseFirestore db;
+    private FirebaseStorage storage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +82,13 @@ public class AddItemManual extends AppCompatActivity {
         mEditDate = (EditText) findViewById(R.id.edit_date);
         mEditNameView = findViewById(R.id.edit_word);
 
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
+
+        final Calendar myCalendar = Calendar.getInstance();
+
         itemProfile.setDrawingCacheEnabled(true);
 
         // TODO:: DATABASE receive item info by item id
@@ -67,6 +98,9 @@ public class AddItemManual extends AppCompatActivity {
         if (extras != null) {
             itemId = getIntent().getExtras().getString(ITEM_ID);
         }
+
+        final String email = user.getEmail();
+        final DocumentReference userDoc = db.collection("Users").document(email);
 
         // TODO:: DATABASE receive item info by item id
 //        if(item has a name) {
@@ -113,25 +147,77 @@ public class AddItemManual extends AppCompatActivity {
                     setResult(RESULT_CANCELED, replyIntent);
                 } else {
 
-
                     Bundle extras = new Bundle();
                     extras.putString(NAME_KEY,mEditNameView.getText().toString());
                     Log.d("passing","passing "+mEditDate.getText().toString()+" to the bundle");
                     extras.putString(DATE_KEY,mEditDate.getText().toString());
+
                     // downcast the image
-                    Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
+                    final Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
                             itemProfile.getWidth(),itemProfile.getHeight(), true);
                     extras.putByteArray(IMAGE_KEY, getBitmapAsByteArray(image));
+
                     itemProfile.setDrawingCacheEnabled(false);
                     replyIntent.putExtras(extras);
                     setResult(RESULT_OK, replyIntent);
                     //startActivityForResult(replyIntent,NEW_ITEM_ACTIVITY_REQUEST_CODE);
+
+                    userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        public void onComplete(Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                final DocumentSnapshot userData = task.getResult();
+
+                                byte[] imgToUpload = getBitmapAsByteArray(image);
+                                final StorageReference ref = storage.getReference().child("testUpload.jpg");
+                                UploadTask uploadTask = ref.putBytes(imgToUpload);
+                                final Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                    @Override
+                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                        if (!task.isSuccessful()) {
+                                            throw task.getException();
+                                        }
+
+                                        // Continue with the task to get the download URL
+                                        return ref.getDownloadUrl();
+                                    }
+                                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.isSuccessful()) {
+                                            Uri downloadUri = task.getResult();
+
+                                            Map<String, Object> itemData = new HashMap<>();
+                                            itemData.put("itemName", mEditNameView.getText().toString());
+                                            itemData.put("expirationDate", mEditDate.getText().toString());
+                                            SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
+                                            itemData.put("lastModifiedDate", mdyFormat.format(myCalendar.getTime()).toString());
+                                            itemData.put("purchaseDate", mdyFormat.format(myCalendar.getTime()).toString());
+                                            itemData.put("lastModifiedBy", userDoc);
+                                            itemData.put("imageID", downloadUri.toString());
+                                            itemData.put("fridge", userData.get("currentFridge"));
+
+                                            db.collection("FridgeItems")
+                                                    .add(itemData)
+                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                        public void onSuccess(DocumentReference documentReference) {
+                                                            // TODO: update the list of items
+                                                        }
+                                                    });
+                                        } else {
+                                            // Handle failures
+                                            // ...
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+
                 }
                 finish();
             }
         });
 
-        final Calendar myCalendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
             @Override
@@ -141,7 +227,7 @@ public class AddItemManual extends AppCompatActivity {
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                String myFormat = "MM/dd/yy";
+                String myFormat = "MM/dd/yyyy";
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                 mEditDate.setText(sdf.format(myCalendar.getTime()));
             }

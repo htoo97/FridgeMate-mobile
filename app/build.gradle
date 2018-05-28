@@ -56,6 +56,7 @@ dependencies {
     api 'com.cocosw:bottomsheet:1.+@aar'
 
     implementation 'com.google.firebase:firebase-firestore:16.0.0'
+    implementation 'com.google.firebase:firebase-storage:16.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
