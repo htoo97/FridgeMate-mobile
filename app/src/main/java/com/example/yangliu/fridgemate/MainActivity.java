@@ -41,7 +41,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends TitleWithButtonsActivity {
+public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private CircleImageView profileImg;
@@ -59,7 +59,7 @@ public class MainActivity extends TitleWithButtonsActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentLayout(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         setTitle("FridgeMate");
 
 
