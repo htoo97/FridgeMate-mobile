@@ -279,7 +279,7 @@ public class FridgeFamilyFragment extends Fragment {
                         new AlertDialog.Builder(getContext())
                                 .setTitle("Leave Fridge")
                                 .setMessage(R.string.delete_fridge_warning)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setIcon(R.drawable.ic_dialog_alert_material)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                         removeFromFridgeList(fridge);
