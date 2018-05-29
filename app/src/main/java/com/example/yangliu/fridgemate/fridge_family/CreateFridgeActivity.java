@@ -40,9 +40,6 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
         setBackArrow();
         setTitle("Create Fridge");
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
