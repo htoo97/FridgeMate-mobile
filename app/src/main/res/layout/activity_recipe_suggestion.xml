@@ -22,12 +22,27 @@
 
     <include layout="@layout/content_recipe_suggestion" />
 
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/RecipeResponse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Placeholder text"
+            tools:layout_editor_absoluteX="2dp"
+            tools:layout_editor_absoluteY="59dp" />
+    </android.support.constraint.ConstraintLayout>
+
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/findRecipesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@android:drawable/ic_search_category_default" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -91,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
                         Map<String, Object> fridgeData = new HashMap<>();
                         fridgeData.put("fridgeName", "My Fridge");
                         fridgeData.put("owner", userDoc);
+                        List<DocumentReference> members = new ArrayList<DocumentReference>();
+                        members.add(userDoc);
+                        fridgeData.put("members", members);
 
                         db.collection("Fridges")
                             .add(fridgeData)

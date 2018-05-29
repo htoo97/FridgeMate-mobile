@@ -36,11 +36,13 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     public static final int NEW_ITEM_ACTIVITY_REQUEST_CODE = 1;
     public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
     public static final int NEW_OCR_ACTIVITY_REQUEST_CODE = 3;
+    public static final int RECIPE_ACTIVITY_REQUEST_CODE = 4;
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ConstraintLayout constraintLayout;
     FloatingActionMenu materialDesignFAM;
     com.github.clans.fab.FloatingActionButton addManual, addOCR;
+    private android.support.design.widget.FloatingActionButton recipeFAB;
 
     private ContentListAdapter adapter = null;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -115,6 +117,16 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), OcrCaptureActivity.class);
                 startActivityForResult(intent, NEW_OCR_ACTIVITY_REQUEST_CODE);
+
+            }
+        });
+
+        //Floating action button for recipe suggest
+        recipeFAB = (android.support.design.widget.FloatingActionButton) view.findViewById(R.id.recipe_button);
+        recipeFAB.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), RecipeSuggestion.class);
+                startActivityForResult(intent, RECIPE_ACTIVITY_REQUEST_CODE);
 
             }
         });
@@ -203,6 +215,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             // Three edit cases:
             if (requestCode == NEW_ITEM_ACTIVITY_REQUEST_CODE) {
                 // TODO:: DATABASE added a new item
+
                 // note this function can be implemented in AddItemManual.class too
             } else if (requestCode == EDIT_ITEM_ACTIVITY_REQUEST_CODE) {
                 // TODO:: DATABASE edited a new item
@@ -211,8 +224,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             else if (requestCode == NEW_OCR_ACTIVITY_REQUEST_CODE) {
                 // TODO:: haven't implemented yet
             }
-
-            // TODO:: DATABASE:: call syncList()
+            syncList();
         }
         else {
             Toast.makeText(getContext(), R.string.empty_not_saved, Toast.LENGTH_LONG).show();

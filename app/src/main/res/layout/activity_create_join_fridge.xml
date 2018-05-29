@@ -11,10 +11,12 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/quote"
@@ -58,31 +60,34 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider3">
+        app:layout_constraintTop_toTopOf="@+id/divider3">
 
         <EditText
             android:id="@+id/editText"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="80dp"
             android:ems="10"
             android:hint="Type email here"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toTopOf="@+id/invite_friend"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.725" />
 
-        <Button style="@style/Widget.AppCompat.Button.Colored"
+        <Button
             android:id="@+id/invite_friend"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="255dp"
             android:layout_height="44dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="80dp"
             android:text="Join"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
