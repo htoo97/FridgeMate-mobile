@@ -232,10 +232,16 @@ public class FridgeFamilyFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 // TODO:: check someone's profile
-                Intent intent = new Intent(view.getContext(), MemberProfileActivity.class);
-//                intent.putExtra();
-                startActivity(intent);
+                if (position != memberListAdapter.getItemCount() - 1) {
+                    // if it is not the footer "add member" button
+                    // access the member profile
+                    Intent intent = new Intent(view.getContext(), MemberProfileActivity.class);
+
+                    // TODO:: DATABASE access the member profile
+                    //intent.putExtra();
+                    startActivity(intent);
 //                Bundle extras = new Bundle();
+                }
             }
 
             @Override
