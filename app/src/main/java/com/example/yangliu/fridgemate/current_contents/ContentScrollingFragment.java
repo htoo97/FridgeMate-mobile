@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -69,7 +70,8 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 //              extras.putString(ITEM_ID,database.getValue("passing the itemid"));
                 intent.putExtras(extras);
                 getActivity().setResult(RESULT_OK, intent);
-                startActivityForResult(intent,EDIT_ITEM_ACTIVITY_REQUEST_CODE);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.item_image), "item_image");
+                startActivity(intent, options.toBundle());
             }
 
             @Override
@@ -212,18 +214,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             String date_string = extras.getString(DATE_KEY);
             byte[] imageByte = extras.getByteArray(IMAGE_KEY);
 
-            // Three edit cases:
-            if (requestCode == NEW_ITEM_ACTIVITY_REQUEST_CODE) {
-                // TODO:: DATABASE added a new item
-
-                // note this function can be implemented in AddItemManual.class too
-            } else if (requestCode == EDIT_ITEM_ACTIVITY_REQUEST_CODE) {
-                // TODO:: DATABASE edited a new item
-                // note this function can be implemented in AddItemManual.class
-            }
-            else if (requestCode == NEW_OCR_ACTIVITY_REQUEST_CODE) {
-                // TODO:: haven't implemented yet
-            }
             syncList();
         }
         else {
