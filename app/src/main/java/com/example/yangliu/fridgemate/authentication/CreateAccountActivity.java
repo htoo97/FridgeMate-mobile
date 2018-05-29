@@ -64,6 +64,7 @@ public class CreateAccountActivity extends TitleWithButtonsActivity {
         super.onCreate(savedInstanceState);
         setContentLayout(R.layout.activity_create_account);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back_material);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();

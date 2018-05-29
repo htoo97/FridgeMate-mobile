@@ -170,7 +170,7 @@ public class FridgeFamilyFragment extends Fragment {
                             switch (item.getItemId()) {
                                 case R.id.leave_fridge:
                                     if(fridgeListAdapter.getItemCount() == 2){
-                                        Toast.makeText(getContext(), R.string.one_fridge_error, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "@string/one_fridge_error", Toast.LENGTH_SHORT).show();
                                         return false;
                                     }
 
@@ -285,7 +285,7 @@ public class FridgeFamilyFragment extends Fragment {
                         new AlertDialog.Builder(getContext())
                                 .setTitle("Leave Fridge")
                                 .setMessage(R.string.delete_fridge_warning)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setIcon(R.drawable.ic_dialog_alert_material)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                         removeFromFridgeList(fridge);

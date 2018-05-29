@@ -23,9 +23,6 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
         setBackArrow();
         setTitle("Join Fridge");
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
         setTitle("Create/Join a Fridge Family!");
         id = findViewById(R.id.editText);
         joinBtn = findViewById(R.id.invite_friend);

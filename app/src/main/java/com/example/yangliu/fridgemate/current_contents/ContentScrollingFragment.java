@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,11 +37,13 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     public static final int NEW_ITEM_ACTIVITY_REQUEST_CODE = 1;
     public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
     public static final int NEW_OCR_ACTIVITY_REQUEST_CODE = 3;
+    public static final int RECIPE_ACTIVITY_REQUEST_CODE = 4;
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ConstraintLayout constraintLayout;
     FloatingActionMenu materialDesignFAM;
     com.github.clans.fab.FloatingActionButton addManual, addOCR;
+    private android.support.design.widget.FloatingActionButton recipeFAB;
 
     private ContentListAdapter adapter = null;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -67,7 +70,8 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 //              extras.putString(ITEM_ID,database.getValue("passing the itemid"));
                 intent.putExtras(extras);
                 getActivity().setResult(RESULT_OK, intent);
-                startActivityForResult(intent,EDIT_ITEM_ACTIVITY_REQUEST_CODE);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.item_image), "item_image");
+                startActivity(intent, options.toBundle());
             }
 
             @Override
@@ -115,6 +119,16 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), OcrCaptureActivity.class);
                 startActivityForResult(intent, NEW_OCR_ACTIVITY_REQUEST_CODE);
+
+            }
+        });
+
+        //Floating action button for recipe suggest
+        recipeFAB = (android.support.design.widget.FloatingActionButton) view.findViewById(R.id.recipe_button);
+        recipeFAB.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), RecipeSuggestion.class);
+                startActivityForResult(intent, RECIPE_ACTIVITY_REQUEST_CODE);
 
             }
         });
@@ -200,18 +214,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             String date_string = extras.getString(DATE_KEY);
             byte[] imageByte = extras.getByteArray(IMAGE_KEY);
 
-            // Three edit cases:
-            if (requestCode == NEW_ITEM_ACTIVITY_REQUEST_CODE) {
-                // TODO:: DATABASE added a new item
-
-                // note this function can be implemented in AddItemManual.class too
-            } else if (requestCode == EDIT_ITEM_ACTIVITY_REQUEST_CODE) {
-                // TODO:: DATABASE edited a new item
-                // note this function can be implemented in AddItemManual.class
-            }
-            else if (requestCode == NEW_OCR_ACTIVITY_REQUEST_CODE) {
-                // TODO:: haven't implemented yet
-            }
             syncList();
         }
         else {

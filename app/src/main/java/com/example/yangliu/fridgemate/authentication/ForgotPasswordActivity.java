@@ -28,6 +28,7 @@ public class ForgotPasswordActivity extends TitleWithButtonsActivity {
         setContentLayout(R.layout.activity_forgot_password);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back_material);
 
         email = findViewById(R.id.email_address_find);
 
