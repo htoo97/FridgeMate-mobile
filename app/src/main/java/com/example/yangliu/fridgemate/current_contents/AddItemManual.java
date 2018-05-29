@@ -22,6 +22,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.FridgeItem;
@@ -41,9 +42,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -66,6 +69,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
     private EditText mEditDate;
     private ImageButton mCameraButton;
     private ImageView itemProfile;
+    private ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -85,6 +89,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         itemProfile = (ImageView) findViewById(R.id.imageView);
         mEditDate = (EditText) findViewById(R.id.edit_date);
         mEditNameView = findViewById(R.id.edit_word);
+        progressBar = (ProgressBar) findViewById(R.id.item_progress_bar);
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -113,6 +118,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
 //        }
 //        if(item has an exp date) {
 //            mEditDate.setText(exp date);
+        //     updateProgressBar(extras.getString(DATE_KEY));
 //        }
 //        if(item has an image)) {
 //            // I stored images as byte arrays, but it depends on your choice of type
@@ -155,8 +161,8 @@ public class AddItemManual extends TitleWithButtonsActivity {
                     Bundle extras = new Bundle();
                     extras.putString(NAME_KEY,mEditNameView.getText().toString());
                     Log.d("passing","passing "+mEditDate.getText().toString()+" to the bundle");
+                    String date = mEditDate.getText().toString();
                     extras.putString(DATE_KEY,mEditDate.getText().toString());
-
                     // downcast the image
 //                    final Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
 //                            itemProfile.getWidth(),itemProfile.getHeight(), true);
@@ -224,6 +230,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                                     Intent replyIntent = new Intent();
                                                     setResult(RESULT_OK, replyIntent);
                                                     finish();
+                                                    supportFinishAfterTransition();
                                                 }
                                             });
                                 }
@@ -247,7 +254,9 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 String myFormat = "MM/dd/yyyy";
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                mEditDate.setText(sdf.format(myCalendar.getTime()));
+                String expDateStr = sdf.format(myCalendar.getTime());
+                mEditDate.setText(expDateStr);
+                updateProgressBar(expDateStr);
             }
 
         };
@@ -259,6 +268,25 @@ public class AddItemManual extends TitleWithButtonsActivity {
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+    }
+
+    private void updateProgressBar(String expDate){
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+        Date strDate = null;
+        if (expDate.length() == 8) {
+            try {
+                strDate = sdf.parse(expDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        if (strDate != null) {
+            int dayDiff = (int) (strDate.getTime() / (86400000)) - (int) (System.currentTimeMillis() / (86400000));
+            if (dayDiff < 0)
+                progressBar.setProgress(0);
+            else
+                progressBar.setProgress(dayDiff);
+        }
     }
 
     // camera functions
