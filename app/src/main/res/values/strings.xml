@@ -52,6 +52,12 @@
     <string name="leave_fridge_warning">Are you sure you want to leave this fridge?</string>
     <string name="one_fridge_error">You can\'t leave your only fridge!</string>
 
+    <string name="join_fridge_error">No such fridge ID could be found.</string>
+    <string name="join_fridge_duplicate">You are already in this Fridge Family!</string>
+    <string name="join_fridge_success">Successfully joined %1$s!</string>
+
+    <string name="join_fridge_hint">Type fridge ID here</string>
+
 
     <string name="no_items">You have no items in this fridge!</string>
 
