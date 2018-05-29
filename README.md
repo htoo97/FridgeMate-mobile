@@ -15,8 +15,16 @@ Welcome page: Jack
 
 User Login: Yang Liu
 
-User Sign up: Yang Liu
+User Sign up (Create Acount): Yang Liu
 
 Forget Password: Yang Liu
+
+Connect to Database: Coleen Wu
+
+Receipt Suggestion: Cameroon Groop
+
+OCR Recognition: Bingjie(Helen) Zhou
+
+
 
 
