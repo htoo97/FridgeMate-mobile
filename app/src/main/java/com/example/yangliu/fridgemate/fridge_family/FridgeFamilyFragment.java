@@ -168,7 +168,7 @@ public class FridgeFamilyFragment extends Fragment {
                             switch (item.getItemId()) {
                                 case R.id.leave_fridge:
                                     if(fridgeListAdapter.getItemCount() == 2){
-                                        Toast.makeText(getContext(), R.string.one_fridge_error, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "@string/one_fridge_error", Toast.LENGTH_SHORT).show();
                                         return false;
                                     }
 

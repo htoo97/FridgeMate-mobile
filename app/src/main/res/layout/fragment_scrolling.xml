@@ -88,7 +88,8 @@
         android:clickable="true"
         android:src="@android:drawable/btn_star_big_on"
         tools:layout_editor_absoluteX="249dp"
-        tools:layout_editor_absoluteY="493dp" />
+        tools:layout_editor_absoluteY="493dp"
+        tools:ignore="MissingConstraints" />
 
 </android.support.constraint.ConstraintLayout>
 
