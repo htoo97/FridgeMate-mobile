@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -33,7 +34,7 @@ public class RecipeSuggestion extends AppCompatActivity {
         String url = "http://www.recipepuppy.com/api/";
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-        params.put("i", "eggs");
+        params.put("i", "ham,cheese");
         RequestHandle data = client.get(url, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -52,7 +53,22 @@ public class RecipeSuggestion extends AppCompatActivity {
                     try {
                         //Testing success
                         TextView recipeText = (TextView) findViewById(R.id.recipeResponse);
-                        recipeText.setText("Testing!");
+                        recipeText.setMovementMethod(new ScrollingMovementMethod());
+                        recipeText.setText("Recipes with your ingredients: " + "\n" );
+                        //Loop through recipes, append to textview
+                        for (int i=0; i < data.length(); i++) {
+                            JSONObject recipe = data.getJSONObject(i);
+                            String title1 = recipe.getString("title");
+                            String url1 = recipe.getString("href");
+                            recipeText.append(title1 + ": " + "\n" + url1 + "\n\n");
+                        }
+
+                        //String title1 = data.getJSONObject(0).getString("title");
+                        //String url1 = data.getJSONObject(0).getString("href");
+
+                        //String title2 = data.getJSONObject(1).getString("title");
+                       //String url2 = data.getJSONObject(1).getString("href");
+                        //recipeText.setText(title1 + ": " + url1 + "\n" + title2 + ": " + url2);
 
                         JSONArray res = response.getJSONArray("Response");
                     } catch (JSONException e) {

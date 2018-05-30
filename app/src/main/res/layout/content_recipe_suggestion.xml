@@ -8,4 +8,18 @@
     tools:context=".current_contents.RecipeSuggestion"
     tools:showIn="@layout/activity_recipe_suggestion">
 
+    <TextView
+        android:id="@+id/recipeResponse"
+        android:layout_width="380dp"
+        android:layout_height="499dp"
+        android:autoLink="all"
+        android:maxLines="50"
+        android:scrollbars="vertical"
+        android:text="Loading recipes..."
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="14sp"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="4dp" />
+
 </android.support.constraint.ConstraintLayout>
