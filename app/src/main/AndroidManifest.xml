@@ -79,6 +79,9 @@
             android:name=".authentication.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".TitleWithButtonsActivity"></activity>
+        <activity
+            android:name=".current_contents.RecipeSuggestion"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

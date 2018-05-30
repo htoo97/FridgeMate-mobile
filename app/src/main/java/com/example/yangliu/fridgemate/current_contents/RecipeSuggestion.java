@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import cz.msebera.android.httpclient.Header;
 
 import com.loopj.android.http.*;
@@ -31,7 +33,7 @@ public class RecipeSuggestion extends AppCompatActivity {
         String url = "http://www.recipepuppy.com/api/";
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-        params.put("i", "tomatoes,eggs");
+        params.put("i", "eggs");
         RequestHandle data = client.get(url, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -40,7 +42,7 @@ public class RecipeSuggestion extends AppCompatActivity {
 
                 JSONArray data = null;
                 try {
-                    data = response.getJSONArray("data");
+                    data = response.getJSONArray("results");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -48,13 +50,18 @@ public class RecipeSuggestion extends AppCompatActivity {
 
                 if (data != null) {
                     try {
+                        //Testing success
+                        TextView recipeText = (TextView) findViewById(R.id.recipeResponse);
+                        recipeText.setText("Testing!");
+
                         JSONArray res = response.getJSONArray("Response");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                //Parse JSON for relevant information
-
+                    //Parse JSON for relevant information
+                    //TextView recipeText = (TextView) findViewById(R.id.recipeResponse);
+                    //recipeText.setText("Testing!");
 
 
                     /*
@@ -74,19 +81,19 @@ public class RecipeSuggestion extends AppCompatActivity {
                 }
             });
 
-
-
+            //Button to update text
+        /*
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.findRecipesButton);
             fab.setOnClickListener(new View.OnClickListener()
             {
 
-                EditText recipeText = (EditText) findViewById(R.id.RecipeResponse);
+                TextView recipeText = (TextView) findViewById(R.id.recipeResponse);
                 @Override
                 public void onClick (View view){
                 recipeText.setText("Testing!");
             }
             });
-
+        */
 
         };
     }
