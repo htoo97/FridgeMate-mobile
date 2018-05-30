@@ -87,8 +87,8 @@
         android:layout_height="58dp"
         android:clickable="true"
         android:src="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="249dp"
-        tools:layout_editor_absoluteY="493dp" />
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="497dp" />
 
 </android.support.constraint.ConstraintLayout>
 
