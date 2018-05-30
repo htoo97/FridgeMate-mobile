@@ -8,32 +8,6 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="190dp"
-        android:layout_margin="16dp"
-        android:orientation="horizontal">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:elevation="4dp"
-            custom:srcCompat="@drawable/ic_ac_unit_black_24dp" />
-
-        <ImageButton
-            android:id="@+id/cameraButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="4"
-            android:elevation="4dp"
-            custom:srcCompat="@drawable/ic_camera_alt_black_24dp" />
-
-    </LinearLayout>
-
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,62 +15,108 @@
 
 
         <EditText
-            android:id="@+id/edit_date"
-            android:layout_width="match_parent"
+            android:id="@+id/edit_word"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:clickable="true"
-            android:focusable="false"
+
+            android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-light"
-            android:hint="@string/hint_date"
+            android:hint="@string/hint_name"
+            android:inputType="textAutoComplete"
             android:textSize="18sp"
             custom:layout_constraintBottom_toBottomOf="parent"
+            custom:layout_constraintBottom_toTopOf="@id/button_save"
             custom:layout_constraintEnd_toEndOf="parent"
+            custom:layout_constraintHorizontal_bias="0.0"
             custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toBottomOf="@+id/linear_layout"
-            custom:layout_constraintVertical_bias="1.0" />
+            custom:layout_constraintTop_toBottomOf="@+id/item_progress_bar"
+            custom:layout_constraintVertical_bias="0.29000002" />
+
+        <Button
+            android:id="@+id/button_save"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
+            android:text="@string/button_save"
+            custom:layout_constraintBottom_toBottomOf="parent"
+            custom:layout_constraintEnd_toEndOf="parent"
+            custom:layout_constraintHorizontal_bias="0.0"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toBottomOf="@+id/edit_word"
+            custom:layout_constraintVertical_bias="0.0" />
 
         <LinearLayout
-            android:id="@+id/linear_layout"
+            android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="100dp"
+            android:layout_margin="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp">
+            custom:layout_constraintEnd_toEndOf="parent"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toTopOf="parent">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="center"
+                    custom:srcCompat="@drawable/ic_camera_alt_black_24dp" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="2" />
+            </FrameLayout>
 
             <EditText
-                android:id="@+id/edit_word"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="10"
-                android:fontFamily="sans-serif-light"
-                android:hint="@string/hint_name"
-                android:inputType="textAutoComplete"
-                android:textSize="18sp" />
-
-            <Button style="@style/Widget.AppCompat.Button.Colored"
-                android:id="@+id/button_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:id="@+id/edit_date"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_weight="1"
-                android:background="@color/colorPrimary"
-                android:elevation="4dp"
-                android:text="@string/button_save"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="8dp" />
+                android:clickable="true"
+                android:focusable="false"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical|center"
+                android:hint="@string/hint_date"
+                android:textSize="18sp"
+                custom:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+                tools:layout_editor_absoluteX="16dp" />
+
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/item_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="8dp"
+            android:transitionName="progress_bar"
+            custom:layout_constraintEnd_toEndOf="parent"
+            custom:layout_constraintHorizontal_bias="0.0"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
 
     </android.support.constraint.ConstraintLayout>
-
-    <ProgressBar
-        android:id="@+id/item_progress_bar"
-        android:transitionName="progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp" />
 
 </LinearLayout>

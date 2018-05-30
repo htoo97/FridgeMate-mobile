@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -34,6 +35,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Transformation;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -137,7 +142,8 @@ public class EditProfile extends TitleWithButtonsActivity {
         });
     }
 
-
+    ContentValues cv;
+    Uri imageUri;
         public void selectPhoto(View view) {
 
             new BottomSheet.Builder(this).title("Options").sheet(R.menu.menu_profile_photo).listener(new DialogInterface.OnClickListener() {
@@ -156,9 +162,20 @@ public class EditProfile extends TitleWithButtonsActivity {
                                         != PackageManager.PERMISSION_GRANTED) {
                                     requestPermissions(new String[]{Manifest.permission.CAMERA},
                                             MY_CAMERA_PERMISSION_CODE);
+                                } else
+                                if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                        != PackageManager.PERMISSION_GRANTED) {
+                                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                            MY_CAMERA_PERMISSION_CODE);
                                 } else {
-                                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                                    cv = new ContentValues();
+                                    cv.put(MediaStore.Images.Media.TITLE, "My Picture");
+                                    cv.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
+                                    imageUri = getContentResolver().insert(
+                                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
+                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                    startActivityForResult(intent, CAMERA_REQUEST);
                                 }
                             }
                             break;
@@ -208,20 +225,37 @@ public class EditProfile extends TitleWithButtonsActivity {
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
+
                     Bitmap bmp = BitmapFactory.decodeStream(imageStream);
                     byte[] byteArray = getBitmapAsByteArray(bmp);
-                    bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                    profilePhoto.setImageBitmap(bmp);
+                    Glide.with(this)
+                            .load(byteArray)
+                            .asBitmap()
+                            .into(profilePhoto);
+                    Log.d("Img size: " ,String.valueOf(byteArray.length/1024) + "kb");
+                    //profilePhoto.setImageBitmap(bmp);
                 }
                 break;
 
             case CAMERA_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    byte[] byteArray = getBitmapAsByteArray(photo);
-                    photo = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                    Log.d("Img size: " ,String.valueOf(byteArray.length) + "b");
-                    profilePhoto.setImageBitmap(photo);
+                    try {
+                        Bitmap photo = MediaStore.Images.Media.getBitmap(
+                                getContentResolver(), imageUri);
+                        byte[] byteArray = getBitmapAsByteArray(photo);
+                        photo = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                        profilePhoto.setImageBitmap(photo);
+                        Log.d("Img size: " ,String.valueOf(byteArray.length/1024) + "kb");
+                        //profilePhoto.setImageBitmap(photo);
+                        Glide.with(this)
+                                .load(byteArray)
+                                .asBitmap()
+                                .into(profilePhoto);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    //Bitmap photo = (Bitmap) data.getExtras().get("data");
                 }
 
                 break;
@@ -235,7 +269,7 @@ public class EditProfile extends TitleWithButtonsActivity {
     public byte[] getBitmapAsByteArray(Bitmap bitmap) {
         if (bitmap == null) return null;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outputStream);
         return outputStream.toByteArray();
     }
 
