@@ -82,6 +82,7 @@
         <activity
             android:name=".current_contents.RecipeSuggestion"
             android:screenOrientation="portrait" />
+        <activity android:name=".fridge_family.MemberProfileActivity"></activity>
     </application>
 
 </manifest>

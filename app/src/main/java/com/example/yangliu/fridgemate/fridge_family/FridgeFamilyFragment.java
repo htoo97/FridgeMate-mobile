@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import com.example.yangliu.fridgemate.Fridge;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
+import com.example.yangliu.fridgemate.current_contents.AddItemManual;
 import com.example.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -168,7 +170,7 @@ public class FridgeFamilyFragment extends Fragment {
                             switch (item.getItemId()) {
                                 case R.id.leave_fridge:
                                     if(fridgeListAdapter.getItemCount() == 2){
-                                        Toast.makeText(getContext(), R.string.one_fridge_error, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "@string/one_fridge_error", Toast.LENGTH_SHORT).show();
                                         return false;
                                     }
 
@@ -230,6 +232,16 @@ public class FridgeFamilyFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 // TODO:: check someone's profile
+                if (position != memberListAdapter.getItemCount() - 1) {
+                    // if it is not the footer "add member" button
+                    // access the member profile
+                    Intent intent = new Intent(view.getContext(), MemberProfileActivity.class);
+
+                    // TODO:: DATABASE access the member profile
+                    //intent.putExtra();
+                    startActivity(intent);
+//                Bundle extras = new Bundle();
+                }
             }
 
             @Override
@@ -279,7 +291,7 @@ public class FridgeFamilyFragment extends Fragment {
                         new AlertDialog.Builder(getContext())
                                 .setTitle("Leave Fridge")
                                 .setMessage(R.string.delete_fridge_warning)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setIcon(R.drawable.ic_dialog_alert_material)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                         removeFromFridgeList(fridge);

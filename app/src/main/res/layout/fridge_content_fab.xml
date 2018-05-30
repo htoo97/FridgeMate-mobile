@@ -56,4 +56,11 @@
 
 
     </com.github.clans.fab.FloatingActionMenu>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/recipe_button"
+        android:layout_width="54dp"
+        android:layout_height="58dp"
+        android:clickable="true"
+        android:src="@android:drawable/btn_star_big_on" />
 </RelativeLayout>

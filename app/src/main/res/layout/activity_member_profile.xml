@@ -3,7 +3,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/edit_profile_form"
+    android:id="@+id/profile_form"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -33,7 +33,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <EditText
+        <TextView
             android:id="@+id/user_name"
             android:layout_width="148dp"
             android:layout_height="46dp"
@@ -68,7 +68,7 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/Information"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -81,7 +81,7 @@
         app:layout_constraintTop_toBottomOf="@+id/Photo">
 
         <LinearLayout
-            android:id="@+id/linearLayout2"
+            android:id="@+id/Email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -109,6 +109,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/Contact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -119,7 +120,7 @@
             android:paddingBottom="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+            app:layout_constraintTop_toBottomOf="@+id/Email">
 
             <ImageView
                 android:layout_width="30dp"
@@ -138,18 +139,5 @@
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
-
-    <Button
-        android:id="@+id/save_user_profile"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="24dp"
-        android:text="SAVE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </android.support.constraint.ConstraintLayout>

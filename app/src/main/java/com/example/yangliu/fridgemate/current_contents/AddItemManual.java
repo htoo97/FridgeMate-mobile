@@ -22,6 +22,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.FridgeItem;
@@ -41,9 +42,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -66,11 +69,14 @@ public class AddItemManual extends TitleWithButtonsActivity {
     private EditText mEditDate;
     private ImageButton mCameraButton;
     private ImageView itemProfile;
+    private ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
+
+    private Bitmap image;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,11 +89,13 @@ public class AddItemManual extends TitleWithButtonsActivity {
         itemProfile = (ImageView) findViewById(R.id.imageView);
         mEditDate = (EditText) findViewById(R.id.edit_date);
         mEditNameView = findViewById(R.id.edit_word);
+        progressBar = (ProgressBar) findViewById(R.id.item_progress_bar);
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+        image = null;
 
         final Calendar myCalendar = Calendar.getInstance();
 
@@ -110,6 +118,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
 //        }
 //        if(item has an exp date) {
 //            mEditDate.setText(exp date);
+        //     updateProgressBar(extras.getString(DATE_KEY));
 //        }
 //        if(item has an image)) {
 //            // I stored images as byte arrays, but it depends on your choice of type
@@ -152,13 +161,12 @@ public class AddItemManual extends TitleWithButtonsActivity {
                     Bundle extras = new Bundle();
                     extras.putString(NAME_KEY,mEditNameView.getText().toString());
                     Log.d("passing","passing "+mEditDate.getText().toString()+" to the bundle");
+                    String date = mEditDate.getText().toString();
                     extras.putString(DATE_KEY,mEditDate.getText().toString());
-
                     // downcast the image
-                    final Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
-                            itemProfile.getWidth(),itemProfile.getHeight(), true);
+//                    final Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
+//                            itemProfile.getWidth(),itemProfile.getHeight(), true);
                     extras.putByteArray(IMAGE_KEY, getBitmapAsByteArray(image));
-
                     itemProfile.setDrawingCacheEnabled(false);
                     replyIntent.putExtras(extras);
                     setResult(RESULT_OK, replyIntent);
@@ -169,50 +177,63 @@ public class AddItemManual extends TitleWithButtonsActivity {
                             if (task.isSuccessful()) {
                                 final DocumentSnapshot userData = task.getResult();
 
-                                byte[] imgToUpload = getBitmapAsByteArray(image);
-                                final StorageReference ref = storage.getReference().child("testUpload.jpg");
-                                UploadTask uploadTask = ref.putBytes(imgToUpload);
-                                final Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                    @Override
-                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                        if (!task.isSuccessful()) {
-                                            throw task.getException();
+                                final Map<String, Object> itemData = new HashMap<>();
+                                itemData.put("itemName", mEditNameView.getText().toString());
+                                itemData.put("expirationDate", mEditDate.getText().toString());
+                                SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
+                                itemData.put("lastModifiedDate", mdyFormat.format(myCalendar.getTime()).toString());
+                                itemData.put("purchaseDate", mdyFormat.format(myCalendar.getTime()).toString());
+                                itemData.put("lastModifiedBy", userDoc);
+                                itemData.put("fridge", userData.get("currentFridge"));
+
+                                if (image != null) {
+                                    byte[] imgToUpload = getBitmapAsByteArray(image);
+                                    String imageName = db.collection("fridgeItems").document().getId();
+                                    final StorageReference ref = storage.getReference().child(imageName);
+                                    UploadTask uploadTask = ref.putBytes(imgToUpload);
+                                    final Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                        @Override
+                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                            if (!task.isSuccessful()) {
+                                                throw task.getException();
+                                            }
+
+                                            // Continue with the task to get the download URL
+                                            return ref.getDownloadUrl();
                                         }
+                                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Uri> task) {
+                                            if (task.isSuccessful()) {
+                                                Uri downloadUri = task.getResult();
+                                                itemData.put("imageID", downloadUri.toString());
+                                                db.collection("FridgeItems")
+                                                        .add(itemData)
+                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                            public void onSuccess(DocumentReference documentReference) {
+                                                                Intent replyIntent = new Intent();
+                                                                setResult(RESULT_OK, replyIntent);
+                                                                finish();
+                                                            }
+                                                        });
 
-                                        // Continue with the task to get the download URL
-                                        return ref.getDownloadUrl();
-                                    }
-                                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.isSuccessful()) {
-                                            Uri downloadUri = task.getResult();
-
-                                            Map<String, Object> itemData = new HashMap<>();
-                                            itemData.put("itemName", mEditNameView.getText().toString());
-                                            itemData.put("expirationDate", mEditDate.getText().toString());
-                                            SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
-                                            itemData.put("lastModifiedDate", mdyFormat.format(myCalendar.getTime()).toString());
-                                            itemData.put("purchaseDate", mdyFormat.format(myCalendar.getTime()).toString());
-                                            itemData.put("lastModifiedBy", userDoc);
-                                            itemData.put("imageID", downloadUri.toString());
-                                            itemData.put("fridge", userData.get("currentFridge"));
-
-                                            db.collection("FridgeItems")
-                                                    .add(itemData)
-                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                        public void onSuccess(DocumentReference documentReference) {
-                                                            Intent replyIntent = new Intent();
-                                                            setResult(RESULT_OK, replyIntent);
-                                                            finish();
-                                                        }
-                                                    });
-                                        } else {
-                                            // Handle failures
-                                            // ...
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
+                                else {
+                                    itemData.put("imageID", "");
+                                    db.collection("FridgeItems")
+                                            .add(itemData)
+                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                public void onSuccess(DocumentReference documentReference) {
+                                                    Intent replyIntent = new Intent();
+                                                    setResult(RESULT_OK, replyIntent);
+                                                    finish();
+                                                    supportFinishAfterTransition();
+                                                }
+                                            });
+                                }
                             }
                         }
                     });
@@ -227,13 +248,15 @@ public class AddItemManual extends TitleWithButtonsActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                // TODO Expiration date Auto-generated method
+                // TODO Expiration date  Auto-generated method
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 String myFormat = "MM/dd/yyyy";
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                mEditDate.setText(sdf.format(myCalendar.getTime()));
+                String expDateStr = sdf.format(myCalendar.getTime());
+                mEditDate.setText(expDateStr);
+                updateProgressBar(expDateStr);
             }
 
         };
@@ -247,6 +270,25 @@ public class AddItemManual extends TitleWithButtonsActivity {
         });
     }
 
+    private void updateProgressBar(String expDate){
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+        Date strDate = null;
+        if (expDate.length() == 8) {
+            try {
+                strDate = sdf.parse(expDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        if (strDate != null) {
+            int dayDiff = (int) (strDate.getTime() / (86400000)) - (int) (System.currentTimeMillis() / (86400000));
+            if (dayDiff < 0)
+                progressBar.setProgress(0);
+            else
+                progressBar.setProgress(dayDiff);
+        }
+    }
+
     // camera functions
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
@@ -257,7 +299,8 @@ public class AddItemManual extends TitleWithButtonsActivity {
             matrix.postRotate(90);
             Bitmap rotatedBitmap = Bitmap.createBitmap(photo  , 0, 0, photo.getWidth(), photo  .getHeight(), matrix, true);
             itemProfile.setImageBitmap(rotatedBitmap);
-            //Glide.with(AddItemManual.this).load(data.getExtras().get("data")).centerCrop().into(itemProfile);
+            // Glide.with(AddItemManual.this).load(data.getExtras().get("data")).centerCrop().into(itemProfile);
+            image = rotatedBitmap;
 
         }
     }
