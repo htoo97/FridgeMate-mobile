@@ -140,8 +140,9 @@ public class LoginActivity extends TitleWithButtonsActivity {
         mGoogleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"Log in pressed", Toast.LENGTH_SHORT).show();
+                showProgress(true);
                 signIn();
+
             }
         });
         //************* google login authentication **********//
@@ -150,6 +151,7 @@ public class LoginActivity extends TitleWithButtonsActivity {
 
 
     private void signIn() {
+        showProgress(true);
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -160,6 +162,7 @@ public class LoginActivity extends TitleWithButtonsActivity {
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            showProgress(true);
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
