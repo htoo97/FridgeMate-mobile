@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ll_one"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginEnd="10dip"
@@ -15,19 +14,17 @@
         android:id="@+id/shop_list_item_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:background="#FFFFFFFF"
+        android:layout_weight="1"
         android:gravity="left"
-        android:paddingLeft="5dip"
+        android:paddingLeft="15dp"
         android:singleLine="true"
-        android:textAlignment="textStart"
-        android:textSize="24sp" />
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_weight="1"
-        android:paddingLeft="5dip"
+        android:paddingLeft="10dp"
         android:weightSum="15">
 
 
@@ -65,7 +62,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:buttonTint="@color/colorPrimaryDark"
-            android:text="Add" />
+            android:gravity="center_vertical"
+            android:text="Select" />
 
 
     </LinearLayout>

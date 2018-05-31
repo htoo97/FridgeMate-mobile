@@ -224,11 +224,15 @@ public class FridgeFamilyFragment extends Fragment {
 
         // for presentation: using the items as member adapters
         RecyclerView mRecyclerMemberView = view.findViewById(R.id.fridgeMemberList);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerMemberView.setLayoutManager(llm);
         memberListAdapter = new MemberListAdapter(view.getContext());
         mRecyclerMemberView.setAdapter(memberListAdapter);
         mRecyclerMemberView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        mRecyclerMemberView.addOnItemTouchListener(new RecyclerItemClickListener(FridgeFamilyFragment.this, mRecyclerMemberView, new RecyclerItemClickListener.OnItemClickListener() {
+        mRecyclerMemberView.addOnItemTouchListener(new RecyclerItemClickListener(
+                FridgeFamilyFragment.this, mRecyclerMemberView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 // TODO:: check someone's profile

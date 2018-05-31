@@ -296,8 +296,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // update the image when edited the profile
         if (requestCode == PROFILE_EDIT_REQUEST_CODE){
             profileImg.setImageURI(user.getPhotoUrl());
+            name.setText(user.getDisplayName());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

@@ -54,6 +54,9 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
         // List view
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
         // Connect list to its adapter
         adapter = new ContentListAdapter(view.getContext());
         recyclerView.setAdapter(adapter);
