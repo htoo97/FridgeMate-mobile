@@ -165,7 +165,6 @@ public class LoginActivity extends TitleWithButtonsActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
 
-
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
 

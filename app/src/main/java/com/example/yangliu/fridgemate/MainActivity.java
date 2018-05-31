@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         View headerView = navigationView.getHeaderView(0);
         profileImg = headerView.findViewById(R.id.profile_image);
+        profileImg.setImageURI(user.getPhotoUrl());
         name = (TextView)headerView.findViewById(R.id.user_name);
         // TODO:: DATABASE:: get profile image and name from
         // profileImg.setImageBitmap();

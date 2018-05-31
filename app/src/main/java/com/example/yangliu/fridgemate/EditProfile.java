@@ -52,9 +52,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.example.yangliu.fridgemate.R.id.image;
 import static com.example.yangliu.fridgemate.R.id.local;
 
 public class EditProfile extends TitleWithButtonsActivity {
@@ -71,6 +73,7 @@ public class EditProfile extends TitleWithButtonsActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
 
+    private boolean photoChanged = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,12 +103,15 @@ public class EditProfile extends TitleWithButtonsActivity {
         saveBtn = findViewById(R.id.save_user_profile);
         name = findViewById(R.id.user_name);
         profilePhoto = findViewById(R.id.profile_image);
+        profilePhoto.setDrawingCacheEnabled(true);
         email = findViewById(R.id.email);
 
         name.setInputType(InputType.TYPE_CLASS_TEXT);
 
         // TODO:: DATABASE get profile pic
         name.setText(user.getDisplayName());
+        profilePhoto.setImageURI(user.getPhotoUrl());
+        //Uri i = user.getPhotoUrl();
 //        profilePhoto.setImageBitmap();
         email.setText(user.getEmail());
 
@@ -113,18 +119,21 @@ public class EditProfile extends TitleWithButtonsActivity {
             public void onClick(View view) {
                 showProgress(true);
 
-                String displayName = String.valueOf(name.getText());
-                if (profilePhoto.getDrawingCache() != null) {
-                    Bitmap profileImg  = Bitmap.createScaledBitmap(profilePhoto.getDrawingCache(),
-                        200,200, true);
+                UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
+                //save profile picture
+                if (photoChanged) {
+                    Bitmap profileImg = profilePhoto.getDrawingCache();
+                    builder.setPhotoUri(getBitmapAsByteArray(profileImg));
                 }
+                
 
-                // TODO:: DATABASE save profile picture, implement change email
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(displayName)
-                    .build();
+                // TODO:: DATABASE: change email
 
-                user.updateProfile(profileUpdates)
+                String displayName = String.valueOf(name.getText());
+                builder.setDisplayName(displayName);
+
+                // Update user profile
+                user.updateProfile(builder.build())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(Task<Void> task) {
@@ -132,58 +141,59 @@ public class EditProfile extends TitleWithButtonsActivity {
                                 Toast.makeText(getApplication(),R.string.profile_updated,
                                         Toast.LENGTH_LONG).show();
                                 }
-
-                                Intent i = new Intent(EditProfile.this, MainActivity.class);
-                                startActivity(i);
-                                finish();
                             }
                         });
+
+                // finish up
+                showProgress(false);
+                profilePhoto.setDrawingCacheEnabled(false);
+                finish();
             }
         });
     }
 
     ContentValues cv;
     Uri imageUri;
-        public void selectPhoto(View view) {
+    public void selectPhoto(View view) {
 
-            new BottomSheet.Builder(this).title("Options").sheet(R.menu.menu_profile_photo).listener(new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case R.id.local://从相册里面取照片
-                            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            galleryIntent.setType("image/*");
-                            startActivityForResult(galleryIntent, LOAD_IMAGE_REQUEST);
-                            break;
-                        case R.id.camera://调用相机拍照
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                if (checkSelfPermission(android.Manifest.permission.CAMERA)
-                                        != PackageManager.PERMISSION_GRANTED) {
-                                    requestPermissions(new String[]{Manifest.permission.CAMERA},
-                                            MY_CAMERA_PERMISSION_CODE);
-                                } else
-                                if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                        != PackageManager.PERMISSION_GRANTED) {
-                                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                            MY_CAMERA_PERMISSION_CODE);
-                                } else {
-                                    cv = new ContentValues();
-                                    cv.put(MediaStore.Images.Media.TITLE, "My Picture");
-                                    cv.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
-                                    imageUri = getContentResolver().insert(
-                                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
-                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                                    startActivityForResult(intent, CAMERA_REQUEST);
-                                }
+        new BottomSheet.Builder(this).title("Options").sheet(R.menu.menu_profile_photo).listener(new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case R.id.local://从相册里面取照片
+                        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        galleryIntent.setType("image/*");
+                        startActivityForResult(galleryIntent, LOAD_IMAGE_REQUEST);
+                        break;
+                    case R.id.camera://调用相机拍照
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (checkSelfPermission(android.Manifest.permission.CAMERA)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                        MY_CAMERA_PERMISSION_CODE);
+                            } else
+                            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        MY_CAMERA_PERMISSION_CODE);
+                            } else {
+                                cv = new ContentValues();
+                                cv.put(MediaStore.Images.Media.TITLE, "My Picture");
+                                cv.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
+                                imageUri = getContentResolver().insert(
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                startActivityForResult(intent, CAMERA_REQUEST);
                             }
-                            break;
+                        }
+                        break;
 
-                    }
                 }
-            }).show();
-        }
+            }
+        }).show();
+    }
 
 
     @Override
@@ -214,48 +224,19 @@ public class EditProfile extends TitleWithButtonsActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO:: better fetching the photo
+        photoChanged = true;
         switch  (requestCode) {
             //从相册里面取相片的返回结果
             case LOAD_IMAGE_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    Uri selectedImageUri = data.getData();
-                    InputStream imageStream = null;
-                    try {
-                        imageStream = getContentResolver().openInputStream(selectedImageUri);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
-                    Bitmap bmp = BitmapFactory.decodeStream(imageStream);
-                    byte[] byteArray = getBitmapAsByteArray(bmp);
-                    Glide.with(this)
-                            .load(byteArray)
-                            .asBitmap()
-                            .into(profilePhoto);
-                    Log.d("Img size: " ,String.valueOf(byteArray.length/1024) + "kb");
-                    //profilePhoto.setImageBitmap(bmp);
+                    imageUri = data.getData();
+                    profilePhoto.setImageURI(imageUri);
                 }
                 break;
 
             case CAMERA_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    try {
-                        Bitmap photo = MediaStore.Images.Media.getBitmap(
-                                getContentResolver(), imageUri);
-                        byte[] byteArray = getBitmapAsByteArray(photo);
-                        photo = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                        profilePhoto.setImageBitmap(photo);
-                        Log.d("Img size: " ,String.valueOf(byteArray.length/1024) + "kb");
-                        //profilePhoto.setImageBitmap(photo);
-                        Glide.with(this)
-                                .load(byteArray)
-                                .asBitmap()
-                                .into(profilePhoto);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    //Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    profilePhoto.setImageURI(imageUri);
                 }
 
                 break;
@@ -266,11 +247,12 @@ public class EditProfile extends TitleWithButtonsActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public byte[] getBitmapAsByteArray(Bitmap bitmap) {
+    public Uri getBitmapAsByteArray(Bitmap bitmap) {
         if (bitmap == null) return null;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outputStream);
-        return outputStream.toByteArray();
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, bytes);
+        String path = MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(), bitmap, "Title", null);
+        return Uri.parse(path);
     }
 
     // Return to previous screen on back button

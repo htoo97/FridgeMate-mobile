@@ -74,7 +74,6 @@ public class AddItemManual extends TitleWithButtonsActivity {
 
     private EditText mEditNameView;
     private EditText mEditDate;
-    private ImageButton mCameraButton;
     private ImageView itemProfile;
     private ProgressBar progressBar;
 
@@ -92,7 +91,6 @@ public class AddItemManual extends TitleWithButtonsActivity {
         setBackArrow();
         setTitle("Add Item");
 
-        mCameraButton = (ImageButton) findViewById(R.id.cameraButton);
         itemProfile = (ImageView) findViewById(R.id.imageView);
         mEditDate = (EditText) findViewById(R.id.edit_date);
         mEditNameView = findViewById(R.id.edit_word);
@@ -137,7 +135,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
 //        }
 
         // set up camera button
-        mCameraButton.setOnClickListener(
+        itemProfile.setOnClickListener(
                 new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {
@@ -165,20 +163,18 @@ public class AddItemManual extends TitleWithButtonsActivity {
                     setResult(RESULT_CANCELED, replyIntent);
                 } else {
 
-                    Bundle extras = new Bundle();
-                    extras.putString(NAME_KEY,mEditNameView.getText().toString());
-                    Log.d("passing","passing "+mEditDate.getText().toString()+" to the bundle");
-                    String date = mEditDate.getText().toString();
-                    extras.putString(DATE_KEY,mEditDate.getText().toString());
-                    // downcast the image
-//                    final Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
-//                            itemProfile.getWidth(),itemProfile.getHeight(), true);
-                    extras.putByteArray(IMAGE_KEY, getBitmapAsByteArray(image));
-                    itemProfile.setDrawingCacheEnabled(false);
-                    replyIntent.putExtras(extras);
-                    setResult(RESULT_OK, replyIntent);
+//                    Bundle extras = new Bundle();
+//                    extras.putString(NAME_KEY,mEditNameView.getText().toString());
+//                    Log.d("passing","passing "+mEditDate.getText().toString()+" to the bundle");
+//                    String date = mEditDate.getText().toString();
+//                    extras.putString(DATE_KEY,mEditDate.getText().toString());
+//                    // downcast the image
+////                    final Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
+////                            itemProfile.getWidth(),itemProfile.getHeight(), true);
+//                    extras.putByteArray(IMAGE_KEY, getBitmapAsByteArray(image));
+//                    itemProfile.setDrawingCacheEnabled(false);
                     //startActivityForResult(replyIntent,NEW_ITEM_ACTIVITY_REQUEST_CODE);
-
+                    setResult(RESULT_OK, replyIntent);
                     userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         public void onComplete(Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
@@ -280,7 +276,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
     private void updateProgressBar(String expDate){
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
         Date strDate = null;
-        if (expDate.length() == 8) {
+        if (expDate.length() != 0) {
             try {
                 strDate = sdf.parse(expDate);
             } catch (ParseException e) {
