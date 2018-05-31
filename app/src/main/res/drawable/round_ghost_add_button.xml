@@ -3,11 +3,11 @@
     <item>
         <shape android:shape="oval">
             <stroke android:color="#FFC8CBD6"
-                android:width="5dp"
+                android:width="3dp"
                 android:dashWidth="10dp"
-                android:dashGap="6dp"/>
+                android:dashGap="5dp"/>
 
-            <size android:width="150dp" android:height="150dp"/>
+            <size android:width="100dp" android:height="100dp"/>
         </shape>
     </item>
 </selector>

@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private DocumentReference userDoc;
     private FirebaseUser user;
 
+    public static final int PROFILE_EDIT_REQUEST_CODE = 4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -159,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, EditProfile.class);
-                startActivity(intent);
+                startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE);
             }
         });
         // slide menu options function
@@ -170,9 +172,8 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.profile_settings:
-                        //TODO::settings
                         Intent intent = new Intent(MainActivity.this, EditProfile.class);
-                        startActivity(intent);
+                        startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE);
                         return true;
                     case R.id.log_out:
                         // Sign out user from database and go back to signin screen
@@ -189,8 +190,6 @@ public class MainActivity extends AppCompatActivity {
                                     }})
                                 .setNegativeButton(android.R.string.no, null).show();
 
-                        // TODO: store local account data?
-                        // SaveSharedPreference.clearUserName(MainActivity.this);
                         return true;
                 }
                 return true;
@@ -297,7 +296,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        profileImg.setImageURI(user.getPhotoUrl());
+        if (requestCode == PROFILE_EDIT_REQUEST_CODE){
+            profileImg.setImageURI(user.getPhotoUrl());
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 

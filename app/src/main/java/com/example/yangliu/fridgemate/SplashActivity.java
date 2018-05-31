@@ -4,7 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
 
@@ -22,6 +27,12 @@ public class SplashActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+
+        final ImageView myImageView= (ImageView)findViewById(R.id.splash);
+        Animation a = new AlphaAnimation(0.00f,1.00f);
+        a.setDuration(1100);
+        myImageView.startAnimation(a);
+
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run() {
@@ -30,7 +41,7 @@ public class SplashActivity extends Activity {
                 startActivity(mainIntent);
                 finish();
             }
-        }, 1500);
+        }, 1300);
 
     }
 }

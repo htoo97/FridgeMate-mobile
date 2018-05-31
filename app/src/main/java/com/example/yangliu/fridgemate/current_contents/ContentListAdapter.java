@@ -126,7 +126,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
                 if (dayDiff < 0)
                     holder.progressBar.setProgress(0);
                 else
-                    holder.progressBar.setProgress(dayDiff);
+                    holder.progressBar.setProgress((int) (dayDiff * 3.3));
             }
         } else {
             // Covers the case of data not being ready yet.

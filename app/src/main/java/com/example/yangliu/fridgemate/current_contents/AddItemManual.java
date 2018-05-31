@@ -288,7 +288,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
             if (dayDiff < 0)
                 progressBar.setProgress(0);
             else
-                progressBar.setProgress(dayDiff);
+                progressBar.setProgress((int) (dayDiff*3.3));
         }
     }
 
