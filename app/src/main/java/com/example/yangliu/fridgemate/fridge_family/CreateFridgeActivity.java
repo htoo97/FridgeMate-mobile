@@ -38,7 +38,7 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
         super.onCreate(savedInstanceState);
         setContentLayout(R.layout.activity_create_fridge);
         setBackArrow();
-        setTitle("Create Fridge");
+        setTitle("Create Fridge Family");
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
