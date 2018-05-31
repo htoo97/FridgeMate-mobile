@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         View headerView = navigationView.getHeaderView(0);
         profileImg = headerView.findViewById(R.id.profile_image);
+        profileImg.setImageURI(user.getPhotoUrl());
         name = (TextView)headerView.findViewById(R.id.user_name);
         // TODO:: DATABASE:: get profile image and name from
         // profileImg.setImageBitmap();
@@ -154,6 +155,13 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
         fragmentTransaction.commit();
 
+        profileImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EditProfile.class);
+                startActivity(intent);
+            }
+        });
         // slide menu options function
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {

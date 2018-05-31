@@ -207,12 +207,11 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == RESULT_OK) {
-
             // fetch results
-            Bundle extras = data.getExtras();
-            String name_string = extras.getString(NAME_KEY);
-            String date_string = extras.getString(DATE_KEY);
-            byte[] imageByte = extras.getByteArray(IMAGE_KEY);
+//            Bundle extras = data.getExtras();
+//            String name_string = extras.getString(NAME_KEY);
+//            String date_string = extras.getString(DATE_KEY);
+//            byte[] imageByte = extras.getByteArray(IMAGE_KEY);
 
             syncList();
         }

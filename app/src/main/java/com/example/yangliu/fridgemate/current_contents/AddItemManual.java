@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.R;
 import com.google.android.gms.tasks.Continuation;
@@ -42,6 +44,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +56,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import io.grpc.Compressor;
 
 public class AddItemManual extends TitleWithButtonsActivity {
 
@@ -67,7 +74,6 @@ public class AddItemManual extends TitleWithButtonsActivity {
 
     private EditText mEditNameView;
     private EditText mEditDate;
-    private ImageButton mCameraButton;
     private ImageView itemProfile;
     private ProgressBar progressBar;
 
@@ -85,7 +91,6 @@ public class AddItemManual extends TitleWithButtonsActivity {
         setBackArrow();
         setTitle("Add Item");
 
-        mCameraButton = (ImageButton) findViewById(R.id.cameraButton);
         itemProfile = (ImageView) findViewById(R.id.imageView);
         mEditDate = (EditText) findViewById(R.id.edit_date);
         mEditNameView = findViewById(R.id.edit_word);
@@ -130,7 +135,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
 //        }
 
         // set up camera button
-        mCameraButton.setOnClickListener(
+        itemProfile.setOnClickListener(
                 new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {
@@ -158,20 +163,18 @@ public class AddItemManual extends TitleWithButtonsActivity {
                     setResult(RESULT_CANCELED, replyIntent);
                 } else {
 
-                    Bundle extras = new Bundle();
-                    extras.putString(NAME_KEY,mEditNameView.getText().toString());
-                    Log.d("passing","passing "+mEditDate.getText().toString()+" to the bundle");
-                    String date = mEditDate.getText().toString();
-                    extras.putString(DATE_KEY,mEditDate.getText().toString());
-                    // downcast the image
-//                    final Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
-//                            itemProfile.getWidth(),itemProfile.getHeight(), true);
-                    extras.putByteArray(IMAGE_KEY, getBitmapAsByteArray(image));
-                    itemProfile.setDrawingCacheEnabled(false);
-                    replyIntent.putExtras(extras);
-                    setResult(RESULT_OK, replyIntent);
+//                    Bundle extras = new Bundle();
+//                    extras.putString(NAME_KEY,mEditNameView.getText().toString());
+//                    Log.d("passing","passing "+mEditDate.getText().toString()+" to the bundle");
+//                    String date = mEditDate.getText().toString();
+//                    extras.putString(DATE_KEY,mEditDate.getText().toString());
+//                    // downcast the image
+////                    final Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
+////                            itemProfile.getWidth(),itemProfile.getHeight(), true);
+//                    extras.putByteArray(IMAGE_KEY, getBitmapAsByteArray(image));
+//                    itemProfile.setDrawingCacheEnabled(false);
                     //startActivityForResult(replyIntent,NEW_ITEM_ACTIVITY_REQUEST_CODE);
-
+                    setResult(RESULT_OK, replyIntent);
                     userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         public void onComplete(Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
@@ -273,7 +276,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
     private void updateProgressBar(String expDate){
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
         Date strDate = null;
-        if (expDate.length() == 8) {
+        if (expDate.length() != 0) {
             try {
                 strDate = sdf.parse(expDate);
             } catch (ParseException e) {
@@ -293,14 +296,11 @@ public class AddItemManual extends TitleWithButtonsActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            // TODO:: may need to be deleted
-            Matrix matrix = new Matrix();
-            // clockwise by 90 degrees becaues some weird issue on emulator
-            matrix.postRotate(90);
-            Bitmap rotatedBitmap = Bitmap.createBitmap(photo  , 0, 0, photo.getWidth(), photo  .getHeight(), matrix, true);
-            itemProfile.setImageBitmap(rotatedBitmap);
-            // Glide.with(AddItemManual.this).load(data.getExtras().get("data")).centerCrop().into(itemProfile);
-            image = rotatedBitmap;
+            byte[] ba = getBitmapAsByteArray(photo);
+            photo = BitmapFactory.decodeByteArray(ba, 0, ba.length);
+            //itemProfile.setImageBitmap(photo);
+            Glide.with(AddItemManual.this).load(ba).asBitmap().centerCrop().into(itemProfile);
+            image = photo;
 
         }
     }
@@ -309,9 +309,8 @@ public class AddItemManual extends TitleWithButtonsActivity {
     public byte[] getBitmapAsByteArray(Bitmap bitmap) {
         if (bitmap == null) return null;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 25, outputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream);
         Log.d("Img size: " ,String.valueOf(outputStream.size()/1024) + "kb");
-
         return outputStream.toByteArray();
     }
 
