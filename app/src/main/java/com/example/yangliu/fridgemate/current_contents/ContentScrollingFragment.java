@@ -274,6 +274,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         // TODO:: DATABASE: populate the local list
 
         final List<FridgeItem> mItems = new LinkedList<>();
+        if (fridgeDoc == null) return;
         fridgeDoc.collection("FridgeItems").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

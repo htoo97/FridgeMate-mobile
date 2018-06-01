@@ -124,7 +124,11 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (mSelectedItems.get(i) == true){
                 // TODO:: DATABASE:: add this to the fridge database
                 final Map<String, Object> itemData = new HashMap<>();
-                itemData.put("itemName", String.valueOf(mShopList.get(i).second) + " " + mShopList.get(i).first);
+                if (mShopList.get(i).second == 0)
+                    itemData.put("itemName", String.valueOf(mShopList.get(i).first));
+                else
+                    itemData.put("itemName", String.valueOf(mShopList.get(i).second) + " " + mShopList.get(i).first);
+                itemData.put("expirationDate","");
 //                SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
 //                itemData.put("purchaseDate", mdyFormat.format(Calendar.getInstance().getTime()).toString());
 //                itemData.put("lastModifiedBy", user);

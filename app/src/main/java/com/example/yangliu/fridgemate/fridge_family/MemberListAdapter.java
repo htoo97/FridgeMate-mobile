@@ -74,6 +74,8 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final DocumentSnapshot userData = task.getResult();
+                    if (userData == null)
+                        return;
                     fridgeDoc = userData.getDocumentReference("currentFridge");
                     setMembers();
                 }
