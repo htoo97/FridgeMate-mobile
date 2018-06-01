@@ -245,17 +245,41 @@ public class FridgeFamilyFragment extends Fragment {
                 }
             }
 
+            // remove a member from your fridge
             @Override
             public void onItemLongClick(View view, final int position) {
-                if (position != memberListAdapter.getItemCount() - 1) {
+                if (position != memberListAdapter.getItemCount() - 1 && position != 0) {
+                    // if the position is not footer Nor yourself
+                    final DocumentReference memberToBeDeleted = memberListAdapter.names.get(position);
                     PopupMenu popup = new PopupMenu(getContext(), view);
                     popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         public boolean onMenuItemClick(MenuItem item) {
-                            // TODO:: DATABASE: delete member
                             // position is the index of the member (to be deleted)
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("Leave Fridge")
+                                    .setMessage("Are you sure to delete " + memberToBeDeleted.getId() + "?")
+                                    .setIcon(R.drawable.ic_dialog_alert_material)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            memberListAdapter.names.remove(position);
+                                            memberListAdapter.notifyDataSetChanged();
+                                            // remove user from the member's list
+                                            final DocumentReference selectedFridge = db.collection("Fridges")
+                                                    .document(fridgeListAdapter.mFridges.get(fridgeListAdapter.selectedItemPos).getFridgeid());
+                                            selectedFridge.update("members",memberListAdapter.names);
 
-                            // call sync()
+                                            // remove the fridge from the user
+                                            memberToBeDeleted.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    List<DocumentReference> fridges = (List<DocumentReference>) task.getResult().get("fridges");
+                                                    fridges.remove(selectedFridge);
+                                                    memberToBeDeleted.update("fridges",fridges);
+                                                }
+                                            });
+
+                                        }}).setNegativeButton(android.R.string.no, null).show();
                             return true;
                         }
                     });
@@ -270,7 +294,6 @@ public class FridgeFamilyFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // TODO:: refresh adapter set data to something
                 swipeRefreshLayout.setRefreshing(true);
                 syncList();
                 memberListAdapter.setMembers();

@@ -246,7 +246,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                     if (deletePermananetly[0])
                         itemDoc.delete();
                 }
-            }, 4000);
+            }, 3000);
 
         }
     }

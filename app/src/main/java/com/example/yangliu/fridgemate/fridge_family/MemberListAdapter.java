@@ -50,7 +50,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private final LayoutInflater mInflater;
     private int currentFridge = -1;
     private Context context;
-    private List<String> names;
+    public List<DocumentReference> names;
     private String[] statuses;
     // TODO DATABASE:: set up images of members
     //private Bitmap[] images;
@@ -65,7 +65,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         currentFridge = SaveSharedPreference.getCurrentFridge(context);
         mInflater = LayoutInflater.from(context);
 
-        names = new LinkedList<String>();
+        names = new LinkedList<DocumentReference>();
         // TODO:: DATABASE set up the names, statuses, images of members
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
@@ -90,10 +90,12 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     memberList = (List) fridgeData.get("members");
                 }
                 names.clear();
-                for (DocumentReference i : memberList){
-                    names.add(i.getId());
+                if (memberList != null) {
+                    for (DocumentReference i : memberList) {
+                        names.add(i);
+                    }
+                    notifyDataSetChanged();
                 }
-                notifyDataSetChanged();
             }
         });
 
@@ -108,7 +110,6 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), InviteFridgeMateActivity.class);
                     v.getContext().startActivity(intent);
-                    notifyDataSetChanged();
                 }
             });
         }
@@ -141,7 +142,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 ItemViewHolder iholder = (ItemViewHolder) holder;
                 if (currentFridge != -1) {
                     // set up each member
-                    iholder.name.setText(names.get(position));
+                    iholder.name.setText(names.get(position).getId());
 
                     // TODO: set up user's status
                     //iholder.status.setText(statuses[position]);

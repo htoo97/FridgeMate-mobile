@@ -148,7 +148,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 List<String> shopList = new LinkedList();
                 if (fridgeData.get("shoppingList") != null) {
-                    shopList = (List) fridgeData.get("shoppingList");
+                    shopList = ((List) fridgeData.get("shoppingList"));
                 }
                 shopList.add(name+"#"+String.valueOf(amount));
                 Map<String, Object> shopListHolder = new HashMap<>();
@@ -172,7 +172,6 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if (fridgeData.get("shoppingList") != null){
                     shopList = (List)fridgeData.get("shoppingList");
                 }
-
                 shopList.remove(pos);
                 Map<String, Object> shopListHolder = new HashMap<>();
                 shopListHolder.put("shoppingList", shopList);
@@ -191,12 +190,14 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     mShopList.clear();
                 mShopList = new LinkedList<Pair<String,Integer>>();
                 mSelectedItems = new LinkedList<Boolean>();
-                for (int i = 0; i < dataList.size(); ++i){
-                    String[] data = dataList.get(i).split("#");
-                    mShopList.add(new Pair<String,Integer>(data[0],Integer.valueOf(data[1])));
-                    mSelectedItems.add(false);
+                if (dataList != null) {
+                    for (int i = 0; i < dataList.size(); ++i){
+                        String[] data = dataList.get(i).split("#");
+                        mShopList.add(new Pair<String,Integer>(data[0],Integer.valueOf(data[1])));
+                        mSelectedItems.add(false);
+                    }
+                    notifyDataSetChanged();
                 }
-                notifyDataSetChanged();
             }
         });
 
