@@ -1,5 +1,6 @@
 package com.example.yangliu.fridgemate;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import java.text.ParseException;
@@ -13,18 +14,20 @@ public class FridgeItem  implements Comparable<FridgeItem>{
 
     private String expDate;
 
-    private byte[] image;
+    private String docRef;
+
+    private Uri image;
 
     public FridgeItem() {
-
     }
 
     // Getters and setters
     // NonNull: -> return value can never be null.
-    public FridgeItem(@NonNull String name, String expDate, byte[] image) {
+    public FridgeItem(@NonNull String name, String expDate, Uri image, String ref) {
         this.itemName = name;
         this.expDate = expDate;
         this.image = image;
+        docRef = ref;
     }
 
     public FridgeItem(@NonNull String name, String expDate) {
@@ -52,10 +55,10 @@ public class FridgeItem  implements Comparable<FridgeItem>{
         this.itemId = itemId;
     }
 
-    public byte[] getImage() { return image; }
+    public Uri getImage() { return image; }
 
-    public void setImage(byte[] imageByteArr) {
-        this.image = imageByteArr;
+    public void setImage(Uri imageUri) {
+        this.image = imageUri;
     }
 
     public String getItemName() {
@@ -77,7 +80,7 @@ public class FridgeItem  implements Comparable<FridgeItem>{
     @Override
     public int compareTo(@NonNull FridgeItem o) {
 
-        if (expDate.length() == 8 && o.expDate.length() == 8){
+        if (expDate.length() !=0 && o.expDate.length() != 0 ){
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
             Date thisDate = null, dateCompareTo = null;
             try {
@@ -107,5 +110,13 @@ public class FridgeItem  implements Comparable<FridgeItem>{
                 return -1;
 
         }
+    }
+
+    public String getDocRef() {
+        return docRef;
+    }
+
+    public void setDocRef(String docRef) {
+        this.docRef = docRef;
     }
 }

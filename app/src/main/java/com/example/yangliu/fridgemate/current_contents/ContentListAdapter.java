@@ -1,6 +1,7 @@
 package com.example.yangliu.fridgemate.current_contents;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.yangliu.fridgemate.Fridge;
 import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.R;
 
@@ -96,14 +98,9 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
                 holder.dateItemView.setText(expDate);
 
             // set image
-            byte[] imageByte = current.getImage();
+            Uri imageByte = current.getImage();
             if (imageByte != null) {
-                //Bitmap b = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
-                //holder.itemImageView.setImageBitmap(b);
-                // TODO:: set image itemImageView size here
-                //holder.itemImageView.setImageBitmap(Bitmap.createScaledBitmap(b, 60, 60, false));
-
-                // maybe change to glide for efficiency
+//                holder.itemImageView.setImageURI(imageByte);
                 Glide.with(context).load(imageByte).centerCrop()
                         .into(holder.itemImageView);
 
@@ -114,7 +111,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
             Date strDate = null;
             // if item has a expdate
-            if (expDate.length() == 8) {
+            if (expDate.length() != 0) {
                 try {
                     strDate = sdf.parse(expDate);
                 } catch (ParseException e) {
@@ -133,6 +130,22 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             holder.wordItemView.setText("No Word");
         }
 
+    }
+
+    FridgeItem lastremoved;
+    public void remove(int position){
+        lastremoved = mItemsOnDisplay.get(position);
+        // locate the item in the original list (if removing when searching)
+        int index = mItems.indexOf(lastremoved);
+        mItemsOnDisplay.remove(position);
+        //mItems.remove(index);
+        notifyDataSetChanged();
+    }
+
+    public void restore(){
+        mItems.add(lastremoved);
+        Collections.sort(mItems);
+        mItemsOnDisplay = mItems;
     }
 
     void setItems(List<FridgeItem> items){

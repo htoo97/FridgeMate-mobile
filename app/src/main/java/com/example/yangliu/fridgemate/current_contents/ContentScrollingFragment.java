@@ -2,8 +2,12 @@ package com.example.yangliu.fridgemate.current_contents;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,23 +21,36 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.yangliu.fridgemate.Fridge;
+import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
 import com.example.yangliu.fridgemate.current_contents.receipt_scan.OcrCaptureActivity;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
 public class ContentScrollingFragment extends Fragment implements FridgeItemTouchHelper.FridgeItemTouchHelpListener{
 
-    public static final String NAME_KEY = "name";
-    public static final String ITEM_ID = "item_id";
-    public static final String DATE_KEY = "date";
-    public static final String IMAGE_KEY = "img";
-    public static final String Other_KEY = "other";
     public static final int NEW_ITEM_ACTIVITY_REQUEST_CODE = 1;
     public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
     public static final int NEW_OCR_ACTIVITY_REQUEST_CODE = 3;
@@ -46,11 +63,34 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     private android.support.design.widget.FloatingActionButton recipeFAB;
 
     private ContentListAdapter adapter = null;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private DocumentReference userDoc;
+    private DocumentReference fridgeDoc;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         constraintLayout = view.findViewById(R.id.cl);
+
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userDoc = db.collection("Users").document(user.getEmail());
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+                    fridgeDoc = userData.getDocumentReference("currentFridge");
+                    syncList();
+                }
+            }
+        });
 
         // List view
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
@@ -61,20 +101,22 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         adapter = new ContentListAdapter(view.getContext());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        // TODO:: DATABASE:: call syncList()
 
         // on item Click (modifying item)
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(ContentScrollingFragment.this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                //TODO:: DATABASE pass the item id to AddItemManual.class for edit
                 Intent intent = new Intent(view.getContext(), AddItemManual.class);
                 Bundle extras = new Bundle();
-//              extras.putString(ITEM_ID,database.getValue("passing the itemid"));
+                FridgeItem i = adapter.mItemsOnDisplay.get(position);
+                extras.putString("name",i.getItemName());
+                extras.putString("expDate",i.getExpDate());
+                extras.putString("image",i.getImage().toString());
+                extras.putString("docRef",i.getDocRef());
                 intent.putExtras(extras);
                 getActivity().setResult(RESULT_OK, intent);
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.item_image), "item_image");
-                startActivity(intent, options.toBundle());
+                startActivityForResult(intent, EDIT_ITEM_ACTIVITY_REQUEST_CODE, options.toBundle());
             }
 
             @Override
@@ -83,17 +125,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             }
         }));
 
-        // TODO:: I'm not sure if it's needed; but view model persists even when app is destroyed
-//        mItemViewModel = ViewModelProviders.of(this).get(FridgeItemViewModel.class);
-//        mItemViewModel.getAllItems().observe(this, new Observer<List<FridgeItem>>() {
-//            @Override
-//            public void onChanged(@Nullable final List<FridgeItem> items) {
-//                // Update the cached copy of the items in the adapter.
-//                adapter.setItems(items);
-//            }
-//        });
-
-
         // swipe refresh
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setEnabled(true);
@@ -101,15 +132,15 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                // TODO:: DATABASE:: call syncList()
+                syncList();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        swipeRefreshLayout.setColorSchemeResources(R.color.blue, R.color.red, R.color.yellow, R.color.green);
-        swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,R.color.green);
 
         // floating button menu
         materialDesignFAM = (FloatingActionMenu) view.findViewById(R.id.material_design_android_floating_action_menu);
+        materialDesignFAM.setClosedOnTouchOutside(true);
         addManual = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.material_design_floating_action_menu_item1);
         addOCR = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.material_design_floating_action_menu_item2);
         addManual.setOnClickListener(new View.OnClickListener() {
@@ -188,19 +219,35 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         if (viewHolder instanceof ContentListAdapter.ItemViewHolder) {
             // TODO:: DATABASE delete the item at position
 
+            String id = adapter.mItemsOnDisplay.get(position).getDocRef();
+            final DocumentReference itemDoc = fridgeDoc.collection("FridgeItems").document(id);
+
+            final boolean[] deletePermananetly = {true};
+
+            adapter.remove(position);
             // TODO:: DATABASE restore the item deletion (by delay or make a temporary copy)
-//            // showing snack bar with Undo option
-//            Snackbar snackbar = Snackbar
-//                    .make(constraintLayout, item.getItemName() + " removed!", Snackbar.LENGTH_LONG);
-//            snackbar.setAction("UNDO", new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//
-//                    // undo is selected, restore the deleted item
-//                    mItemViewModel.restoreItem(item);
-//                }
-//            });
-//            snackbar.show();
+            // showing snack bar with Undo option
+            Snackbar snackbar = Snackbar
+                    .make(constraintLayout, "Item removed!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // undo is selected, restore the deleted item
+                    adapter.restore();
+                    adapter.notifyDataSetChanged();
+                    deletePermananetly[0] = false;
+                    return;
+                }
+            });
+            snackbar.show();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    if (deletePermananetly[0])
+                        itemDoc.delete();
+                }
+            }, 4000);
+
         }
     }
 
@@ -226,12 +273,23 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     public void syncList(){
         // TODO:: DATABASE: populate the local list
 
+        final List<FridgeItem> mItems = new LinkedList<>();
+        fridgeDoc.collection("FridgeItems").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    FridgeItem i = new FridgeItem(String.valueOf(document.get("itemName")),
+                            String.valueOf(document.get("expirationDate")),
+                            Uri.parse(String.valueOf(document.get("imageID"))),
+                            String.valueOf(document.getId()));
+                    mItems.add(i);
+                }
+                adapter.setItems(mItems);
+                adapter.notifyDataSetChanged();
+            }
+        });
         // global current fridge position in the fridge list
-        int currentFridge = SaveSharedPreference.getCurrentFridge(getContext());
-        // get a list of items and set it to the list view's adapter
-        //adapter.setItems(List< FridgeItem> blabla);
-
-        adapter.notifyDataSetChanged();
+        //int currentFridge = SaveSharedPreference.getCurrentFridge(getContext());
     }
 
 }

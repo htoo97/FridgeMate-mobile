@@ -6,8 +6,8 @@
     <!--fab:menu_colorPressed="@color/colorAccent"-->
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/material_design_android_floating_action_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="12dp"
@@ -49,8 +49,8 @@
             android:id="@+id/material_design_floating_action_menu_item2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/colorAccent"
             android:src="@drawable/ic_center_focus_strong_black_24dp"
+            fab:fab_colorNormal="@color/colorAccent"
             fab:fab_label="Add by OCR"
             fab:fab_size="mini" />
 

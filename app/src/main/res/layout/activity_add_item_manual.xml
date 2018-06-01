@@ -102,11 +102,11 @@
                     android:src="@drawable/ic_camera_alt_black_24dp" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imageView"
+                    android:id="@+id/item_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:contentDescription="Photo"
+                    android:contentDescription="item_image"
                     custom:border_width="1dp" />
 
             </FrameLayout>

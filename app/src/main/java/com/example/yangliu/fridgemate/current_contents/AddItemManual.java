@@ -39,6 +39,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -81,6 +82,8 @@ public class AddItemManual extends TitleWithButtonsActivity {
     private FirebaseUser user;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
+    private DocumentReference  userDoc;
+    private DocumentReference fridgeDoc;
 
     private Bitmap image;
 
@@ -91,16 +94,26 @@ public class AddItemManual extends TitleWithButtonsActivity {
         setBackArrow();
         setTitle("Add Item");
 
-        itemProfile = (ImageView) findViewById(R.id.imageView);
-        mEditDate = (EditText) findViewById(R.id.edit_date);
+        itemProfile = findViewById(R.id.item_image);
+        mEditDate = findViewById(R.id.edit_date);
         mEditNameView = findViewById(R.id.edit_word);
-        progressBar = (ProgressBar) findViewById(R.id.item_progress_bar);
+        progressBar = findViewById(R.id.item_progress_bar);
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         image = null;
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userDoc = db.collection("Users").document(user.getEmail());
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+                    fridgeDoc = userData.getDocumentReference("currentFridge");
+                }
+            }
+        });
 
         final Calendar myCalendar = Calendar.getInstance();
 
@@ -108,31 +121,21 @@ public class AddItemManual extends TitleWithButtonsActivity {
 
         // TODO:: DATABASE receive item info by item id
         Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
+        final Bundle extras = intent.getExtras();
         String itemId = null;
         if (extras != null) {
-            itemId = getIntent().getExtras().getString(ITEM_ID);
+            mEditNameView.setText(extras.getString("name"));
+            String expDate = extras.getString("expDate");
+            if (expDate != "" && expDate != null) {
+                mEditDate.setText(expDate);
+                updateProgressBar(expDate);
+            }
+            String image = extras.getString("image");
+            if (image != null && image.length() != 0) {
+                Glide.with(this).load(Uri.parse(image)).centerCrop()
+                        .into(itemProfile);
+            }
         }
-
-        final String email = user.getEmail();
-        final DocumentReference userDoc = db.collection("Users").document(email);
-
-        // TODO:: DATABASE receive item info by item id
-//        if(item has a name) {
-//            mEditNameView.setText(item's name);
-//        }
-//        if(item has an exp date) {
-//            mEditDate.setText(exp date);
-        //     updateProgressBar(extras.getString(DATE_KEY));
-//        }
-//        if(item has an image)) {
-//            // I stored images as byte arrays, but it depends on your choice of type
-//            byte[] imgByte = extras.getByteArray(IMAGE_KEY);
-//            if (imgByte != null) {
-//                Bitmap photo = BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
-//                itemProfile.setImageBitmap(photo);
-//            }
-//        }
 
         // set up camera button
         itemProfile.setOnClickListener(
@@ -161,19 +164,11 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 Intent replyIntent = new Intent();
                 if (TextUtils.isEmpty(mEditNameView.getText())) {
                     setResult(RESULT_CANCELED, replyIntent);
-                } else {
-
-//                    Bundle extras = new Bundle();
-//                    extras.putString(NAME_KEY,mEditNameView.getText().toString());
-//                    Log.d("passing","passing "+mEditDate.getText().toString()+" to the bundle");
-//                    String date = mEditDate.getText().toString();
-//                    extras.putString(DATE_KEY,mEditDate.getText().toString());
-//                    // downcast the image
-////                    final Bitmap image = Bitmap.createScaledBitmap(itemProfile.getDrawingCache(),
-////                            itemProfile.getWidth(),itemProfile.getHeight(), true);
-//                    extras.putByteArray(IMAGE_KEY, getBitmapAsByteArray(image));
-//                    itemProfile.setDrawingCacheEnabled(false);
-                    //startActivityForResult(replyIntent,NEW_ITEM_ACTIVITY_REQUEST_CODE);
+                    finish();
+                    // animation
+                    supportFinishAfterTransition();
+                }
+                else {
                     setResult(RESULT_OK, replyIntent);
                     userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         public void onComplete(Task<DocumentSnapshot> task) {
@@ -189,11 +184,13 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                 itemData.put("lastModifiedBy", userDoc);
                                 itemData.put("fridge", userData.get("currentFridge"));
 
+                                // ************** if it has profile image **********************
                                 if (image != null) {
                                     byte[] imgToUpload = getBitmapAsByteArray(image);
                                     String imageName = db.collection("fridgeItems").document().getId();
                                     final StorageReference ref = storage.getReference().child(imageName);
                                     UploadTask uploadTask = ref.putBytes(imgToUpload);
+
                                     final Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                         @Override
                                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -210,39 +207,68 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                             if (task.isSuccessful()) {
                                                 Uri downloadUri = task.getResult();
                                                 itemData.put("imageID", downloadUri.toString());
-                                                db.collection("FridgeItems")
-                                                        .add(itemData)
-                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                            public void onSuccess(DocumentReference documentReference) {
-                                                                Intent replyIntent = new Intent();
-                                                                setResult(RESULT_OK, replyIntent);
+                                                // ************** if we are editing an item **********************
+                                                if (extras != null){
+                                                    String docRef = extras.getString("docRef");
+                                                    if (docRef != "" && docRef != null){
+                                                        DocumentReference itemDoc = fridgeDoc.collection("FridgeItems").document(docRef);
+                                                        itemDoc.update(itemData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
                                                                 finish();
+                                                                supportFinishAfterTransition();
                                                             }
                                                         });
+                                                    }
+                                                }
+                                                // ************** if we are adding an item **********************
+                                                else {
+                                                    fridgeDoc.collection("FridgeItems")
+                                                            .add(itemData)
+                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                    finish();
+                                                                }
+                                                            });
+                                                }
 
                                             }
                                         }
                                     });
                                 }
+                                // ************** if it doesn't have profile image **********************
                                 else {
                                     itemData.put("imageID", "");
-                                    db.collection("FridgeItems")
-                                            .add(itemData)
-                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                public void onSuccess(DocumentReference documentReference) {
-                                                    Intent replyIntent = new Intent();
-                                                    setResult(RESULT_OK, replyIntent);
+                                    // ************** if we are editing an item **********************
+                                    if (extras != null) {
+                                        String docRef = extras.getString("docRef");
+                                        if (docRef != "" && docRef != null) {
+                                            DocumentReference itemDoc = fridgeDoc.collection("FridgeItems").document(docRef);
+                                            itemDoc.set(itemData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
                                                     finish();
                                                     supportFinishAfterTransition();
                                                 }
                                             });
+                                        }
+                                    }
+                                    // ************** if we are adding an item **********************
+                                    else {
+                                        fridgeDoc.collection("FridgeItems")
+                                                .add(itemData)
+                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                    public void onSuccess(DocumentReference documentReference) {
+                                                        finish();
+                                                    }
+                                                });
+                                    }
                                 }
                             }
                         }
                     });
 
                 }
-                finish();
             }
         });
 

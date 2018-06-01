@@ -1,5 +1,6 @@
 package com.example.yangliu.fridgemate.shop_list;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -12,6 +13,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -49,7 +51,7 @@ public class ShopListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_shop_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_shop_list, container, false);
 
         name = view.findViewById(R.id.et_content1);
         incQuantity =  view.findViewById(R.id.ibn_add1);
@@ -95,6 +97,10 @@ public class ShopListFragment extends Fragment {
         addItemToShopList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
                 shopListAdapter.addItem(String.valueOf(name.getText()),Integer.valueOf(""+ amount.getText()));
                 name.setText("");
                 amount.setText("0");
