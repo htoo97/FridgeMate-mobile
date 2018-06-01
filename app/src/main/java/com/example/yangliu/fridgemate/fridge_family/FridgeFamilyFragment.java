@@ -152,7 +152,12 @@ public class FridgeFamilyFragment extends Fragment {
                 if(position < fridgeListAdapter.mFridges.size()){
                     DocumentReference newCurrentFridge = db.collection("Fridges")
                             .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
-                    userDoc.update("currentFridge", newCurrentFridge);
+                    userDoc.update("currentFridge", newCurrentFridge).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            syncList();
+                        }
+                    });
                 }
             }
 
@@ -380,7 +385,6 @@ public class FridgeFamilyFragment extends Fragment {
 
     public void syncList(){
         showProgress(true);
-        // TODO:: DATABASE: populate fridge member list
         int currentFridge = SaveSharedPreference.getCurrentFridge(getContext());
         final List<Fridge> userFridges = new ArrayList<>();
 
