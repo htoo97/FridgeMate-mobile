@@ -108,7 +108,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             // set name
             holder.wordItemView.setText(current.getItemName());
 
-            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
             Date strDate = null;
             // if item has a expdate
             if (expDate.length() != 0) {

@@ -21,6 +21,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -121,6 +123,12 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         for (int i = 0; i < getItemCount(); i++){
             if (mSelectedItems.get(i) == true){
                 // TODO:: DATABASE:: add this to the fridge database
+                final Map<String, Object> itemData = new HashMap<>();
+                itemData.put("itemName", String.valueOf(mShopList.get(i).second) + " " + mShopList.get(i).first);
+//                SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
+//                itemData.put("purchaseDate", mdyFormat.format(Calendar.getInstance().getTime()).toString());
+//                itemData.put("lastModifiedBy", user);
+                fridgeDoc.collection("FridgeItems").add(itemData);
                 removeItem(i);
             }
         }
