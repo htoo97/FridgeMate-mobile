@@ -123,8 +123,6 @@ public class EditProfile extends TitleWithButtonsActivity {
                     Bitmap profileImg = profilePhoto.getDrawingCache();
                     builder.setPhotoUri(getBitmapAsByteArray(profileImg));
                 }
-                
-
                 // TODO:: DATABASE: change email
 
                 String displayName = String.valueOf(name.getText());

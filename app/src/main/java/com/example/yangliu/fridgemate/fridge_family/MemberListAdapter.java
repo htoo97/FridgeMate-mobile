@@ -3,6 +3,7 @@ package com.example.yangliu.fridgemate.fridge_family;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +16,19 @@ import com.example.yangliu.fridgemate.Fridge;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
 import com.example.yangliu.fridgemate.Fridge;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.security.spec.ECField;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -39,17 +50,53 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private final LayoutInflater mInflater;
     private int currentFridge = -1;
     private Context context;
-    private String[] names;
+    private List<String> names;
     private String[] statuses;
     // TODO DATABASE:: set up images of members
     //private Bitmap[] images;
 
+
+    private FirebaseUser user;
+    private FirebaseFirestore db;
+    private DocumentReference fridgeDoc;
+
     MemberListAdapter(Context context) {
         this.context = context;
         currentFridge = SaveSharedPreference.getCurrentFridge(context);
-        // TODO:: DATABASE set up the names, statuses, images of members
-
         mInflater = LayoutInflater.from(context);
+
+        names = new LinkedList<String>();
+        // TODO:: DATABASE set up the names, statuses, images of members
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        DocumentReference  userDoc = db.collection("Users").document(user.getEmail());
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+                    fridgeDoc = userData.getDocumentReference("currentFridge");
+                    setMembers();
+                }
+            }
+        });
+    }
+    public void setMembers(){
+        fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(Task<DocumentSnapshot> task) {
+                final DocumentSnapshot fridgeData = task.getResult();
+
+                List<DocumentReference> memberList = new LinkedList();
+                if (fridgeData.get("members") != null) {
+                    memberList = (List) fridgeData.get("members");
+                }
+                names.clear();
+                for (DocumentReference i : memberList){
+                    names.add(i.getId());
+                }
+                notifyDataSetChanged();
+            }
+        });
+
     }
 
     private static final int FOOTER_VIEW = 1;
@@ -80,7 +127,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
     @Override
     public int getItemViewType(int position) {
-        if (currentFridge == -1 || (names == null || position == names.length)) {
+        if (currentFridge == -1 || (names == null || position == names.size())) {
             // This is where we'll add footer.
             return FOOTER_VIEW;
         }
@@ -94,8 +141,10 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 ItemViewHolder iholder = (ItemViewHolder) holder;
                 if (currentFridge != -1) {
                     // set up each member
-                    iholder.name.setText(names[position]);
-                    iholder.status.setText(statuses[position]);
+                    iholder.name.setText(names.get(position));
+
+                    // TODO: set up user's status
+                    //iholder.status.setText(statuses[position]);
 
                     // TODO:: DATABASE set up user's image
                     //holder.imageView.setImageBitmap(images[position]);
@@ -113,7 +162,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemCount() {
         if (names != null)
-            return names.length + 1;
+            return names.size() + 1;
         return 1;
     }
 

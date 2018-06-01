@@ -45,7 +45,7 @@
 
                 <TextView
                     android:id="@+id/name_view"
-                    style="@android:style/TextAppearance.DeviceDefault.Large"
+                    style="@android:style/Widget.DeviceDefault.Light.TextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"

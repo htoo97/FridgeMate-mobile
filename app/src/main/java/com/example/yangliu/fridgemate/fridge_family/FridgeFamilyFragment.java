@@ -224,12 +224,9 @@ public class FridgeFamilyFragment extends Fragment {
 
         // for presentation: using the items as member adapters
         RecyclerView mRecyclerMemberView = view.findViewById(R.id.fridgeMemberList);
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerMemberView.setLayoutManager(llm);
         memberListAdapter = new MemberListAdapter(view.getContext());
-        mRecyclerMemberView.setAdapter(memberListAdapter);
         mRecyclerMemberView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerMemberView.setAdapter(memberListAdapter);
 
         mRecyclerMemberView.addOnItemTouchListener(new RecyclerItemClickListener(
                 FridgeFamilyFragment.this, mRecyclerMemberView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -276,6 +273,7 @@ public class FridgeFamilyFragment extends Fragment {
                 // TODO:: refresh adapter set data to something
                 swipeRefreshLayout.setRefreshing(true);
                 syncList();
+                memberListAdapter.setMembers();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
