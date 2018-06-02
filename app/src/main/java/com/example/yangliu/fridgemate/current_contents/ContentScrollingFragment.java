@@ -271,7 +271,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             syncList();
         }
         else {
-            Toast.makeText(getContext(), R.string.empty_not_saved, Toast.LENGTH_LONG).show();
+            // Toast.makeText(getContext(), R.string.empty_not_saved, Toast.LENGTH_LONG).show();
         }
     }
 
