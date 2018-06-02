@@ -23,7 +23,7 @@
     </RelativeLayout>
 
     <Button style="@style/Widget.AppCompat.Button.Colored"
-        android:id="@+id/button"
+        android:id="@+id/add_all_ocr"
         android:layout_width="159dp"
         android:layout_height="45dp"
         android:layout_marginBottom="4dp"

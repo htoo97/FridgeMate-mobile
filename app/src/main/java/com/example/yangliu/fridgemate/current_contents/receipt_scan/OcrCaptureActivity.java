@@ -46,7 +46,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -57,15 +56,34 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.support.v7.widget.RecyclerView;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import java.text.SimpleDateFormat;
+
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
-import java.util.List;
 
+import java.util.List;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Calendar;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 /**
  * Activity for the Ocr Detecting app.  This app detects text and displays the value with the
@@ -94,9 +112,15 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
 
-
     OcrItemListAdapter adapter;
     private Button addListToFridgeBtn;
+
+
+    private com.google.firebase.auth.FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private FirebaseFirestore db;
+    private DocumentReference  userDoc;
+    private DocumentReference fridgeDoc;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -110,6 +134,7 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
 
         preview = findViewById(R.id.preview);
         graphicOverlay = findViewById(R.id.graphicOverlay);
+        addListToFridgeBtn = findViewById(R.id.add_all_ocr);
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -122,15 +147,57 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         adapter = new OcrItemListAdapter(this);
         recyclerView.setAdapter(adapter);
 
-//        addListToFridgeBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                List<String> toBeAdded = adapter.mData;
-//                for (String s: toBeAdded){
-//                    // TODO:: DATABASE add these names to the fridge
-//                }
-//            }
-//        });
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userDoc = db.collection("Users").document(user.getEmail());
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+                    fridgeDoc = userData.getDocumentReference("currentFridge");
+                }
+            }
+        });
+
+        addListToFridgeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<String> toBeAdded = adapter.mData;
+                for (final String s: toBeAdded){
+                    // add these names to the fridge as items
+                    userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        public void onComplete(Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                final DocumentSnapshot userData = task.getResult();
+
+                                final java.util.Map<String, Object> itemData = new HashMap<>();
+                                itemData.put("itemName", s);
+                                itemData.put("expirationDate", "");
+                                SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
+                                Calendar myCalendar = Calendar.getInstance();
+                                itemData.put("lastModifiedDate", mdyFormat.format(myCalendar.getTime()).toString());
+                                itemData.put("purchaseDate", mdyFormat.format(myCalendar.getTime()).toString());
+                                itemData.put("lastModifiedBy", userDoc);
+                                itemData.put("fridge", userData.get("currentFridge"));
+                                itemData.put("imageID", "");
+
+                                fridgeDoc.collection("FridgeItems")
+                                                            .add(itemData)
+                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                    Intent replyIntent = new Intent();
+                                                                    setResult(RESULT_OK, replyIntent);
+                                                                    finish();
+                                                                }
+                                                            });
+                            }
+                        }
+                    });
+                }
+            }
+        });
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -144,7 +211,7 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(graphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
+        Snackbar.make(graphicOverlay, "Tap to Add. Pinch/Stretch to zoom",
                 Snackbar.LENGTH_LONG)
                 .show();
 
