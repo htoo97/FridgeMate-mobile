@@ -130,10 +130,16 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 mEditDate.setText(expDate);
                 updateProgressBar(expDate);
             }
-            String image = extras.getString("image");
-            if (image != null && image.length() != 0) {
-                Glide.with(this).load(Uri.parse(image)).centerCrop()
+            String imageUriString = extras.getString("image");
+            if (imageUriString != null && imageUriString.length() != 0) {
+                Uri img = Uri.parse(imageUriString);
+                Glide.with(this).load(img).centerCrop()
                         .into(itemProfile);
+                try {
+                    image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), img);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
