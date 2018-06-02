@@ -1,5 +1,6 @@
 package com.example.yangliu.fridgemate.current_contents;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -34,7 +35,9 @@ public class RecipeSuggestion extends AppCompatActivity {
         String url = "http://www.recipepuppy.com/api/";
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-        params.put("i", "ham,cheese");
+        Intent intent = getIntent();
+        String toSearch = intent.getStringExtra("search string");
+        params.put("i", toSearch);
         RequestHandle data = client.get(url, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

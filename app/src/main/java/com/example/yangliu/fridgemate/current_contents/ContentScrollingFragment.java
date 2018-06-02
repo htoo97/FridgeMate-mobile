@@ -161,7 +161,12 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         recipeFAB = (android.support.design.widget.FloatingActionButton) view.findViewById(R.id.recipe_button);
         recipeFAB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), RecipeSuggestion.class);
+                Intent intent = new Intent(getActivity(), RecipeSuggestion.class);
+                String toSearch = "";
+                for (FridgeItem i : adapter.mItems){
+                    toSearch += i.getItemName() + ',';
+                }
+                intent.putExtra("search string", toSearch);
                 startActivityForResult(intent, RECIPE_ACTIVITY_REQUEST_CODE);
 
             }
