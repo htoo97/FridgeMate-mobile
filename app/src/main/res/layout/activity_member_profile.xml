@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -96,15 +96,18 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_ac_unit_black_24dp" />
 
             <TextView
                 android:id="@+id/email"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:paddingLeft="15dp"
                 android:text="useremail@gmail.com"
+                android:textAlignment="center"
                 android:textColor="#000000"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -114,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="64dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingBottom="10dp"
@@ -125,6 +128,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_person_pin_black_24dp" />
 
             <TextView
@@ -133,7 +137,9 @@
                 android:layout_gravity="center_vertical"
                 android:paddingLeft="15dp"
                 android:text="useremail@gmail.com"
+                android:textAlignment="center"
                 android:textColor="#000000"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
         </LinearLayout>

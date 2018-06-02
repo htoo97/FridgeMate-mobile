@@ -42,7 +42,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends TitleWithButtonsActivity {
+public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -65,7 +65,7 @@ public class LoginActivity extends TitleWithButtonsActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentLayout(R.layout.activity_login);
+        setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
 
         // Automatically go to user home if already logged in (and email verified)

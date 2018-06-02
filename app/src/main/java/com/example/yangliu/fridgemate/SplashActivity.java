@@ -10,6 +10,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
 
@@ -29,9 +30,11 @@ public class SplashActivity extends Activity {
 
 
         final ImageView myImageView= (ImageView)findViewById(R.id.splash);
+        final TextView myTextView = (TextView)findViewById(R.id.COOL);
         Animation a = new AlphaAnimation(0.00f,1.00f);
         a.setDuration(1100);
         myImageView.startAnimation(a);
+        myTextView.startAnimation(a);
 
         new Handler().postDelayed(new Runnable(){
             @Override
@@ -41,7 +44,7 @@ public class SplashActivity extends Activity {
                 startActivity(mainIntent);
                 finish();
             }
-        }, 1300);
+        }, 2300);
 
     }
 }
