@@ -29,13 +29,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/Logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="serif"
+        android:gravity="center_horizontal"
+        android:text="FridgeMate"
+        android:textAlignment="center"
+        android:textSize="@dimen/fab_size_mini"
+        android:textStyle="bold|italic"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
+
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -121,7 +134,8 @@
                 <com.google.android.gms.common.SignInButton
                     android:id="@+id/googleBtn"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"></com.google.android.gms.common.SignInButton>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"></com.google.android.gms.common.SignInButton>
 
             </LinearLayout>
 

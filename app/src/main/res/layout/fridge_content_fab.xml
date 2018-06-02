@@ -60,7 +60,11 @@
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/recipe_button"
         android:layout_width="54dp"
-        android:layout_height="58dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="83dp"
         android:clickable="true"
         android:src="@android:drawable/btn_star_big_on" />
 </RelativeLayout>
