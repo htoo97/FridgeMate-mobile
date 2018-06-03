@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 
@@ -17,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,9 +28,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.Fridge;
+import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
-import com.example.yangliu.fridgemate.current_contents.AddItemManual;
 import com.example.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,6 +46,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.yangliu.fridgemate.MainActivity.adapter;
+import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
+import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
+
 
 public class FridgeFamilyFragment extends Fragment {
 
@@ -52,78 +58,24 @@ public class FridgeFamilyFragment extends Fragment {
     private View mProgressView;
     private RecyclerView mfridgeListView;
 
-    private MemberListAdapter memberListAdapter;
-    private FridgeListAdapter fridgeListAdapter;
-
-    private FirebaseAuth mAuth;
     private FirebaseUser user;
     private FirebaseFirestore db;
     private DocumentReference userDoc;
 
     private int shortAnimTime;
 
-    public FridgeFamilyFragment() {  }
+    public FridgeFamilyFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_fridge_family, container, false);
 
-
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        db = FirebaseFirestore.getInstance();
-
-        final String email = user.getEmail();
         shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-        // Create fridge if user has no fridges
-        userDoc = db.collection("Users").document(email);
-        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            public void onComplete(Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    final DocumentSnapshot userData = task.getResult();
-
-                    // Perform first-time fridge setup
-                    if(userData.get("currentFridge") == null
-                            && ( userData.get("fridges") == null || ((List)userData.get("fridges")).isEmpty() )) {
-                        Toast.makeText(getContext(), R.string.fridge_setup_message, Toast.LENGTH_SHORT).show();
-                        Map<String, Object> fridgeData = new HashMap<>();
-                        fridgeData.put("fridgeName", "My Fridge");
-                        fridgeData.put("owner", userDoc);
-                        List<DocumentReference> members = new ArrayList<DocumentReference>();
-                        members.add(userDoc);
-                        fridgeData.put("members", members);
-
-                        db.collection("Fridges")
-                                .add(fridgeData)
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        List<DocumentReference> fridges = new ArrayList<DocumentReference>();
-                                        if(userData.get("fridges") != null){
-                                            fridges = (List)userData.get("fridges");
-                                        }
-
-                                        fridges.add(documentReference);
-
-                                        userDoc.update(
-                                                "currentFridge", documentReference,
-                                                "fridges", fridges)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Toast.makeText(getContext(),
-                                                                R.string.fridge_setup_complete, Toast.LENGTH_LONG).show();
-                                                        syncList();
-                                                    }
-                                                });
-                                    }
-                                });
-                    }
-                }
-            }
-        });
-
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        userDoc = setUpDatabase();
 
         mProgressView = view.findViewById(R.id.load_fridge_progress);
         constraintLayout = view.findViewById(R.id.cl);
@@ -134,8 +86,7 @@ public class FridgeFamilyFragment extends Fragment {
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mfridgeListView.setLayoutManager(MyLayoutManager);
-        fridgeListAdapter = new FridgeListAdapter(view.getContext());
-        mfridgeListView.setAdapter(fridgeListAdapter);
+        mfridgeListView.setAdapter(MainActivity.fridgeListAdapter);
 
         //  on item Click:: change current fridge
         mfridgeListView.addOnItemTouchListener(new RecyclerItemClickListener(FridgeFamilyFragment.this, mfridgeListView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -144,20 +95,24 @@ public class FridgeFamilyFragment extends Fragment {
                 // change focus color
                 int oldSelectedPos = fridgeListAdapter.selectedItemPos;
                 fridgeListAdapter.selectedItemPos = position;
-                if (oldSelectedPos != -1)  fridgeListAdapter.notifyItemChanged(oldSelectedPos);
-                fridgeListAdapter.notifyItemChanged(position);
+                if (oldSelectedPos != -1) {
+                    fridgeListAdapter.notifyItemChanged(position);
+                    fridgeListAdapter.notifyItemChanged(oldSelectedPos);
+                }
                 SaveSharedPreference.setCurrentFridge(getContext(),position);
 
+                // allow auto sync the content list, shopping list for once
+                MainActivity.familySync = MainActivity.shopListSync = MainActivity.contentSync = true;
+
                 // Update current fridge in database
-                if(position < fridgeListAdapter.mFridges.size()){
-                    DocumentReference newCurrentFridge = db.collection("Fridges")
+                if(fridgeListAdapter.mFridges != null &&
+                        position < fridgeListAdapter.mFridges.size()){
+                    final DocumentReference newCurrentFridgeDoc = db.collection("Fridges")
                             .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
-                    userDoc.update("currentFridge", newCurrentFridge).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            syncList();
-                        }
-                    });
+                    MainActivity.fridgeDoc = newCurrentFridgeDoc;
+                    memberListAdapter.fridgeDoc = newCurrentFridgeDoc;
+                    memberListAdapter.syncMemberList();
+                    userDoc.update("currentFridge", newCurrentFridgeDoc);
                 }
             }
 
@@ -205,7 +160,7 @@ public class FridgeFamilyFragment extends Fragment {
                                         public void onClick(DialogInterface dialog, int which) {
                                             newName[0] = input.getText().toString();
                                             selectedFridge.update("fridgeName",newName[0]);
-                                            syncList();
+                                            syncFridgeList();
                                         }
                                     });
                                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -229,7 +184,6 @@ public class FridgeFamilyFragment extends Fragment {
 
         // for presentation: using the items as member adapters
         RecyclerView mRecyclerMemberView = view.findViewById(R.id.fridgeMemberList);
-        memberListAdapter = new MemberListAdapter(view.getContext());
         mRecyclerMemberView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerMemberView.setAdapter(memberListAdapter);
 
@@ -293,27 +247,96 @@ public class FridgeFamilyFragment extends Fragment {
             }
         }));
 
-
+        // set up refresh button
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setEnabled(true);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                syncList();
-                memberListAdapter.setMembers();
+                syncBothLists();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
 
+
+        // avoid abusive syncing
+        if (MainActivity.familySync){
+            if (userDoc == null)
+                Toast.makeText(getContext(), "User Doc ref error", Toast.LENGTH_SHORT).show();
+            else
+                syncBothLists();
+            MainActivity.familySync = false;
+        }
         return view;
     }
 
+    private void createFirstFridge(){
+        // Create fridge if user has no fridges
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+
+                    // Perform first-time fridge setup
+                    if(userData.get("currentFridge") == null
+                            && ( userData.get("fridges") == null || ((List)userData.get("fridges")).isEmpty() )) {
+                        Toast.makeText(getContext(), R.string.fridge_setup_message, Toast.LENGTH_SHORT).show();
+                        Map<String, Object> fridgeData = new HashMap<>();
+                        fridgeData.put("fridgeName", "My Fridge");
+                        fridgeData.put("owner", userDoc);
+                        List<DocumentReference> members = new ArrayList<DocumentReference>();
+                        members.add(userDoc);
+                        fridgeData.put("members", members);
+                        SaveSharedPreference.setCurrentFridge(getContext(),0);
+
+                        db.collection("Fridges")
+                                .add(fridgeData)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        List<DocumentReference> fridges = new ArrayList<DocumentReference>();
+                                        if(userData.get("fridges") != null){
+                                            fridges = (List)userData.get("fridges");
+                                        }
+
+                                        fridges.add(documentReference);
+
+                                        userDoc.update(
+                                                "currentFridge", documentReference,
+                                                "fridges", fridges)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Toast.makeText(getContext(),
+                                                                R.string.fridge_setup_complete, Toast.LENGTH_LONG).show();
+                                                        syncFridgeList();
+                                                    }
+                                                });
+                                    }
+                                });
+                    }
+                }
+            }
+        });
+    }
+
+    private void syncBothLists(){
+        syncFridgeList();
+        memberListAdapter.syncMemberList();
+    }
     private void leaveFridge(final DocumentReference fridge){
         fridge.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final DocumentSnapshot fridgeData = task.getResult();
+
+                    // remove and update the fridge locally
+                    fridgeListAdapter.mFridges.remove(fridge);
+                    if(fridgeListAdapter.getItemCount() > 0)
+                        fridgeListAdapter.selectedItemPos = 0;
+                    else
+                        fridgeListAdapter.selectedItemPos = -1;
+                    fridgeListAdapter.notifyDataSetChanged();
 
                     // Delete fridge if user is only member
                     final List<DocumentReference> members = (List)fridgeData.get("members");
@@ -324,8 +347,12 @@ public class FridgeFamilyFragment extends Fragment {
                                 .setIcon(R.drawable.ic_dialog_alert_material)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
+                                        // remove the fridge and set another current fridge
                                         removeFromFridgeList(fridge);
+                                        // just delete fridge from your data
                                         fridge.delete();
+
+
                                     }})
                                 .setNegativeButton(android.R.string.no, null).show();
                     }
@@ -335,6 +362,7 @@ public class FridgeFamilyFragment extends Fragment {
                                 .setMessage(R.string.leave_fridge_warning)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
+                                        // remove the fridge
                                         removeFromFridgeList(fridge);
 
                                         // Remove user from fridge's members
@@ -348,7 +376,7 @@ public class FridgeFamilyFragment extends Fragment {
         });
     }
 
-    // Remove fridge from user's lists of fridges
+    // leave fridge on firebase
     private void removeFromFridgeList(final DocumentReference fridge){
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -374,7 +402,7 @@ public class FridgeFamilyFragment extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        syncList();
+                                        syncFridgeList();
                                     }
                                 });
                     }
@@ -383,12 +411,12 @@ public class FridgeFamilyFragment extends Fragment {
         });
     }
 
-    public void syncList(){
+    // sync fridge list
+    public void syncFridgeList(){
         showProgress(true);
         int currentFridge = SaveSharedPreference.getCurrentFridge(getContext());
         final List<Fridge> userFridges = new ArrayList<>();
 
-        DocumentReference userDoc = db.collection("Users").document(user.getEmail());
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -403,37 +431,29 @@ public class FridgeFamilyFragment extends Fragment {
                         for(final DocumentReference ref : fridges){
                             ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 public void onComplete(Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()) {
+                                        DocumentSnapshot fridgeData = task.getResult();
 
-                                    DocumentSnapshot fridgeData = task.getResult();
+                                        userFridges.add(new Fridge(fridgeData.getId(),
+                                                fridgeData.getString("fridgeName")));
 
-                                    userFridges.add(new Fridge(fridgeData.getId(),
-                                            fridgeData.getString("fridgeName"),
-                                            "test"));
+                                        fridgeListAdapter.setItems(userFridges);
 
-                                    fridgeListAdapter.setItems(userFridges);
+                                        // Highlight current fridge
+                                        if (currentFridge.equals(ref)) {
+                                            fridgeListAdapter.selectedItemPos = userFridges.size() - 1;
+                                        }
 
-                                    // Highlight current fridge
-                                    if(currentFridge.equals(ref)){
-                                        fridgeListAdapter.selectedItemPos = userFridges.size() - 1;
                                     }
-
-                                    showProgress(false);
                                 }
                             });
-
                         }
                     }
+                    showProgress(false);
                 }
             }
         });
 
-    }
-
-    // Refresh every time activity comes into focus
-    @Override
-    public void onResume(){
-        super.onResume();
-        syncList();
     }
 
     // Cancel active tasks when fragment is detached
@@ -475,5 +495,39 @@ public class FridgeFamilyFragment extends Fragment {
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mfridgeListView.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
         }
+    }
+    // Set up database functions when app opened
+    private DocumentReference setUpDatabase(){
+        if (user == null){
+            Toast.makeText(getContext(), R.string.error_load_data,
+                    Toast.LENGTH_LONG).show();
+            FirebaseAuth.getInstance().signOut();
+            return null;
+        }
+
+        final String email = user.getEmail();
+
+        DocumentReference documentReference = db.collection("Users").document(email);
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    // Create document for user if doesn't already exist
+                    DocumentSnapshot document = task.getResult();
+                    if (!document.exists()) {
+                        Map<String, Object> userData = new HashMap<>();
+                        userData.put("email", email);
+
+                        db.collection("Users").document(email)
+                                .set(userData);
+                    }
+                } else {
+                    Log.d("set_up_database", "get failed with ", task.getException());
+                }
+            }
+        });
+
+        userDoc = documentReference;
+        createFirstFridge();
+        return documentReference;
     }
 }

@@ -8,7 +8,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.yangliu.fridgemate.Fridge;
+import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.SaveSharedPreference;
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,6 +26,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
+import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
 
 public class CreateFridgeActivity extends TitleWithButtonsActivity {
 
@@ -80,7 +86,7 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                         Map<String, Object> fridgeData = new HashMap<>();
                         fridgeData.put("fridgeName", name);
                         fridgeData.put("owner", userDoc);
-                        List<DocumentReference> members = new ArrayList<DocumentReference>();
+                        final List<DocumentReference> members = new ArrayList<DocumentReference>();
                         members.add(userDoc);
                         fridgeData.put("members", members);
 
@@ -93,9 +99,17 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                                     if (userData.get("fridges") != null) {
                                         fridges = (List) userData.get("fridges");
                                     }
+                                    // update adapters locally
+                                    fridgeListAdapter.mFridges.add(new Fridge(documentReference.getId(),name));
+                                    fridgeListAdapter.selectedItemPos = fridgeListAdapter.mFridges.size()-1;
+                                    SaveSharedPreference.setCurrentFridge(getApplicationContext(),fridgeListAdapter.selectedItemPos);
+                                    fridgeListAdapter.notifyDataSetChanged();
+                                    memberListAdapter.names.clear();
+                                    memberListAdapter.names.add(userDoc);
+                                    memberListAdapter.notifyDataSetChanged();
 
+                                    // update firebase
                                     fridges.add(documentReference);
-
                                     // Set as current fridge
                                     userDoc.update(
                                         "currentFridge", documentReference,
@@ -104,6 +118,7 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 finish();
+
                                             }
                                         });
                                 }

@@ -18,16 +18,27 @@ public class FridgeItem  implements Comparable<FridgeItem>{
 
     private Uri image;
 
+    public byte[] getImageCache() {
+        return imageCache;
+    }
+
+    public void setImageCache(byte[] imageCache) {
+        this.imageCache = imageCache;
+    }
+
+    private byte[] imageCache;
+
     public FridgeItem() {
     }
 
     // Getters and setters
     // NonNull: -> return value can never be null.
-    public FridgeItem(@NonNull String name, String expDate, Uri image, String ref) {
+    public FridgeItem(@NonNull String name, String expDate, Uri image, String ref, byte[] cache){
         this.itemName = name;
         this.expDate = expDate;
         this.image = image;
         docRef = ref;
+        imageCache = cache;
     }
 
     public FridgeItem(@NonNull String name, String expDate) {
@@ -111,6 +122,8 @@ public class FridgeItem  implements Comparable<FridgeItem>{
 
         }
     }
+
+
 
     public String getDocRef() {
         return docRef;

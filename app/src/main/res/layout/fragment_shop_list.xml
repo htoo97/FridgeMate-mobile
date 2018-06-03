@@ -99,16 +99,25 @@
         android:layout_height="1dp"
         android:background="?android:attr/listDivider" />
 
+
     <Button style="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/add_selected_to_fridge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Fridge Them (0)" />
 
+    <View
+        android:id="@+id/divider5"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:background="@drawable/ic_shopping_cart_black_24dp"
+        android:backgroundTint="@color/colorAccentLight"
         android:foregroundGravity="center_horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

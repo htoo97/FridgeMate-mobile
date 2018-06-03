@@ -22,8 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
+import com.example.yangliu.fridgemate.current_contents.ContentListAdapter;
 import com.example.yangliu.fridgemate.current_contents.ContentScrollingFragment;
 import com.example.yangliu.fridgemate.fridge_family.FridgeFamilyFragment;
+import com.example.yangliu.fridgemate.fridge_family.FridgeListAdapter;
+import com.example.yangliu.fridgemate.fridge_family.MemberListAdapter;
+import com.example.yangliu.fridgemate.shop_list.ShopListAdapter;
 import com.example.yangliu.fridgemate.shop_list.ShopListFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cz.msebera.android.httpclient.ContentTooLongException;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,12 +56,22 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     FragmentTransaction fragmentTransaction;
 
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
-    private DocumentReference userDoc;
-    private FirebaseUser user;
+    public static FirebaseAuth mAuth;
+    public static FirebaseFirestore db;
+    public static DocumentReference userDoc;
+    public static FirebaseUser user;
+    public static DocumentReference fridgeDoc;
 
     public static final int PROFILE_EDIT_REQUEST_CODE = 4;
+
+    public static ContentListAdapter adapter = null;
+    public static MemberListAdapter memberListAdapter;
+    public static FridgeListAdapter fridgeListAdapter;
+    public static ShopListAdapter shopListAdapter;
+
+    public static boolean contentSync;
+    public static boolean familySync;
+    public static boolean shopListSync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +79,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("FridgeMate");
 
+        // allow first time sync when user enters the app
+        familySync = shopListSync = contentSync = true;
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
-
         userDoc = setUpDatabase();
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+                    fridgeDoc = userData.getDocumentReference("currentFridge");
+                    // finish database connection set up:
+                    // initialize the first tab page
+                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
+                    fragmentTransaction.commit();
+                }
+            }
+        });
 
         // Return to login screen if cannot verify user identity
         if(userDoc == null){
@@ -77,6 +106,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             finish();
         }
+
+        adapter = new ContentListAdapter(this);
+        fridgeListAdapter = new FridgeListAdapter(this);
+        memberListAdapter = new MemberListAdapter(this);
+        shopListAdapter = new ShopListAdapter(this);
+
 
         final String email = user.getEmail();
 
@@ -151,11 +186,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         name.setText(displayName);
-
-        // initialize the first tab page
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
-        fragmentTransaction.commit();
 
         profileImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -303,5 +333,4 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 }

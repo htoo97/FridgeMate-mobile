@@ -7,6 +7,8 @@
     android:id="@+id/cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ic_storage_black_24dp"
+    android:backgroundTint="@color/colorAccentLight"
     android:fitsSystemWindows="true"
     tools:context=".current_contents.ContentScrollingFragment">
 
@@ -59,11 +61,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_ac_unit_black_24dp" />
     </LinearLayout>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swiperefresh"
         android:layout_width="wrap_content"
-        android:backgroundTint="@color/white"
         android:layout_height="0dp"
+        android:backgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

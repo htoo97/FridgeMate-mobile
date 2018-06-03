@@ -17,6 +17,7 @@ import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
 import com.example.yangliu.fridgemate.Fridge;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -50,7 +51,7 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private Context context;
 
 
-    FridgeListAdapter(Context context) {
+    public FridgeListAdapter(Context context) {
         this.context = context;
         mInflater = LayoutInflater.from(context);
         selectedItemPos = SaveSharedPreference.getCurrentFridge(context);
@@ -65,7 +66,6 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), CreateJoinFridgeActivity.class);
                     itemView.getContext().startActivity(intent);
-                    notifyDataSetChanged();
                 }
             });
         }
@@ -123,10 +123,12 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+
     void setItems(List<Fridge> items){
-        mFridges = items;
+        mFridges= items;
         notifyDataSetChanged();
     }
+
 
     // getItemCount() is called many times, and when it is first called,
     // mItems has not been updated (means initially, it's null, and we can't return null).

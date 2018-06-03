@@ -86,6 +86,7 @@ public class TitleWithButtonsActivity extends AppCompatActivity {
         commonTitleTb.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                supportFinishAfterTransition();
                 finish();
             }
         });

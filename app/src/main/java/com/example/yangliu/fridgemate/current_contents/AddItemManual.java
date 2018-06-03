@@ -130,13 +130,12 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 mEditDate.setText(expDate);
                 updateProgressBar(expDate);
             }
-            String imageUriString = extras.getString("image");
-            if (imageUriString != null && imageUriString.length() != 0) {
-                Uri img = Uri.parse(imageUriString);
-                Glide.with(this).load(img).centerCrop()
+            byte[] imageByteArr = extras.getByteArray("imageCache");
+            if (imageByteArr != null && imageByteArr.length != 0) {
+                Glide.with(this).load(imageByteArr).centerCrop()
                         .into(itemProfile);
                 try {
-                    image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), img);
+                    image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(extras.getString("image")));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -344,6 +343,12 @@ public class AddItemManual extends TitleWithButtonsActivity {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream);
         Log.d("Img size: " ,String.valueOf(outputStream.size()/1024) + "kb");
         return outputStream.toByteArray();
+    }
+
+    @Override
+    public void onBackPressed() {
+        supportFinishAfterTransition();
+        super.onBackPressed();
     }
 
 }

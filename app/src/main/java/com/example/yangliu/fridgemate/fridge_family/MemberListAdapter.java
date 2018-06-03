@@ -3,6 +3,7 @@ package com.example.yangliu.fridgemate.fridge_family;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.yangliu.fridgemate.Fridge;
+import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
 import com.example.yangliu.fridgemate.Fridge;
@@ -58,9 +60,9 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private FirebaseUser user;
     private FirebaseFirestore db;
-    private DocumentReference fridgeDoc;
+    public DocumentReference fridgeDoc;
 
-    MemberListAdapter(Context context) {
+    public MemberListAdapter(Context context) {
         this.context = context;
         currentFridge = SaveSharedPreference.getCurrentFridge(context);
         mInflater = LayoutInflater.from(context);
@@ -69,38 +71,42 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         // TODO:: DATABASE set up the names, statuses, images of members
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
-        DocumentReference  userDoc = db.collection("Users").document(user.getEmail());
-        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final DocumentSnapshot userData = task.getResult();
-                    if (userData == null)
-                        return;
                     fridgeDoc = userData.getDocumentReference("currentFridge");
-                    setMembers();
                 }
             }
         });
     }
-    public void setMembers(){
+
+    public void syncMemberList(){
+        // if database connection is not ready yet, wait for 1.5 seconds
+        if (fridgeDoc == null){
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run() {
+                    fetchMemberList();
+                }
+            }, 500);
+        }
+        else
+            fetchMemberList();
+    }
+
+    public void fetchMemberList(){
         fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(Task<DocumentSnapshot> task) {
                 final DocumentSnapshot fridgeData = task.getResult();
 
-                List<DocumentReference> memberList = new LinkedList();
-                if (fridgeData.get("members") != null) {
-                    memberList = (List) fridgeData.get("members");
-                }
-                names.clear();
-                if (memberList != null) {
-                    for (DocumentReference i : memberList) {
-                        names.add(i);
-                    }
-                    notifyDataSetChanged();
-                }
+                names = (List) fridgeData.get("members");
+                if (names == null)
+                    names = new LinkedList();
+                notifyDataSetChanged();
+
             }
         });
-
     }
 
     private static final int FOOTER_VIEW = 1;

@@ -6,9 +6,12 @@
     android:layout_marginEnd="10dip"
     android:layout_marginStart="10dip"
     android:layout_marginTop="3dip"
-    android:background="#ffffff"
+    android:background="@android:drawable/screen_background_light_transparent"
     android:orientation="vertical"
-    android:padding="5dip">
+    android:padding="5dip"
+    android:foreground="?attr/selectableItemBackground"
+    android:stateListAnimator="@anim/animation"
+    android:clickable="true">
 
     <TextView
         android:id="@+id/shop_list_item_name"

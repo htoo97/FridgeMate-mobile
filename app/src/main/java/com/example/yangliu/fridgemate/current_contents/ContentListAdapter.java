@@ -33,12 +33,14 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         private final CircleImageView itemImageView;
         private final TextView wordItemView;
         private final TextView dateItemView;
+        private final TextView freshDays;
         private ProgressBar progressBar;
         public RelativeLayout viewBackground, viewForeground;
 
         private ItemViewHolder(View itemView) {
             super(itemView);
 
+            freshDays = itemView.findViewById(R.id.freshDays);
             wordItemView = itemView.findViewById(R.id.name_view);
             dateItemView = itemView.findViewById(R.id.date_view);
 
@@ -98,7 +100,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
                 holder.dateItemView.setText(expDate);
 
             // set image
-            Uri imageByte = current.getImage();
+            byte[] imageByte = current.getImageCache();
             if (imageByte != null) {
 //                holder.itemImageView.setImageURI(imageByte);
                 Glide.with(context).load(imageByte).centerCrop()
@@ -120,10 +122,17 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             }
             if (strDate != null) {
                 int dayDiff = (int) (strDate.getTime() / (86400000)) - today;
-                if (dayDiff < 0)
+                if (dayDiff < 0) {
                     holder.progressBar.setProgress(0);
-                else
+                    holder.freshDays.setText("Expired");
+                }
+                else {
                     holder.progressBar.setProgress((int) (dayDiff * 3.3));
+                    if (dayDiff > 1)
+                        holder.freshDays.setText(String.valueOf(dayDiff) + " Days");
+                    else
+                        holder.freshDays.setText("1 Day");
+                }
             }
         } else {
             // Covers the case of data not being ready yet.
@@ -146,6 +155,12 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         mItems.add(lastremoved);
         Collections.sort(mItems);
         mItemsOnDisplay = mItems;
+    }
+
+    // adding an item
+    public void addNonExpiringItem(FridgeItem i) {
+        mItems.add(i);
+        notifyDataSetChanged();
     }
 
     void setItems(List<FridgeItem> items){

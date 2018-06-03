@@ -8,18 +8,15 @@ public class Fridge {
 
     private String fridgeName;
 
-    private String memberList;
-
     public Fridge() {
 
     }
 
     // Getters and setters
     // NonNull: -> return value can never be null.
-    public Fridge(@NonNull String fridgeid, String name, String memberList) {
-        this.fridgeName = name;
+    public Fridge(@NonNull String fridgeid, String name) {
         this.fridgeid = fridgeid;
-        this.memberList = memberList;
+        this.fridgeName = name;
     }
 
     public String getFridgeid() {
@@ -36,13 +33,5 @@ public class Fridge {
 
     public void setFridgeName(@NonNull String fridgeName) {
         this.fridgeName = fridgeName;
-    }
-
-    public String getMemberList() {
-        return memberList;
-    }
-
-    public void setMemberList(String memberList) {
-        this.memberList = memberList;
     }
 }

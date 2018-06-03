@@ -19,6 +19,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.yangliu.fridgemate.MainActivity.shopListAdapter;
 
 public class ShopListFragment extends Fragment {
 
@@ -38,18 +42,17 @@ public class ShopListFragment extends Fragment {
     private ConstraintLayout constraintLayout;
 
     private EditText name;
-    public Button addSelectedToFrdige;
+    public static Button addSelectedToFrdige;
     private Button addItemToShopList;
     private ImageButton incQuantity;
     private ImageButton decQuantity;
     private TextView amount;
 
-    private ShopListAdapter shopListAdapter;
 
     public ShopListFragment() {}
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_shop_list, container, false);
 
@@ -85,11 +88,11 @@ public class ShopListFragment extends Fragment {
         final RecyclerView itemListView = (RecyclerView) view.findViewById(R.id.shopping_list);
         itemListView.setHasFixedSize(true);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         itemListView.setLayoutManager(llm);
 
-        shopListAdapter = new ShopListAdapter(view.getContext());
+
         itemListView.setAdapter(shopListAdapter);
         itemListView.setVisibility(View.VISIBLE);
 
@@ -101,7 +104,11 @@ public class ShopListFragment extends Fragment {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
-                shopListAdapter.addItem(String.valueOf(name.getText()),Integer.valueOf(""+ amount.getText()));
+                String itemName = String.valueOf(name.getText());
+                if (itemName.length() != 0)
+                    shopListAdapter.addItem(itemName,Integer.valueOf(""+ amount.getText()));
+                else
+                    Toast.makeText(getContext(), "Please give it a name", Toast.LENGTH_SHORT).show();
                 name.setText("");
                 amount.setText("0");
             }
@@ -120,13 +127,20 @@ public class ShopListFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // TODO:: refresh adapter set data to something
                 swipeRefreshLayout.setRefreshing(true);
                 shopListAdapter.syncItems();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
 
+
+        // avoid abusive syncing
+        if (MainActivity.shopListSync){
+            swipeRefreshLayout.setRefreshing(true);
+            shopListAdapter.syncItems();
+            MainActivity.shopListSync = false;
+            swipeRefreshLayout.setRefreshing(false);
+        }
         return view;
     }
 

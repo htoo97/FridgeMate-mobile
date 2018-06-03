@@ -12,7 +12,8 @@
     android:layout_weight="6"
     android:background="@drawable/round_button_pressed"
     android:elevation="3dp"
-    android:padding="12dp">
+    android:padding="12dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
