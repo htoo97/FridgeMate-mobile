@@ -1,10 +1,13 @@
 package com.example.yangliu.fridgemate.current_contents;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 
 import cz.msebera.android.httpclient.Header;
 
+import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.loopj.android.http.*;
 
 import com.example.yangliu.fridgemate.R;
@@ -21,15 +25,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RecipeSuggestion extends AppCompatActivity {
+import java.util.LinkedList;
+import java.util.List;
+
+public class RecipeSuggestion extends TitleWithButtonsActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipe_suggestion);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        setContentLayout(R.layout.activity_recipe_suggestion);
+        // set up toolbar
+        setBackArrow();
+        setTitle("Recipe Suggestion");
 
         //API request
         String url = "http://www.recipepuppy.com/api/";
@@ -38,7 +45,27 @@ public class RecipeSuggestion extends AppCompatActivity {
         Intent intent = getIntent();
         String toSearch = intent.getStringExtra("search string");
         params.put("i", toSearch);
-        RequestHandle data = client.get(url, params, new JsonHttpResponseHandler() {
+
+        // set up ocr items
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvNumbers);
+        int numberOfColumns = 3;
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        final RecipeSuggestionAdapter recipeListAdapter = new RecipeSuggestionAdapter(this);
+        recyclerView.setAdapter(recipeListAdapter);
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(RecipeSuggestion.this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                String htmlLink = recipeListAdapter.getLink(position);
+                if (!htmlLink.startsWith("http://") && !htmlLink.startsWith("https://"))
+                    htmlLink = "http://" + htmlLink;
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(htmlLink));
+                startActivity(browserIntent);
+            }
+            @Override
+            public void onItemLongClick(View view, int position) {}
+        }));
+
+                RequestHandle data = client.get(url, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 // Root JSON in response is an dictionary i.e { "data : [ ... ] }
@@ -54,17 +81,22 @@ public class RecipeSuggestion extends AppCompatActivity {
 
                 if (data != null) {
                     try {
+                        List<RecipeItem> dataArr = new LinkedList<RecipeItem>();
+
                         //Testing success
                         TextView recipeText = (TextView) findViewById(R.id.recipeResponse);
-                        recipeText.setMovementMethod(new ScrollingMovementMethod());
-                        recipeText.setText("Recipes with your ingredients: " + "\n" );
+                        String s = "Recipes with your ingredients: " + "\n";
                         //Loop through recipes, append to textview
                         for (int i=0; i < data.length(); i++) {
                             JSONObject recipe = data.getJSONObject(i);
                             String title1 = recipe.getString("title");
                             String url1 = recipe.getString("href");
-                            recipeText.append(title1 + ": " + "\n" + url1 + "\n\n");
+                            String thumbnail =  recipe.getString("thumbnail");
+                            dataArr.add(new RecipeItem(title1,thumbnail,url1));
                         }
+
+                        // add data to list adapter
+                        recipeListAdapter.setItems(dataArr);
 
                         //String title1 = data.getJSONObject(0).getString("title");
                         //String url1 = data.getJSONObject(0).getString("href");

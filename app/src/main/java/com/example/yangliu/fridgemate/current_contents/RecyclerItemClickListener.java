@@ -82,7 +82,26 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         });
     }
 
+    // for fridge family list
+    public RecyclerItemClickListener(RecipeSuggestion context, final RecyclerView recyclerView, OnItemClickListener listener) {
+        mListener = listener;
 
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
+
+                if (childView != null && mListener != null) {
+                    mListener.onItemLongClick(childView, recyclerView.getChildAdapterPosition(childView));
+                }
+            }
+        });
+    }
     @Override
     public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
         View childView = view.findChildViewUnder(e.getX(), e.getY());

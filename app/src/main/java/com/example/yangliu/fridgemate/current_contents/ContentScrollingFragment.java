@@ -291,7 +291,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                 for (QueryDocumentSnapshot document : task.getResult()) {
 
                     Uri image = Uri.parse(String.valueOf(document.get("imageID")));
-
                     FridgeItem i = new FridgeItem(String.valueOf(document.get("itemName")),
                             String.valueOf(document.get("expirationDate")),image, String.valueOf(document.getId()));
                     mItems.add(i);

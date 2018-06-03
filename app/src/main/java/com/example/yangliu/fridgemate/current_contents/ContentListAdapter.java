@@ -106,6 +106,9 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
                 Glide.with(context).load(imageUri).centerCrop()
                         .into(holder.itemImageView);
 
+            } else{
+                // avoic using Glide cache issue
+                holder.itemImageView.setImageResource(R.drawable.ic_ac_unit_black_24dp);
             }
             // set name
             holder.wordItemView.setText(current.getItemName());

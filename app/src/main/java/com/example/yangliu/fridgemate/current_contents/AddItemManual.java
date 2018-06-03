@@ -95,7 +95,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         super.onCreate(savedInstanceState);
         setContentLayout(R.layout.activity_add_item_manual);
         setBackArrow();
-        setTitle("Add Item");
+        setTitle("Edit Item Info");
 
         itemProfile = findViewById(R.id.item_image);
         mEditDate = findViewById(R.id.edit_date);
@@ -165,6 +165,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
             public void onClick(View view) {
                 Intent replyIntent = getIntent();
                 if (TextUtils.isEmpty(mEditNameView.getText())) {
+                    Toast.makeText(AddItemManual.this, "Please name your item", Toast.LENGTH_SHORT).show();
                     setResult(RESULT_CANCELED, replyIntent);
                     finish();
                     // animation
