@@ -74,8 +74,8 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final LayoutInflater mInflater;
     private List<Pair<String,Integer>> mShopList;
     private Context context;
-    private List<Boolean> mSelectedItems;
-    int sumAmount = 0;
+    public List<Boolean> mSelectedItems;
+    public int sumAmount = 0;
 
     public ShopListAdapter(final Context context) {
         this.context = context;
@@ -133,13 +133,16 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
 
-        // update list locally
-        for (Pair<String, Integer> item: addedItems){
-            mShopList.remove(item);
-            mSelectedItems.remove(false);
+        if (addedItems.size() != 0) {
+            // update list locally
+            for (Pair<String, Integer> item: addedItems){
+                mShopList.remove(item);
+                mSelectedItems.remove(false);
+            }
+
+            fridgeDoc.update("shoppingList", mShopList);
+            notifyDataSetChanged();
         }
-        fridgeDoc.update("shoppingList", mShopList);
-        notifyDataSetChanged();
         ShopListFragment.addSelectedToFrdige.setText("FRIDGE THEM");
     }
 

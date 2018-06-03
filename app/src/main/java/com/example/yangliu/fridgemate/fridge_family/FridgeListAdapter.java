@@ -35,7 +35,7 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private ItemViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name_view);
-            imageView = itemView.findViewById(R.id.item_image);
+            imageView = itemView.findViewById(R.id.fridge_image);
 
             // on select stroker
             frame = itemView.findViewById(R.id.fridgeFamilyCanvas);

@@ -100,10 +100,10 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
                 holder.dateItemView.setText(expDate);
 
             // set image
-            byte[] imageByte = current.getImageCache();
-            if (imageByte != null) {
+            Uri imageUri = current.getImage();
+            if (imageUri != null && !String.valueOf(imageUri).equals("")) {
 //                holder.itemImageView.setImageURI(imageByte);
-                Glide.with(context).load(imageByte).centerCrop()
+                Glide.with(context).load(imageUri).centerCrop()
                         .into(holder.itemImageView);
 
             }

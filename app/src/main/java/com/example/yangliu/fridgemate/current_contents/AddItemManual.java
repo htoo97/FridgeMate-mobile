@@ -3,6 +3,7 @@ package com.example.yangliu.fridgemate.current_contents;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -85,7 +87,8 @@ public class AddItemManual extends TitleWithButtonsActivity {
     private DocumentReference  userDoc;
     private DocumentReference fridgeDoc;
 
-    private Bitmap image;
+    private Bitmap image; // indicator of a new image added
+    private String oldImageUri; // indicator of there exist an old image
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,15 +133,9 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 mEditDate.setText(expDate);
                 updateProgressBar(expDate);
             }
-            byte[] imageByteArr = extras.getByteArray("imageCache");
-            if (imageByteArr != null && imageByteArr.length != 0) {
-                Glide.with(this).load(imageByteArr).centerCrop()
-                        .into(itemProfile);
-                try {
-                    image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(extras.getString("image")));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            oldImageUri = extras.getString("image");
+            if (oldImageUri != null && oldImageUri != "") {
+                Glide.with(this).load(Uri.parse(oldImageUri)).centerCrop().into(itemProfile);
             }
         }
 
@@ -166,7 +163,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         final Button button = findViewById(R.id.button_save);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Intent replyIntent = new Intent();
+                Intent replyIntent = getIntent();
                 if (TextUtils.isEmpty(mEditNameView.getText())) {
                     setResult(RESULT_CANCELED, replyIntent);
                     finish();
@@ -189,7 +186,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                 itemData.put("lastModifiedBy", userDoc);
                                 itemData.put("fridge", userData.get("currentFridge"));
 
-                                // ************** if it has profile image **********************
+                                // ************** if it has new profile image **********************
                                 if (image != null) {
                                     byte[] imgToUpload = getBitmapAsByteArray(image);
                                     String imageName = db.collection("fridgeItems").document().getId();
@@ -214,6 +211,12 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                                 itemData.put("imageID", downloadUri.toString());
                                                 // ************** if we are editing an item **********************
                                                 if (extras != null){
+                                                    // delete the old image on database if there's any
+                                                    if (oldImageUri != null && !oldImageUri.equals("")) {
+                                                        storage.getReferenceFromUrl(oldImageUri).delete();
+                                                        oldImageUri = String.valueOf(downloadUri);
+                                                    }
+                                                    // update the fields
                                                     String docRef = extras.getString("docRef");
                                                     if (docRef != "" && docRef != null){
                                                         DocumentReference itemDoc = fridgeDoc.collection("FridgeItems").document(docRef);
@@ -241,11 +244,11 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                         }
                                     });
                                 }
-                                // ************** if it doesn't have profile image **********************
+                                // ************** if it doesn't have a new profile image **********************
                                 else {
-                                    itemData.put("imageID", "");
                                     // ************** if we are editing an item **********************
                                     if (extras != null) {
+                                        itemData.put("imageID", oldImageUri);
                                         String docRef = extras.getString("docRef");
                                         if (docRef != "" && docRef != null) {
                                             DocumentReference itemDoc = fridgeDoc.collection("FridgeItems").document(docRef);
@@ -260,6 +263,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                     }
                                     // ************** if we are adding an item **********************
                                     else {
+                                        itemData.put("imageID", "");
                                         fridgeDoc.collection("FridgeItems")
                                                 .add(itemData)
                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

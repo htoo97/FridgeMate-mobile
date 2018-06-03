@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="16dp"
     android:orientation="vertical">
 
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp">
+        android:layout_height="wrap_content">
 
 
         <TextView
@@ -20,10 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:paddingStart="4dp"
-            android:text="Name:"
+            android:text="Expiration Date:"
             android:textAppearance="@style/TextAppearance.Design.Hint"
-            custom:layout_constraintBottom_toTopOf="@+id/edit_word"
+            custom:layout_constraintBottom_toTopOf="@+id/edit_date"
             custom:layout_constraintStart_toStartOf="parent"
             custom:layout_constraintTop_toBottomOf="@+id/item_progress_bar" />
 
@@ -33,7 +32,7 @@
             android:layout_height="wrap_content"
 
             android:layout_marginStart="16dp"
-            android:text="Exp Bar:"
+            android:text="Expiration Bar"
             android:textAppearance="@style/TextAppearance.Design.Hint"
             custom:layout_constraintBottom_toTopOf="@+id/item_progress_bar"
             custom:layout_constraintStart_toStartOf="parent"
@@ -41,15 +40,15 @@
             custom:layout_constraintVertical_bias="1.0" />
 
         <EditText
-            android:id="@+id/edit_word"
+            android:id="@+id/edit_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-
+            android:focusable="false"
+            android:clickable="true"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-light"
-            android:hint="@string/hint_name"
-            android:inputType="textAutoComplete"
+            android:hint="@string/hint_date"
             android:textSize="18sp"
             custom:layout_constraintBottom_toBottomOf="parent"
             custom:layout_constraintBottom_toTopOf="@id/button_save"
@@ -75,7 +74,7 @@
             custom:layout_constraintEnd_toEndOf="parent"
             custom:layout_constraintHorizontal_bias="0.0"
             custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toBottomOf="@+id/edit_word"
+            custom:layout_constraintTop_toBottomOf="@+id/edit_date"
             custom:layout_constraintVertical_bias="0.0" />
 
         <LinearLayout
@@ -107,6 +106,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:contentDescription="item_image"
+                    android:transitionName="item_image"
                     custom:border_width="1dp" />
 
             </FrameLayout>
@@ -127,18 +127,17 @@
                     android:layout_weight="3"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
-                    android:text="Expiration Date:"
+                    android:text="Name:"
                     android:textAppearance="@style/TextAppearance.Design.Hint" />
 
                 <EditText
-                    android:id="@+id/edit_date"
+                    android:id="@+id/edit_word"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:inputType="textAutoComplete"
                     android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="false"
                     android:fontFamily="sans-serif-light"
-                    android:hint="@string/hint_date"
+                    android:hint="@string/hint_name"
                     android:textSize="18sp"
                     custom:layout_constraintTop_toBottomOf="@+id/linearLayout3"
                     tools:layout_editor_absoluteX="16dp" />

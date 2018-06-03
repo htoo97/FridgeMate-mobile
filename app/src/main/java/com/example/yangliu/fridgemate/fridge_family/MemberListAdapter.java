@@ -3,6 +3,7 @@ package com.example.yangliu.fridgemate.fridge_family;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.yangliu.fridgemate.Fridge;
 import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
@@ -39,13 +41,15 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView imageView;
-        private final TextView name,status;
+        private final TextView name,status,textMemberView;
 
         private ItemViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name_view);
             imageView = itemView.findViewById(R.id.member_image);
             status = itemView.findViewById(R.id.status_view);
+            textMemberView = itemView.findViewById(R.id.text_MemberView);
+
         }
     }
 
@@ -53,7 +57,6 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private int currentFridge = -1;
     private Context context;
     public List<DocumentReference> names;
-    private String[] statuses;
     // TODO DATABASE:: set up images of members
     //private Bitmap[] images;
 
@@ -68,7 +71,6 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mInflater = LayoutInflater.from(context);
 
         names = new LinkedList<DocumentReference>();
-        // TODO:: DATABASE set up the names, statuses, images of members
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
         MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -143,20 +145,38 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return super.getItemViewType(position);
     }
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
         try {
             if (holder instanceof ItemViewHolder) {
-                ItemViewHolder iholder = (ItemViewHolder) holder;
+                final ItemViewHolder iholder = (ItemViewHolder) holder;
                 if (currentFridge != -1) {
+
                     // set up each member
-                    iholder.name.setText(names.get(position).getId());
+                    // set name
+                    final String name = names.get(position).getId();
+                    iholder.name.setText(name);
+                    names.get(position).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()) {
+                                DocumentSnapshot userData = task.getResult();
 
-                    // TODO: set up user's status
-                    //iholder.status.setText(statuses[position]);
+                                // set up user's status
+                                String status = String.valueOf(userData.get("status"));
+                                if (status != null && !status.equals("null"))
+                                iholder.status.setText(status);
 
-                    // TODO:: DATABASE set up user's image
-                    //holder.imageView.setImageBitmap(images[position]);
+                                // DATABASE set up user's image
+                                String image = String.valueOf(userData.get("profilePhoto"));
+                                if (image != null && !image.equals("null"))
+                                    Glide.with(context).load(Uri.parse(image)).centerCrop().into(iholder.imageView);
+                                else
+                                    iholder.textMemberView.setText(String.valueOf(name.charAt(0)).toUpperCase());
+                            }
+                        }
+                    });
+
                 }
                 else {
                     // Covers the case of data not being ready yet.

@@ -19,12 +19,11 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
             android:contentDescription="ItemImage"
             android:elevation="4dp"
             android:requiresFadingEdge="none"
-            android:visibility="visible"
-            app:srcCompat="@drawable/ic_add_gray_24dp" />
+            android:src="@drawable/ic_add_gray_24dp"
+            android:visibility="visible" />
 
 
 </FrameLayout>

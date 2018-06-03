@@ -65,7 +65,7 @@
         android:id="@+id/fridgeList"
         android:name="com.example.yangliu.fridgemate.FridgeFamilyFragment"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="115dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:foregroundGravity="center"

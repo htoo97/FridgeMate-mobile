@@ -5,15 +5,14 @@
     android:id="@+id/one_item_frame"
     android:layout_width="match_parent"
     android:layout_height="90dp"
-    android:layout_marginBottom="2dp"
-    android:layout_marginTop="2dp"
+    android:layout_margin="3dp"
+    android:background="@drawable/round_ghost_add_rectangle"
     android:paddingLeft="@dimen/padd_10"
     android:paddingRight="@dimen/padd_10">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:srcCompat="@drawable/ic_add_gray_24dp"
-        android:background="@drawable/round_ghost_add_rectangle"/>
+        app:srcCompat="@drawable/ic_add_gray_24dp" />
 
 </FrameLayout>

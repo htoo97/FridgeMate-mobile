@@ -92,27 +92,31 @@ public class FridgeFamilyFragment extends Fragment {
         mfridgeListView.addOnItemTouchListener(new RecyclerItemClickListener(FridgeFamilyFragment.this, mfridgeListView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                // change focus color
-                int oldSelectedPos = fridgeListAdapter.selectedItemPos;
-                fridgeListAdapter.selectedItemPos = position;
-                if (oldSelectedPos != -1) {
-                    fridgeListAdapter.notifyItemChanged(position);
-                    fridgeListAdapter.notifyItemChanged(oldSelectedPos);
-                }
-                SaveSharedPreference.setCurrentFridge(getContext(),position);
 
-                // allow auto sync the content list, shopping list for once
-                MainActivity.familySync = MainActivity.shopListSync = MainActivity.contentSync = true;
+                // only when it is not the adding-member footer
+                if (position != memberListAdapter.getItemCount()) {
+                    // change focus color
+                    int oldSelectedPos = fridgeListAdapter.selectedItemPos;
+                    fridgeListAdapter.selectedItemPos = position;
+                    if (oldSelectedPos != -1) {
+                        fridgeListAdapter.notifyItemChanged(position);
+                        fridgeListAdapter.notifyItemChanged(oldSelectedPos);
+                    }
+                    SaveSharedPreference.setCurrentFridge(getContext(), position);
 
-                // Update current fridge in database
-                if(fridgeListAdapter.mFridges != null &&
-                        position < fridgeListAdapter.mFridges.size()){
-                    final DocumentReference newCurrentFridgeDoc = db.collection("Fridges")
-                            .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
-                    MainActivity.fridgeDoc = newCurrentFridgeDoc;
-                    memberListAdapter.fridgeDoc = newCurrentFridgeDoc;
-                    memberListAdapter.syncMemberList();
-                    userDoc.update("currentFridge", newCurrentFridgeDoc);
+                    // allow auto sync the content list, shopping list for once
+                    MainActivity.familySync = MainActivity.shopListSync = MainActivity.contentSync = true;
+
+                    // Update current fridge in database
+                    if (fridgeListAdapter.mFridges != null &&
+                            position < fridgeListAdapter.mFridges.size()) {
+                        final DocumentReference newCurrentFridgeDoc = db.collection("Fridges")
+                                .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
+                        MainActivity.fridgeDoc = newCurrentFridgeDoc;
+                        memberListAdapter.fridgeDoc = newCurrentFridgeDoc;
+                        memberListAdapter.syncMemberList();
+                        userDoc.update("currentFridge", newCurrentFridgeDoc);
+                    }
                 }
             }
 

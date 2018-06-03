@@ -4,12 +4,14 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -18,6 +20,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,9 +32,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,23 +47,38 @@ import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.example.yangliu.fridgemate.MainActivity.fridgeDoc;
+import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
 import static com.example.yangliu.fridgemate.R.id.image;
 import static com.example.yangliu.fridgemate.R.id.local;
+import static com.example.yangliu.fridgemate.R.id.password;
 
 public class EditProfile extends TitleWithButtonsActivity {
 
@@ -68,24 +89,39 @@ public class EditProfile extends TitleWithButtonsActivity {
     private EditText name;
     private CircleImageView profilePhoto;
     private TextView email;
+    private EditText status;
     private Button saveBtn;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private FirebaseStorage storage;
+    private DocumentReference userDoc;
 
     private boolean photoChanged = false;
+    private String oldProfileUri;
+    ContentValues cv;
+    Uri imageUri;
+    
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentLayout(R.layout.activity_edit_profile);
         setBackArrow();
         setTitle("Edit Profile");
 
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // make keyboard push the page up
+        this.getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
+        storage = FirebaseStorage.getInstance();
+        userDoc = MainActivity.userDoc;
 
+        if (userDoc == null) {
+            Toast.makeText(this, "User documents loading errors", Toast.LENGTH_SHORT).show();
+            finish();
+        }
         // Return to login screen if cannot verify user identity
         if(user == null){
             Toast.makeText(getApplication(), R.string.error_load_data,
@@ -102,54 +138,133 @@ public class EditProfile extends TitleWithButtonsActivity {
 
         saveBtn = findViewById(R.id.save_user_profile);
         name = findViewById(R.id.user_name);
+        status = findViewById(R.id.status);
         profilePhoto = findViewById(R.id.profile_image);
         profilePhoto.setDrawingCacheEnabled(true);
         email = findViewById(R.id.email);
-
         name.setInputType(InputType.TYPE_CLASS_TEXT);
 
-        // TODO:: DATABASE get profile pic
+        // populate local data from the firebase
         name.setText(user.getDisplayName());
-        profilePhoto.setImageURI(user.getPhotoUrl());
+
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot userData = task.getResult();
+                    status.setText((CharSequence) userData.get("status"));
+                    oldProfileUri = String.valueOf(userData.get("profilePhoto"));;
+                    if (oldProfileUri  != null && !oldProfileUri.equals("null"))
+                        Glide.with(EditProfile.this).load(Uri.parse(oldProfileUri)).centerCrop()
+                                .into(profilePhoto);
+                }
+            }
+        });
+
         //Uri i = user.getPhotoUrl();
 //        profilePhoto.setImageBitmap();
         email.setText(user.getEmail());
-
         saveBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
-                //save profile picture
+                final Intent replyIntent = getIntent();
+
+                saveBtn.setText("(Saving. Please Wait) ");
+
                 if (photoChanged) {
-                    Bitmap profileImg = profilePhoto.getDrawingCache();
-                    builder.setPhotoUri(getBitmapAsByteArray(profileImg));
-                }
-                // TODO:: DATABASE: change email
+                    // add new photo to user's profile
+                    Bitmap profileImg = null;
+                    try {
+                        profileImg = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                String displayName = String.valueOf(name.getText());
-                builder.setDisplayName(displayName);
-
-                // Update user profile
-                user.updateProfile(builder.build())
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    final Uri[] newProfile = new Uri[1];
+                    byte[] imgToUpload = getBitmapAsByteArray(profileImg);
+                    final StorageReference ref = storage.getReference().child(user.getEmail());
+                    UploadTask uploadTask = ref.putBytes(imgToUpload);
+                    final Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
-                        public void onComplete(Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(getApplication(),R.string.profile_updated,
-                                        Toast.LENGTH_LONG).show();
-                                }
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
                             }
-                        });
 
-                profilePhoto.setDrawingCacheEnabled(false);
-                finish();
+                            // Continue with the task to get the download URL
+                            return ref.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                newProfile[0] = task.getResult();
+                                saveBtn.setText("(Saving.. Please Wait) ");
+                                // delete the old photo online
+                                if (oldProfileUri != null && !oldProfileUri.equals("null"))
+                                    storage.getReferenceFromUrl(oldProfileUri).delete();
+                                oldProfileUri = String.valueOf(newProfile[0]);
+
+                                // update the profile photo
+                                userDoc.update("profilePhoto", String.valueOf(newProfile[0]));
+                                UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
+                                builder.setDisplayName(String.valueOf(name.getText()));
+                                // Update user status, name
+                                user.updateProfile(builder.build())
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(getApplication(),R.string.profile_updated,
+                                                            Toast.LENGTH_LONG).show();
+                                                    profilePhoto.setDrawingCacheEnabled(false);
+                                                    // upload Status
+                                                    String statusStr = String.valueOf(status.getText());
+                                                    if (statusStr != null && !statusStr.equals("")){
+                                                        // update the status
+                                                        userDoc.update("status",statusStr);
+
+                                                    }
+                                                    setResult(RESULT_OK,replyIntent);
+                                                    finish();
+                                                    supportFinishAfterTransition();
+                                                }
+                                            }
+                                        });
+                            }
+                        }
+                    });
+                }
+                else {
+                    // no photo updates
+                    UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
+                    builder.setDisplayName(String.valueOf(name.getText()));
+                    // Update user status, name
+                    user.updateProfile(builder.build())
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getApplication(), R.string.profile_updated,
+                                                Toast.LENGTH_LONG).show();
+                                        profilePhoto.setDrawingCacheEnabled(false);
+                                        // upload Status
+                                        String statusStr = String.valueOf(status.getText());
+                                        if (statusStr != null && !statusStr.equals("")) {
+                                            // update the status
+                                            userDoc.update("status", '"' + statusStr + '"');
+
+                                        }
+                                        setResult(RESULT_OK, replyIntent);
+                                        finish();
+                                        supportFinishAfterTransition();
+                                    }
+                                }
+                            });
+                }
             }
         });
     }
-
-    ContentValues cv;
-    Uri imageUri;
     public void selectPhoto(View view) {
-
         new BottomSheet.Builder(this).title("Options").sheet(R.menu.menu_profile_photo).listener(new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -202,7 +317,119 @@ public class EditProfile extends TitleWithButtonsActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.delete_account:
-                // TODO:: DATABASE: deactivate user account
+                // DATABASE: deactivate user account
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditProfile.this);
+                builder.setTitle("Please enter your password again:");
+
+                // Set up the input
+                final EditText input = new EditText(EditProfile.this);
+                input.setText("no password needed for Google-linked accounts");
+                LinearLayout linearLayout = new LinearLayout(EditProfile.this);
+                LinearLayout.LayoutParams layoutParams =
+                        new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(layoutParams);
+                input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+
+                final String[] pw = new String[0];
+                //layoutParams.gravity = Gravity.CENTER;
+                linearLayout.addView(input);
+                linearLayout.setPadding(40, 0, 40, 0);
+                builder.setView(linearLayout);
+                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        pw[0] = input.getText().toString();
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        finish();
+                        return;
+                    }
+                });
+                builder.show();
+                AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(),pw[0]);
+                // it means it's a google account
+                if (credential == null)
+                    credential = GoogleAuthProvider.getCredential
+                            (String.valueOf(user.getIdToken(true)), String.valueOf(mAuth.getAccessToken(true)));
+
+                // Get auth credentials from the user for re-authentication. The example below shows
+                // email and password credentials but there are multiple possible providers,
+                // such as GoogleAuthProvider or FacebookAuthProvider.
+                // Prompt the user to re-provide their sign-in credentials
+                user.reauthenticate(credential)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        DocumentSnapshot userData = task.getResult();
+
+                                        // delete user's profile image
+                                        storage.getReferenceFromUrl((String) userData.get("profilePhoto")).delete();
+
+                                        // delete (or update) user's fridges
+                                        List<DocumentReference> fridges = (List) userData.get("fridges");
+                                        for(final DocumentReference ref : fridges){
+                                            ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                public void onComplete(Task<DocumentSnapshot> task) {
+                                                    if(task.isSuccessful()) {
+                                                        DocumentSnapshot fridgeData = task.getResult();
+                                                        List<DocumentReference> membersList = (List<DocumentReference>) fridgeData.get("members");
+                                                        for (DocumentReference member : membersList){
+                                                            if (member == userDoc)
+                                                                membersList.remove(member);
+                                                        }
+                                                        //delete the fridge if the user is the last one
+                                                        if (membersList.size() == 0){
+                                                            // delete items' images in Storage
+                                                            ref.collection("FridgeItems").get().addOnCompleteListener(
+                                                                    new OnCompleteListener<QuerySnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                            List<DocumentSnapshot> itemSnapshots= task.getResult().getDocuments();
+                                                                            for (DocumentSnapshot each: itemSnapshots){
+                                                                                String uri = (String) each.get("imageID");
+                                                                                if (uri != null && !uri.equals("null")){
+                                                                                    storage.getReferenceFromUrl(uri).delete();
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                            );
+
+                                                            // delete all info in this fridge
+                                                            ref.delete();
+                                                        }
+                                                        else{
+                                                            ref.update("members",membersList);
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                    }
+                                });
+                                user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(EditProfile.this, "ALl data have been deleted", Toast.LENGTH_LONG).show();
+                                                    Intent intent = new Intent(EditProfile.this,LoginActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            }
+                                        });
+
+                            }
+                        });
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -224,13 +451,15 @@ public class EditProfile extends TitleWithButtonsActivity {
             case LOAD_IMAGE_REQUEST:
                 if (resultCode == RESULT_OK) {
                     imageUri = data.getData();
-                    profilePhoto.setImageURI(imageUri);
+                    Glide.with(this).load(imageUri).centerCrop()
+                            .into(profilePhoto);
                 }
                 break;
 
             case CAMERA_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    profilePhoto.setImageURI(imageUri);
+                    Glide.with(this).load(imageUri).centerCrop()
+                            .into(profilePhoto);
                 }
 
                 break;
@@ -241,12 +470,12 @@ public class EditProfile extends TitleWithButtonsActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public Uri getBitmapAsByteArray(Bitmap bitmap) {
+    public byte[] getBitmapAsByteArray(Bitmap bitmap) {
         if (bitmap == null) return null;
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, bytes);
-        String path = MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(), bitmap, "Title", null);
-        return Uri.parse(path);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream);
+        Log.d("Img size: " ,String.valueOf(outputStream.size()/1024) + "kb");
+        return outputStream.toByteArray();
     }
 
     // Return to previous screen on back button

@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
+import com.example.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -92,9 +93,26 @@ public class ShopListFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         itemListView.setLayoutManager(llm);
 
-
         itemListView.setAdapter(shopListAdapter);
         itemListView.setVisibility(View.VISIBLE);
+        // select item just by clicking on it
+        itemListView.addOnItemTouchListener(new RecyclerItemClickListener(ShopListFragment.this, itemListView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (shopListAdapter.mSelectedItems.get(position)) {
+                    shopListAdapter.mSelectedItems.set(position, false);
+                    --shopListAdapter.sumAmount;
+                }
+                else{
+                    shopListAdapter.mSelectedItems.set(position, true);
+                    ++shopListAdapter.sumAmount;
+                }
+                shopListAdapter.notifyItemChanged(position);
+                addSelectedToFrdige.setText("FRIDGE THEM (" + shopListAdapter.sumAmount + ")");
+            }
+            @Override
+            public void onItemLongClick(View view, int position) {}
+        }));
 
         addItemToShopList = view.findViewById(R.id.add_to_shop_list);
         addItemToShopList.setOnClickListener(new View.OnClickListener() {

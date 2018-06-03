@@ -5,8 +5,10 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.yangliu.fridgemate.fridge_family.FridgeFamilyFragment;
+import com.example.yangliu.fridgemate.shop_list.ShopListFragment;
 
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
@@ -20,6 +22,26 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
     // for fridge content list
     public RecyclerItemClickListener(ContentScrollingFragment context, final RecyclerView recyclerView, OnItemClickListener listener) {
+        mListener = listener;
+
+        mGestureDetector = new GestureDetector(context.getActivity(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
+
+                if (childView != null && mListener != null) {
+                    mListener.onItemLongClick(childView, recyclerView.getChildAdapterPosition(childView));
+                }
+            }
+        });
+    }
+
+    public RecyclerItemClickListener(ShopListFragment context, final RecyclerView recyclerView, OnItemClickListener listener) {
         mListener = listener;
 
         mGestureDetector = new GestureDetector(context.getActivity(), new GestureDetector.SimpleOnGestureListener() {
