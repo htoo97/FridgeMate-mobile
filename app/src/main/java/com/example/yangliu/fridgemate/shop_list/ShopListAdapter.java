@@ -49,7 +49,15 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
             selectedItem = itemView.findViewById(R.id.select_item);
-
+//            selectedItem.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (selectedItem.isChecked())
+//                        selectedItem.setChecked(false);
+//                    else
+//                        selectedItem.setChecked(true);
+//                }
+//            });
         }
     }
 
@@ -114,8 +122,10 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 itemData.put("expirationDate","");
                 fridgeDoc.collection("FridgeItems").add(itemData);
                 addedItems.add(itemToAdd);
-                // update local adapter
-                MainActivity.adapter.addNonExpiringItem(new FridgeItem(itemName,""));
+
+                mSelectedItems.set(i,false);
+                // update local adapter (bad idea)
+                //MainActivity.adapter.addNonExpiringItem(new FridgeItem(itemName,""));
             }
         }
 
@@ -123,8 +133,10 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             // update list locally
             for (Pair<String, Integer> item: addedItems){
                 mShopList.remove(item);
-                mSelectedItems.remove(false);
+                // resize the selected list
+                mSelectedItems.remove(0);
             }
+
 
             fridgeDoc.update("shoppingList", mShopList);
             notifyDataSetChanged();
@@ -132,7 +144,9 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             // Let content list sync
             MainActivity.contentSync = true;
         }
+        sumAmount = 0;
         ShopListFragment.addSelectedToFrdige.setText("FRIDGE THEM");
+        addSelectedToFrdige.setClickable(true);
     }
 
     void addItem(final String name, final Integer amount){
@@ -159,8 +173,13 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void removeItem(final int pos){
-        //TODO:: DATABASE: remove this item
+        //DATABASE: remove this item
         mShopList.remove(pos);
+        if (mSelectedItems.get(pos)) {
+            --sumAmount;
+            ShopListFragment.addSelectedToFrdige.setText("FRIDGE THEM (" + sumAmount + ")");
+        }
+
         mSelectedItems.remove(pos);
         notifyDataSetChanged();
         fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

@@ -73,11 +73,11 @@ public class ShopListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int temp = Integer.parseInt(amount.getText().toString());
-                if (temp!=0) {
+                if (temp!=1) {
                     temp -= 1;
                 }
                 else {
-                    temp = 0;
+                    temp = 1;
                 }
                 amount.setText(String.valueOf(temp));
             }
@@ -128,7 +128,7 @@ public class ShopListFragment extends Fragment {
                 else
                     Toast.makeText(getContext(), "Please give it a name", Toast.LENGTH_SHORT).show();
                 name.setText("");
-                amount.setText("0");
+                amount.setText("1");
             }
         });
         addSelectedToFrdige  = view.findViewById(R.id.add_selected_to_fridge);
@@ -136,6 +136,7 @@ public class ShopListFragment extends Fragment {
         addSelectedToFrdige.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addSelectedToFrdige.setClickable(false);
                 shopListAdapter.addSelectedToFridge();
             }
         });

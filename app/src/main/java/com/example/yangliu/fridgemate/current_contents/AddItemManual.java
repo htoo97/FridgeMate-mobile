@@ -192,6 +192,8 @@ public class AddItemManual extends TitleWithButtonsActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent replyIntent = getIntent();
+                // only pressing button once
+                button.setClickable(false);
                 if (TextUtils.isEmpty(mEditNameView.getText())) {
                     Toast.makeText(AddItemManual.this, "Please name your item", Toast.LENGTH_SHORT).show();
                     setResult(RESULT_CANCELED, replyIntent);

@@ -13,6 +13,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -24,11 +25,18 @@ import com.example.yangliu.fridgemate.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class RecipeSuggestion extends TitleWithButtonsActivity {
+
+
+    private AsyncHttpClient client;
+    RecipeSuggestionAdapter recipeListAdapter;
+    int page;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,20 +45,22 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
         // set up toolbar
         setBackArrow();
         setTitle("Recipe Suggestion");
+        textView = findViewById(R.id.textView8);
 
         //API request
-        String url = "http://www.recipepuppy.com/api/";
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
+        client = new AsyncHttpClient();
+        final RequestParams params = new RequestParams();
         Intent intent = getIntent();
         String toSearch = intent.getStringExtra("search string");
         params.put("i", toSearch);
+        page = 1;
+
+        callAPI(params);
 
         // set up ocr items
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvNumbers);
-        int numberOfColumns = 3;
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        final RecipeSuggestionAdapter recipeListAdapter = new RecipeSuggestionAdapter(this);
+        recipeListAdapter = new RecipeSuggestionAdapter(this);
         recyclerView.setAdapter(recipeListAdapter);
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(RecipeSuggestion.this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -65,7 +75,35 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
             public void onItemLongClick(View view, int position) {}
         }));
 
-                RequestHandle data = client.get(url, params, new JsonHttpResponseHandler() {
+        FloatingActionButton nextPage = findViewById(R.id.goNext);
+        FloatingActionButton previousPage = findViewById(R.id.goPrevious);
+        nextPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                page++;
+                callAPI(params);
+            }
+        });
+        previousPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (page > 1){
+                    page--;
+                    callAPI(params);
+                }
+                else{
+                    Toast.makeText(RecipeSuggestion.this, "This is the first page.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+    }
+
+    private void callAPI(RequestParams params){
+        params.put("p", page);
+        String url = "http://www.recipepuppy.com/api/";
+        client.get(url, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 // Root JSON in response is an dictionary i.e { "data : [ ... ] }
@@ -102,49 +140,28 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
                         //String url1 = data.getJSONObject(0).getString("href");
 
                         //String title2 = data.getJSONObject(1).getString("title");
-                       //String url2 = data.getJSONObject(1).getString("href");
+                        //String url2 = data.getJSONObject(1).getString("href");
                         //recipeText.setText(title1 + ": " + url1 + "\n" + title2 + ": " + url2);
 
                         JSONArray res = response.getJSONArray("Response");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    if (recipeListAdapter.getItemCount() == 0)
+                        textView.setText("Sorry. We couldn't find relavant recipe for you at the moment.");
+                    else
+                        textView.setText("");
 
-                    //Parse JSON for relevant information
-                    //TextView recipeText = (TextView) findViewById(R.id.recipeResponse);
-                    //recipeText.setText("Testing!");
-
-
-                    /*
-                    String[] names = new String[data.length()];
-                    String[] birthdays = new String[data.length()];
-                    for(int i = 0 ; i < data.length() ; i++) {
-                        birthdays[i] = data.getString("birthday");
-                        names[i] = data.getString("name");
-                    }
-                    */
                 }
             }
 
-                @Override
-                public void onFailure( int statusCode, Header[] headers, String res, Throwable t){
-                    // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                }
-            });
+            @Override
+            public void onFailure( int statusCode, Header[] headers, String res, Throwable t){
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                textView.setText("Server Error");
 
-            //Button to update text
-        /*
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.findRecipesButton);
-            fab.setOnClickListener(new View.OnClickListener()
-            {
-
-                TextView recipeText = (TextView) findViewById(R.id.recipeResponse);
-                @Override
-                public void onClick (View view){
-                recipeText.setText("Testing!");
             }
-            });
-        */
+        });
 
-        };
     }
+}

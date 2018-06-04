@@ -57,7 +57,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private int currentFridge = -1;
     private Context context;
     public List<DocumentReference> names;
-    // TODO DATABASE:: set up images of members
+    // DATABASE:: set up images of members
     //private Bitmap[] images;
 
 
@@ -165,14 +165,18 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 // set up user's status
                                 String status = String.valueOf(userData.get("status"));
                                 if (status != null && !status.equals("null"))
-                                iholder.status.setText(status);
+                                    iholder.status.setText('"' +status+'"');
+                                else
+                                    iholder.status.setText("No status yet!");
 
                                 // DATABASE set up user's image
                                 String image = String.valueOf(userData.get("profilePhoto"));
                                 if (image != null && !image.equals("null"))
                                     Glide.with(context).load(Uri.parse(image)).centerCrop().into(iholder.imageView);
-                                else
+                                else {
+                                    iholder.imageView.setImageResource(0);
                                     iholder.textMemberView.setText(String.valueOf(name.charAt(0)).toUpperCase());
+                                }
                             }
                         }
                     });

@@ -19,13 +19,14 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.text.Line;
 import com.google.android.gms.vision.text.TextBlock;
 
 /**
  * A very simple Processor which gets detected TextBlocks and adds them to the overlay
  * as OcrGraphics.
  */
-public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
+public class OcrDetectorProcessor implements Detector.Processor<TextBlock>{
 
     private GraphicOverlay<OcrGraphic> graphicOverlay;
 

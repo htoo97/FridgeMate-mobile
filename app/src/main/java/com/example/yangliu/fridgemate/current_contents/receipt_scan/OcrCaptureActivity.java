@@ -164,8 +164,10 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         addListToFridgeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addListToFridgeBtn.setClickable(false);
                 List<String> toBeAdded = adapter.mData;
                 for (final String s: toBeAdded){
+                    addListToFridgeBtn.setText("Adding.. Please wait");
                     // add these names to the fridge as items
                     userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         public void onComplete(Task<DocumentSnapshot> task) {
@@ -193,6 +195,8 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
                                                                 }
                                                             });
                             }
+                            else
+                                addListToFridgeBtn.setClickable(true);
                         }
                     });
                 }

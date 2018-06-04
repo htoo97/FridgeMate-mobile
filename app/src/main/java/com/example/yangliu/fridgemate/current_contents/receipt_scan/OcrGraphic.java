@@ -20,6 +20,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
+import com.example.yangliu.fridgemate.R;
+import com.google.android.gms.vision.text.Line;
 import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 
@@ -48,13 +50,13 @@ public class OcrGraphic extends GraphicOverlay.Graphic {
             rectPaint = new Paint();
             rectPaint.setColor(TEXT_COLOR);
             rectPaint.setStyle(Paint.Style.STROKE);
-            rectPaint.setStrokeWidth(4.0f);
+            rectPaint.setStrokeWidth(3.0f);
         }
 
         if (textPaint == null) {
             textPaint = new Paint();
             textPaint.setColor(TEXT_COLOR);
-            textPaint.setTextSize(54.0f);
+            textPaint.setTextSize(50.0f);
         }
         // Redraw the overlay, as this graphic has been added.
         postInvalidate();

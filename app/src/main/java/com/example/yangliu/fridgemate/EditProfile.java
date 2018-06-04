@@ -168,6 +168,7 @@ public class EditProfile extends TitleWithButtonsActivity {
             public void onClick(View view) {
                 final Intent replyIntent = getIntent();
 
+                saveBtn.setClickable(false);
                 saveBtn.setText("(Saving. Please Wait) ");
 
                 if (photoChanged) {
@@ -198,42 +199,38 @@ public class EditProfile extends TitleWithButtonsActivity {
                             if (task.isSuccessful()) {
                                 newProfile[0] = task.getResult();
                                 saveBtn.setText("(Saving.. Please Wait) ");
-                                // update the profile photo
-                                userDoc.update("profilePhoto", String.valueOf(newProfile[0]));
+                                // update the name, status, profile
+                                String nameStr = String.valueOf(name.getText());
+                                userDoc.update("status",String.valueOf(status.getText()),"name",nameStr,"profilePhoto", String.valueOf(newProfile[0]))
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        // delete the old photo // NO need for this online firebase handles it
 
-//                                // delete the old photo // NO need for this online firebase handles it
-//                                if (oldProfileUri != null && !oldProfileUri.equals("null"))
-//                                    storage.getReferenceFromUrl(oldProfileUri).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<Void> task) {
-//                                            oldProfileUri = String.valueOf(newProfile[0]);
-//                                        }
-//                                    });
+                                        // update this basic stuff that will be depreciated soon
+                                        UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
+                                        builder.setDisplayName(String.valueOf(name.getText()));
+                                        // Update username
+                                        user.updateProfile(builder.build())
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(getApplication(),R.string.profile_updated,
+                                                                    Toast.LENGTH_LONG).show();
+                                                            profilePhoto.setDrawingCacheEnabled(false);
 
-                                UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
-                                builder.setDisplayName(String.valueOf(name.getText()));
-                                // Update user status, name
-                                user.updateProfile(builder.build())
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(getApplication(),R.string.profile_updated,
-                                                            Toast.LENGTH_LONG).show();
-                                                    profilePhoto.setDrawingCacheEnabled(false);
-                                                    // upload Status
-                                                    String statusStr = String.valueOf(status.getText());
-                                                    if (statusStr != null && !statusStr.equals("")){
-                                                        // update the status
-                                                        userDoc.update("status",statusStr);
-
+                                                            setResult(RESULT_OK,replyIntent);
+                                                            finish();
+                                                            supportFinishAfterTransition();
+                                                        }
                                                     }
-                                                    setResult(RESULT_OK,replyIntent);
-                                                    finish();
-                                                    supportFinishAfterTransition();
-                                                }
-                                            }
-                                        });
+                                                });
+                                    }
+                                });
+
+
+//
                             }
                         }
                     });
@@ -251,16 +248,17 @@ public class EditProfile extends TitleWithButtonsActivity {
                                         Toast.makeText(getApplication(), R.string.profile_updated,
                                                 Toast.LENGTH_LONG).show();
                                         profilePhoto.setDrawingCacheEnabled(false);
-                                        // upload Status
                                         String statusStr = String.valueOf(status.getText());
-                                        if (statusStr != null && !statusStr.equals("")) {
-                                            // update the status
-                                            userDoc.update("status", '"' + statusStr + '"');
-
-                                        }
-                                        setResult(RESULT_OK, replyIntent);
-                                        finish();
-                                        supportFinishAfterTransition();
+                                        // update the status, name
+                                        userDoc.update("status",  statusStr ,"name",String.valueOf(name.getText()))
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                setResult(RESULT_OK, replyIntent);
+                                                finish();
+                                                supportFinishAfterTransition();
+                                            }
+                                        });
                                     }
                                 }
                             });

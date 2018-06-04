@@ -11,7 +11,7 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="120dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.RecyclerView
@@ -23,8 +23,9 @@
 
     </RelativeLayout>
 
-    <Button style="@style/Widget.AppCompat.Button.Colored"
+    <Button
         android:id="@+id/add_all_ocr"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="159dp"
         android:layout_height="45dp"
         android:layout_marginBottom="4dp"
@@ -40,11 +41,13 @@
     <com.example.yangliu.fridgemate.current_contents.receipt_scan.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="wrap_content"
-        android:layout_height="482dp"
+        android:layout_height="444dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/relativeLayout">
+        app:layout_constraintTop_toBottomOf="@id/relativeLayout"
+        app:layout_constraintVertical_bias="0.0">
 
         <com.example.yangliu.fridgemate.current_contents.receipt_scan.GraphicOverlay
             android:id="@+id/graphicOverlay"

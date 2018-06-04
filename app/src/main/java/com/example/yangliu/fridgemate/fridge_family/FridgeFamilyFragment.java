@@ -96,7 +96,8 @@ public class FridgeFamilyFragment extends Fragment {
         mfridgeListView.addOnItemTouchListener(new RecyclerItemClickListener(FridgeFamilyFragment.this, mfridgeListView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                if (position == fridgeListAdapter.selectedItemPos)
+                    return;
                 // only when it is not the adding-member footer
                 if (position != memberListAdapter.getItemCount()) {
                     // change focus color
@@ -204,23 +205,20 @@ public class FridgeFamilyFragment extends Fragment {
                 FridgeFamilyFragment.this, mRecyclerMemberView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                // TODO:: check someone's profile
+                // check someone's profile
                 if (position != memberListAdapter.getItemCount() - 1) {
                     // if it is not the footer "add member" button
                     // access the member profile
                     Intent intent = new Intent(view.getContext(), MemberProfileActivity.class);
-
-                    // TODO:: DATABASE access the member profile
-                    //intent.putExtra();
+                    intent.putExtra("memberId", memberListAdapter.names.get(position).getId());
                     startActivity(intent);
-//                Bundle extras = new Bundle();
                 }
             }
 
             // remove a member from your fridge
             @Override
             public void onItemLongClick(View view, final int position) {
-                if (position != memberListAdapter.getItemCount() - 1 && position != 0) {
+                if (position != memberListAdapter.getItemCount() - 1) {
                     // if the position is not footer Nor yourself
                     final DocumentReference memberToBeDeleted = memberListAdapter.names.get(position);
                     PopupMenu popup = new PopupMenu(getContext(), view);
@@ -229,33 +227,40 @@ public class FridgeFamilyFragment extends Fragment {
                         public boolean onMenuItemClick(MenuItem item) {
                             // position is the index of the member (to be deleted)
                             new AlertDialog.Builder(getContext())
-                                    .setTitle("Leave Fridge")
-                                    .setMessage("Are you sure to delete " + memberToBeDeleted.getId() + "?")
+                                    .setTitle("Remove Member")
+                                    .setMessage("Are you sure to remove " + memberToBeDeleted.getId() + "?")
                                     .setIcon(R.drawable.ic_dialog_alert_material)
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int whichButton) {
-                                            memberListAdapter.names.remove(position);
-                                            memberListAdapter.notifyDataSetChanged();
-                                            // remove user from the member's list
-                                            final DocumentReference selectedFridge = db.collection("Fridges")
-                                                    .document(fridgeListAdapter.mFridges.get(fridgeListAdapter.selectedItemPos).getFridgeid());
-                                            selectedFridge.update("members",memberListAdapter.names);
+                                            // if you are removing yourself
+                                            if (memberListAdapter.names.get(position).getId().equals(userDoc.getId()))
+                                                leaveFridge(fridgeDoc);
+                                            else {
+                                                memberListAdapter.names.remove(position);
+                                                memberListAdapter.notifyDataSetChanged();
+                                                // remove user from the member's list
+                                                final DocumentReference selectedFridge = db.collection("Fridges")
+                                                        .document(fridgeListAdapter.mFridges.get(fridgeListAdapter.selectedItemPos).getFridgeid());
+                                                selectedFridge.update("members", memberListAdapter.names);
 
-                                            // remove the fridge from the user
-                                            memberToBeDeleted.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    List<DocumentReference> fridges = (List<DocumentReference>) task.getResult().get("fridges");
-                                                    fridges.remove(selectedFridge);
-                                                    memberToBeDeleted.update("fridges",fridges);
-                                                }
-                                            });
+                                                // remove the fridge from the user
+                                                memberToBeDeleted.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                        List<DocumentReference> fridges = (List<DocumentReference>) task.getResult().get("fridges");
+                                                        fridges.remove(selectedFridge);
+                                                        memberToBeDeleted.update("fridges", fridges);
+                                                    }
+                                                });
+                                            }
 
-                                        }}).setNegativeButton(android.R.string.no, null).show();
+                                        }
+                                    }).setNegativeButton(android.R.string.no, null).show();
                             return true;
                         }
                     });
                     popup.show();
+
                 }
             }
         }));

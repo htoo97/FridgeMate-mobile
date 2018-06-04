@@ -63,8 +63,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     private ConstraintLayout constraintLayout;
     FloatingActionMenu materialDesignFAM;
     com.github.clans.fab.FloatingActionButton addManual, addOCR;
-    private ImageView recipeBtn;
-
 
 
     private FirebaseFirestore db;
@@ -84,7 +82,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
         // Connect list to its adapter
-        recyclerView.setAdapter(((MainActivity) getActivity()).adapter);
+        recyclerView.setAdapter(MainActivity.adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         // on item Click (modifying item)
@@ -132,12 +130,14 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), AddItemManual.class);
                 startActivityForResult(intent, NEW_ITEM_ACTIVITY_REQUEST_CODE);
+                materialDesignFAM.close(true);
             }
         });
         addOCR.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), OcrCaptureActivity.class);
                 startActivityForResult(intent, NEW_OCR_ACTIVITY_REQUEST_CODE);
+                materialDesignFAM.close(true);
 
             }
         });
@@ -177,7 +177,8 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         String toSearch = "";
         if (MainActivity.adapter.mItems != null) {
             for (FridgeItem i : MainActivity.adapter.mItems) {
-                toSearch += i.getItemName() + ',';
+                String searchStr = i.getItemName();
+                toSearch += searchStr.replace(' ',',') + ',';
             }
         }
         intent.putExtra("search string", toSearch);
@@ -261,7 +262,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 String uri = (String) task.getResult().get("imageID");
-                                if (uri != null && !uri.equals(""))
+                                if (uri != null && !uri.equals("null") && !uri.equals(""))
                                     storage.getReferenceFromUrl(uri).delete();
                                 // delete its info
                                 itemDoc.delete();

@@ -101,7 +101,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
 
             // set image
             Uri imageUri = current.getImage();
-            if (imageUri != null && !String.valueOf(imageUri).equals("")) {
+            if (imageUri != null && !String.valueOf(imageUri).equals("null") && !String.valueOf(imageUri).equals("")) {
 //                holder.itemImageView.setImageURI(imageByte);
                 Glide.with(context).load(imageUri).centerCrop()
                         .into(holder.itemImageView);
