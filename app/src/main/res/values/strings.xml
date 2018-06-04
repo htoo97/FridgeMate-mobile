@@ -56,7 +56,7 @@
     <string name="join_fridge_duplicate">You are already in this Fridge Family!</string>
     <string name="join_fridge_success">Successfully joined %1$s!</string>
 
-    <string name="join_fridge_hint">Type fridge ID here</string>
+    <string name="join_fridge_hint">Paste fridge ID here</string>
 
 
     <string name="no_items">You have no items in this fridge!</string>

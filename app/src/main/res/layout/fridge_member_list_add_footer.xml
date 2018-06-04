@@ -4,11 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/one_item_frame"
     android:layout_width="match_parent"
-    android:layout_height="90dp"
-    android:layout_margin="3dp"
-    android:background="@drawable/round_ghost_add_rectangle"
-    android:paddingLeft="@dimen/padd_10"
-    android:paddingRight="@dimen/padd_10">
+    android:layout_height="70dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginEnd="15dp"
+    android:layout_marginLeft="15dp"
+    android:layout_marginRight="15dp"
+    android:layout_marginStart="15dp"
+    android:layout_marginTop="5dp"
+    android:background="@drawable/round_ghost_add_rectangle">
 
     <ImageView
         android:layout_width="match_parent"

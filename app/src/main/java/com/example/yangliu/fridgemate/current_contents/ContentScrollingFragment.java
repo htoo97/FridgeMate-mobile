@@ -228,7 +228,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             MainActivity.adapter.remove(position);
             // DATABASE restore the item deletion (by delay or make a temporary copy)
             // showing snack bar with Undo option
-            Snackbar snackbar = Snackbar
+            final Snackbar snackbar = Snackbar
                     .make(constraintLayout, "Item removed!", Snackbar.LENGTH_LONG);
             snackbar.setAction("UNDO", new View.OnClickListener() {
                 @Override
@@ -240,10 +240,21 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                     return;
                 }
             });
+//            snackbar.setAction("MOVE To SHOPPING LIST", new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    // undo is selected, restore the deleted item
+//                    MainActivity.adapter.restore();
+//                    MainActivity.adapter.notifyDataSetChanged();
+//                    deletePermananetly[0] = false;
+//                    return;
+//                }
+//            });
             snackbar.show();
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
+                    snackbar.dismiss();
                     if (deletePermananetly[0]) {
                         // delete its photo
                         itemDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -259,7 +270,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
                     }
                 }
-            }, 2500);
+            }, 2000);
 
         }
     }

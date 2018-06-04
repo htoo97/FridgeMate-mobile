@@ -161,8 +161,8 @@ public class EditProfile extends TitleWithButtonsActivity {
             }
         });
 
-        //Uri i = user.getPhotoUrl();
-//        profilePhoto.setImageBitmap();
+        // Uri i = user.getPhotoUrl();
+        // profilePhoto.setImageBitmap();
         email.setText(user.getEmail());
         saveBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -189,7 +189,6 @@ public class EditProfile extends TitleWithButtonsActivity {
                             if (!task.isSuccessful()) {
                                 throw task.getException();
                             }
-
                             // Continue with the task to get the download URL
                             return ref.getDownloadUrl();
                         }
@@ -199,13 +198,18 @@ public class EditProfile extends TitleWithButtonsActivity {
                             if (task.isSuccessful()) {
                                 newProfile[0] = task.getResult();
                                 saveBtn.setText("(Saving.. Please Wait) ");
-                                // delete the old photo online
-                                if (oldProfileUri != null && !oldProfileUri.equals("null"))
-                                    storage.getReferenceFromUrl(oldProfileUri).delete();
-                                oldProfileUri = String.valueOf(newProfile[0]);
-
                                 // update the profile photo
                                 userDoc.update("profilePhoto", String.valueOf(newProfile[0]));
+
+//                                // delete the old photo // NO need for this online firebase handles it
+//                                if (oldProfileUri != null && !oldProfileUri.equals("null"))
+//                                    storage.getReferenceFromUrl(oldProfileUri).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Void> task) {
+//                                            oldProfileUri = String.valueOf(newProfile[0]);
+//                                        }
+//                                    });
+
                                 UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
                                 builder.setDisplayName(String.valueOf(name.getText()));
                                 // Update user status, name
@@ -331,7 +335,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                 input.setLayoutParams(layoutParams);
                 input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
 
-                final String[] pw = new String[0];
+                final String[] pw = new String[1];
                 //layoutParams.gravity = Gravity.CENTER;
                 linearLayout.addView(input);
                 linearLayout.setPadding(40, 0, 40, 0);
@@ -444,7 +448,6 @@ public class EditProfile extends TitleWithButtonsActivity {
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO:: better fetching the photo
         photoChanged = true;
         switch  (requestCode) {
             //从相册里面取相片的返回结果
@@ -461,7 +464,6 @@ public class EditProfile extends TitleWithButtonsActivity {
                     Glide.with(this).load(imageUri).centerCrop()
                             .into(profilePhoto);
                 }
-
                 break;
             default:
                 Toast.makeText(getApplicationContext(), "You have not selected and image", Toast.LENGTH_SHORT).show();

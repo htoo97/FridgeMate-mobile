@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_center_focus_strong_black_24dp"
             fab:fab_colorNormal="@color/colorAccent"
-            fab:fab_label="Add by OCR"
+            fab:fab_label="Quick Add"
             fab:fab_size="mini" />
 
 

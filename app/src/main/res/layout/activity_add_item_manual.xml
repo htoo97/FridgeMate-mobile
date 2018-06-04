@@ -163,4 +163,11 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    <ImageButton
+        android:id="@+id/rotateImg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        custom:srcCompat="@drawable/ic_rotate_right_black_24dp" />
+
 </LinearLayout>

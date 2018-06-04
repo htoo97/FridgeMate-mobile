@@ -31,10 +31,12 @@ public class SplashActivity extends Activity {
 
         final ImageView myImageView= (ImageView)findViewById(R.id.splash);
         final TextView myTextView = (TextView)findViewById(R.id.COOL);
+        final TextView myTextView2 = (TextView)findViewById(R.id.COOL2);
         Animation a = new AlphaAnimation(0.00f,1.00f);
         a.setDuration(1100);
         myImageView.startAnimation(a);
         myTextView.startAnimation(a);
+        myTextView2.startAnimation(a);
 
         new Handler().postDelayed(new Runnable(){
             @Override

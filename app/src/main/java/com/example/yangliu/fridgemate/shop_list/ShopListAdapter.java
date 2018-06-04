@@ -49,21 +49,6 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
             selectedItem = itemView.findViewById(R.id.select_item);
-            selectedItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = getAdapterPosition();
-                    if(selectedItem.isChecked()) {
-                        mSelectedItems.set(pos, true);
-                        ++sumAmount;
-                    }
-                    else {
-                        mSelectedItems.set(pos, false);
-                        --sumAmount;
-                    }
-                    addSelectedToFrdige.setText("FRIDGE THEM (" + sumAmount + ")");
-                }
-            });
 
         }
     }
@@ -129,6 +114,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 itemData.put("expirationDate","");
                 fridgeDoc.collection("FridgeItems").add(itemData);
                 addedItems.add(itemToAdd);
+                // update local adapter
                 MainActivity.adapter.addNonExpiringItem(new FridgeItem(itemName,""));
             }
         }
@@ -142,6 +128,9 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             fridgeDoc.update("shoppingList", mShopList);
             notifyDataSetChanged();
+
+            // Let content list sync
+            MainActivity.contentSync = true;
         }
         ShopListFragment.addSelectedToFrdige.setText("FRIDGE THEM");
     }
@@ -211,6 +200,8 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             }
         });
+        ShopListFragment.addSelectedToFrdige.setText("FRIDGE THEM");
+        sumAmount = 0;
     }
 
 

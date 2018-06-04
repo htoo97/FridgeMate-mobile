@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -46,7 +48,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
 import static com.example.yangliu.fridgemate.MainActivity.adapter;
+import static com.example.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
 import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
 
@@ -175,6 +179,11 @@ public class FridgeFamilyFragment extends Fragment {
                                     });
                                     builder.show();
                                     return true;
+                                case R.id.copyId:
+                                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
+                                    ClipData clip = ClipData.newPlainText("Your Fridge ID", fridgeDoc.getId());
+                                    clipboard.setPrimaryClip(clip);
+                                    Toast.makeText(getContext(), "Fridge ID copied to clipboard.", Toast.LENGTH_SHORT).show();
                                 default:
                                     return true;
                             }

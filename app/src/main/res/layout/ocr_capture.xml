@@ -18,6 +18,7 @@
             android:id="@+id/rvNumbers"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
             tools:listitem="@layout/ocr_item" />
 
     </RelativeLayout>
@@ -38,12 +39,8 @@
 
     <com.example.yangliu.fridgemate.current_contents.receipt_scan.CameraSourcePreview
         android:id="@+id/preview"
-        android:layout_width="368dp"
-        android:layout_height="421dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="482dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

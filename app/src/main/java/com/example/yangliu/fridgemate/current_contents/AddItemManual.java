@@ -12,6 +12,7 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -79,6 +83,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
     private EditText mEditDate;
     private ImageView itemProfile;
     private ProgressBar progressBar;
+    private ImageButton mRotateImg;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -101,6 +106,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         mEditDate = findViewById(R.id.edit_date);
         mEditNameView = findViewById(R.id.edit_word);
         progressBar = findViewById(R.id.item_progress_bar);
+        mRotateImg = findViewById(R.id.rotateImg);
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -122,7 +128,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
 
         itemProfile.setDrawingCacheEnabled(true);
 
-        // TODO:: DATABASE receive item info by item id
+        // DATABASE receive item info by item id
         Intent intent = getIntent();
         final Bundle extras = intent.getExtras();
         String itemId = null;
@@ -138,6 +144,28 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 Glide.with(this).load(Uri.parse(oldImageUri)).centerCrop().into(itemProfile);
             }
         }
+
+        mRotateImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((oldImageUri != null && oldImageUri != "") || image != null) {
+                    RotateAnimation rotate = new RotateAnimation(0, 90, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    rotate.setDuration(300);
+                    rotate.setInterpolator(new LinearInterpolator());
+                    itemProfile.startAnimation(rotate);
+                    // image changed
+
+                    new Handler().postDelayed(new Runnable(){
+                        @Override
+                        public void run() {
+                            itemProfile.setRotation(itemProfile.getRotation()+ 90);
+                            image = itemProfile.getDrawingCache();
+                        }
+                    }, 300);
+
+                }
+            }
+        });
 
         // set up camera button
         itemProfile.setOnClickListener(
@@ -172,6 +200,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                     supportFinishAfterTransition();
                 }
                 else {
+                    button.setText("(Saving. Please Wait)");
                     setResult(RESULT_OK, replyIntent);
                     userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         public void onComplete(Task<DocumentSnapshot> task) {
@@ -209,6 +238,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                         public void onComplete(@NonNull Task<Uri> task) {
                                             if (task.isSuccessful()) {
                                                 Uri downloadUri = task.getResult();
+                                                button.setText("(Saving.. Please Wait)");
                                                 itemData.put("imageID", downloadUri.toString());
                                                 // ************** if we are editing an item **********************
                                                 if (extras != null){

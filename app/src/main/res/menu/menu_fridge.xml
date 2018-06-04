@@ -6,6 +6,9 @@
     <item
         android:id="@+id/rename_fridge"
         android:title="Rename" />
+    <item
+        android:id="@+id/copyId"
+        android:title="Copy Fridge ID" />
 
     <item
         android:id="@+id/leave_fridge"
