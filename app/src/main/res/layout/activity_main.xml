@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/shoplistbg"
     tools:context=".MainActivity">
 
     <ProgressBar
@@ -66,7 +67,7 @@
                     android:id="@+id/navigation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="?android:attr/windowBackground"
+                    android:background="@color/colorDeaccent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:menu="@menu/navigation">
@@ -80,6 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
+                android:background="@color/colorDeaccent"
                 app:headerLayout="@layout/slide_menu"
                 app:menu="@menu/menu_scrolling">
 

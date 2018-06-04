@@ -67,6 +67,8 @@ import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.vision.text.Line;
+import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
@@ -142,7 +144,7 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
 
         // set up ocr items
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvNumbers);
-        int numberOfColumns = 3;
+        int numberOfColumns = 2;
         recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
         adapter = new OcrItemListAdapter(this);
         recyclerView.setAdapter(adapter);
@@ -437,10 +439,27 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         TextBlock text = null;
         if (graphic != null) {
             text = graphic.getTextBlock();
-            if (text != null && text.getValue() != null) {
-                adapter.addItem(text.getValue());
+
+            List<? extends Text> linesList = text.getComponents();
+            final CharSequence lines[] = new CharSequence[linesList.size()];
+            for (int i = 0; i < linesList.size(); ++i){
+                lines[i] = linesList.get(i).getValue();
             }
-            else Log.d(TAG, "text data is null");
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Choose the item to add");
+            builder.setItems(lines, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    adapter.addItem((String) lines[which]);
+                }
+            });
+            builder.show();
+
+//            if (text != null && text.getValue() != null) {
+//                adapter.addItem(text.getValue());
+//            }
+//            else Log.d(TAG, "text data is null");
         }
         else {
             Log.d(TAG,"no text detected");

@@ -26,10 +26,9 @@
             android:layout_height="match_parent"
 
             android:layout_gravity="center"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:background="@android:color/transparent"
             android:contentDescription="ItemImage"
-            android:elevation="4dp"
             android:requiresFadingEdge="none"
             android:visibility="visible"
             app:srcCompat="@drawable/ic_group_black_24dp" />
@@ -39,9 +38,12 @@
             style="@style/Base.TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="4"
+            android:autoText="false"
             android:gravity="center"
-            android:text="fridge name" />
+            android:maxLines="2"
+            android:text="fridge name very long"
+            android:textAlignment="center" />
     </LinearLayout>
 
 </FrameLayout>

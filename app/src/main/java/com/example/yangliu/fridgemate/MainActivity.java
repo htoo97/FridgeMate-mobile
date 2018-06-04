@@ -25,6 +25,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -128,7 +130,9 @@ public class MainActivity extends AppCompatActivity {
         if(displayName == null || displayName.equals("")) displayName = user.getEmail();
         name.setText(displayName);
 
-
+        //bottom navigation
+        final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setItemBackgroundResource(R.color.colorAccentLightTransparent);
         // check and sync with user's documents
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -138,6 +142,11 @@ public class MainActivity extends AppCompatActivity {
                     fridgeDoc = userData.getDocumentReference("currentFridge");
                     // finish database connection set up:
 
+                    // entrace
+                    View view = findViewById(R.id.main_container);
+                    Animation mLoadAnimation = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
+                    mLoadAnimation.setDuration(800);
+                    view.startAnimation(mLoadAnimation);
                     // initialize the first tab page
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
@@ -149,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
                     if (profileUri != null && !profileUri.equals("null")){
                         Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
                     }
+
+                    // only allow user to change tab after syncing
+                    navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
                     // create the first fridge if necessary
                     // Create fridge if user has no fridges
@@ -239,11 +251,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        //bottom navigation
-        //mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     // Set up database functions when app opened
@@ -279,13 +286,16 @@ public class MainActivity extends AppCompatActivity {
         return documentReference;
     }
 
-
     // bottom view navigation option function
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            View view = findViewById(R.id.main_container);
+            Animation mLoadAnimation = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
+            mLoadAnimation.setDuration(800);
+            view.startAnimation(mLoadAnimation);
             switch (item.getItemId()) {
                 case R.id.current_fridge:
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();

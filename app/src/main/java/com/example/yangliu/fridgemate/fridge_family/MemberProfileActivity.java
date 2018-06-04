@@ -2,6 +2,8 @@ package com.example.yangliu.fridgemate.fridge_family;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,6 +41,7 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
     private TextView status;
     private CircleImageView profilePhoto;
     private TextView email;
+    private TextView currentFridge;
 
 
     private FirebaseFirestore db;
@@ -58,6 +62,16 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
         profilePhoto.setClickable(false);
         status = findViewById(R.id.status);
         name = findViewById(R.id.user_name);
+        currentFridge = findViewById(R.id.current_fridge);
+        currentFridge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Friend's Fridge ID", currentFridge.getText());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(MemberProfileActivity.this, name.getText() + "'s current Fridge ID copied.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         DocumentReference memberDoc = db.collection("Users").document(memberId);
 
@@ -74,11 +88,17 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
                 if (!statusMessage.equals("null") && !statusMessage.equals(""))
                     status.setText(statusMessage);
                 String userName = String.valueOf(memberData.get("name"));
-                if (!statusMessage.equals("null") && !statusMessage.equals(""))
+                if (!userName.equals("null") && !userName.equals(""))
                     name.setText(userName);
                 else{
                     name.setText(emailStr.substring(0,emailStr.indexOf("@")));
                 }
+                DocumentReference d = (DocumentReference) memberData.get("currentFridge");
+                if (d != null) {
+                    String currentFridgeID = String.valueOf(d.getId());
+                    currentFridge.setText(currentFridgeID);
+                }
+
             }
         });
 

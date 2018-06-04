@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/padd_10">
+    android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/load_fridge_progress"
@@ -23,7 +22,7 @@
         android:id="@+id/divider2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
+        android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -31,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Families"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/fridgeList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +86,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="@dimen/padd_10"
-        android:background="@android:color/darker_gray"
+        android:background="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/fridgeList" />
 
@@ -95,6 +95,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Members"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/swiperefresh"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

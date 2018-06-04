@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/shoplistbg"
     tools:context=".current_contents.RecipeSuggestion">
 
     <TextView
@@ -36,6 +37,10 @@
             android:id="@+id/rvNumbers"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingEnd="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingStart="5dp"
             tools:listitem="@layout/recipe_list_item">
 
         </android.support.v7.widget.RecyclerView>
