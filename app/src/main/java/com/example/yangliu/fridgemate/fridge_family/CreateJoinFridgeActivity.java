@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -68,7 +69,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                     return;
                 }
 
-
+                joinBtn.setClickable(false);
                 final DocumentReference fridgeDoc = db.collection("Fridges").document(fridge);
                 fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -84,6 +85,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                             if(members.contains(userDoc)){
                                 Toast.makeText(CreateJoinFridgeActivity.this,
                                         R.string.join_fridge_duplicate, Toast.LENGTH_LONG).show();
+                                joinBtn.setClickable(true);
                                 return;
                             }
 
@@ -98,6 +100,8 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                             Toast.makeText(CreateJoinFridgeActivity.this,
                                     getResources().getString(R.string.join_fridge_success, fridgeName),
                                     Toast.LENGTH_LONG).show();
+                            // allow syncing again
+                            MainActivity.familySync = true;
                         }
                         else {
                             Toast.makeText(CreateJoinFridgeActivity.this,
@@ -112,6 +116,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
         createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                createBtn.setClickable(false);
                 Intent i = new Intent(CreateJoinFridgeActivity.this, CreateFridgeActivity.class);
                 startActivity(i);
                 finish();

@@ -5,9 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.SearchManager;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -20,11 +21,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
@@ -48,13 +50,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cz.msebera.android.httpclient.ContentTooLongException;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,12 +74,13 @@ public class MainActivity extends AppCompatActivity {
     public static FirebaseAuth mAuth;
     public static FirebaseFirestore db;
     public static DocumentReference userDoc;
+    public static FirebaseStorage storage;
     public static FirebaseUser user;
     public static DocumentReference fridgeDoc;
 
     public static final int PROFILE_EDIT_REQUEST_CODE = 4;
 
-    public static ContentListAdapter adapter = null;
+    public static ContentListAdapter contentListAdapter = null;
     public static MemberListAdapter memberListAdapter;
     public static FridgeListAdapter fridgeListAdapter;
     public static ShopListAdapter shopListAdapter;
@@ -88,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         setTitle("FridgeMate");
 
@@ -102,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
         userDoc = setUpDatabase();
+        storage = FirebaseStorage.getInstance();
 
         // set up slide menu user profiles
         mDrawLayout = findViewById(R.id.drawerLayout);
@@ -116,11 +122,19 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.navigation_view);
         View headerView =  navigationView.getHeaderView(0);
         profileImg = headerView.findViewById(R.id.profile_image);
+        profileImg.setDrawingCacheEnabled(true);
         profileImg.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, EditProfile.class);
+                Bitmap b = profileImg.getDrawingCache();
+                if (b != null && !b.hasAlpha()) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    b.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] imageInByte = baos.toByteArray();
+                    intent.putExtra("photo",imageInByte);
+                }
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, findViewById(R.id.profile_image), "profile_img");
                 startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE, options.toBundle());
             }
@@ -132,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
 
         //bottom navigation
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setItemBackgroundResource(R.color.colorAccentLightTransparent);
         // check and sync with user's documents
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -210,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        adapter = new ContentListAdapter(this);
+        contentListAdapter = new ContentListAdapter(this);
         fridgeListAdapter = new FridgeListAdapter(this);
         memberListAdapter = new MemberListAdapter(this);
         shopListAdapter = new ShopListAdapter(this);
@@ -298,20 +311,24 @@ public class MainActivity extends AppCompatActivity {
             view.startAnimation(mLoadAnimation);
             switch (item.getItemId()) {
                 case R.id.current_fridge:
+                    // check if it's already in current_fridge
+                    Fragment f = getFragmentManager().findFragmentByTag("content");
+
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
+                    fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment(),"content");
                     fragmentTransaction.commit();
                     mToolbar.setTitle("Current Contents");
+
                     return true;
                 case R.id.navigation_dashboard:
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.main_container, new FridgeFamilyFragment());
+                    fragmentTransaction.replace(R.id.main_container, new FridgeFamilyFragment(),"family");
                     fragmentTransaction.commit();
                     mToolbar.setTitle("Fridge Family");
                     return true;
                 case R.id.shopping_list:
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.main_container, new ShopListFragment());
+                    fragmentTransaction.replace(R.id.main_container, new ShopListFragment(),"wishlist");
                     fragmentTransaction.commit();
                     mToolbar.setTitle("Shopping List");
                     return true;
@@ -356,13 +373,13 @@ public class MainActivity extends AppCompatActivity {
                 // use had made changes to the profile and successfully saved
 
                 userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            String profileUri = (String) task.getResult().get("profilePhoto");
-                            if (profileUri != null && !profileUri.equals("null")){
-                                Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
-                            }
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        String profileUri = (String) task.getResult().get("profilePhoto");
+                        if (profileUri != null && !profileUri.equals("null")){
+                            Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
                         }
+                    }
                 });
                 name.setText(user.getDisplayName());
             }

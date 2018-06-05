@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF8C00</color>
-    <color name="colorPrimaryDark">#FF8C00</color>
-    <color name="colorAccent">#ffb630</color>
-    <color name="colorAccentLight">#7effda92</color>
-    <color name="colorAccentLightTransparent">#3effda92</color>
-    <color name="colorDeaccent">#e1fcf8ef</color>
+    <!--<color name="colorPrimary">#fcfdfa</color>-->
+    <color name="colorPrimary">#8c9497</color>
+    <color name="colorBars">#dddfdc</color>
+    <color name="windowBackground">#f3f4f2</color>
+    <color name="colorPrimaryDark">#373a3b</color>
+    <color name="colorAccent">#2ed4ee</color>
+    <color name="colorAccentLight">#ccf8fa</color>
+    <color name="colorAccentLightTransparent">#42ccf3f9</color>
+    <color name="colorDeaccent">#e1effcfc</color>
     <color name="colorBadAccent">#d0939291</color>
     <color name="colorBad">#75bfbebd</color>
 
@@ -13,6 +16,7 @@
     <color name="white">#dcffffff</color>
     <color name="red">#D50F25</color>
     <color name="yellow">#EEB211</color>
-    <color name="green">#009925</color>
+    <color name="green">#3df55c</color>
+    <color name="greenLight">#a342f26d</color>
     <color name="blue">#3369E8</color>
 </resources>

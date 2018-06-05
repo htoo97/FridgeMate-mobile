@@ -11,7 +11,6 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static android.os.SystemClock.sleep;
+import static com.example.yangliu.fridgemate.MainActivity.userDoc;
 import static com.example.yangliu.fridgemate.shop_list.ShopListFragment.addSelectedToFrdige;
 
 public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -49,15 +50,24 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
             selectedItem = itemView.findViewById(R.id.select_item);
-//            selectedItem.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    if (selectedItem.isChecked())
-//                        selectedItem.setChecked(false);
-//                    else
-//                        selectedItem.setChecked(true);
-//                }
-//            });
+            selectedItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                    if (mSelectedItems.get(pos)) {
+                        selectedItem.setChecked(false);
+                        mSelectedItems.set(pos,false);
+                        --sumAmount;
+                    }
+                    else {
+                        mSelectedItems.set(pos,true);
+                        selectedItem.setChecked(true);
+                        ++sumAmount;
+                    }
+                    notifyItemChanged(pos);
+                    addSelectedToFrdige.setText("FRIDGE THEM (" + sumAmount + ")");
+                }
+            });
         }
     }
 
@@ -69,20 +79,9 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context context;
     public List<Boolean> mSelectedItems;
     public int sumAmount = 0;
-
     public ShopListAdapter(final Context context) {
         this.context = context;
         mInflater = LayoutInflater.from(context);
-        // Database connection set up
-        DocumentReference userDoc = MainActivity.userDoc;
-        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    final DocumentSnapshot userData = task.getResult();
-                    fridgeDoc = userData.getDocumentReference("currentFridge");
-                }
-            }
-        });
     }
 
     @Override
@@ -200,27 +199,37 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void syncItems(){
-        // DATABASE Sync the shoplist on database with the local
-        fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            public void onComplete(Task<DocumentSnapshot> task) {
-                final DocumentSnapshot fridgeData = task.getResult();
-                List<String> dataList = (List) fridgeData.get("shoppingList");
-                if (mShopList != null)
-                    mShopList.clear();
-                mShopList = new LinkedList<Pair<String, Integer>>();
-                mSelectedItems = new LinkedList<Boolean>();
-                if (dataList != null) {
-                    for (int i = 0; i < dataList.size(); ++i) {
-                        String[] data = dataList.get(i).split("#");
-                        mShopList.add(new Pair<String, Integer>(data[0], Integer.valueOf(data[1])));
-                        mSelectedItems.add(false);
-                    }
-                    notifyDataSetChanged();
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+                    fridgeDoc = userData.getDocumentReference("currentFridge");
+                    // DATABASE Sync the shoplist on database with the local
+                    fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        public void onComplete(Task<DocumentSnapshot> task) {
+                            final DocumentSnapshot fridgeData = task.getResult();
+                            List<String> dataList = (List) fridgeData.get("shoppingList");
+                            if (mShopList != null)
+                                mShopList.clear();
+                            mShopList = new LinkedList<Pair<String, Integer>>();
+                            mSelectedItems = new LinkedList<Boolean>();
+                            if (dataList != null) {
+                                for (int i = 0; i < dataList.size(); ++i) {
+                                    String[] data = dataList.get(i).split("#");
+                                    mShopList.add(new Pair<String, Integer>(data[0], Integer.valueOf(data[1])));
+                                    mSelectedItems.add(false);
+                                }
+                                notifyDataSetChanged();
+                            }
+                        }
+                    });
+                    ShopListFragment.addSelectedToFrdige.setText("FRIDGE THEM");
+                    sumAmount = 0;
                 }
             }
         });
-        ShopListFragment.addSelectedToFrdige.setText("FRIDGE THEM");
-        sumAmount = 0;
+
+
     }
 
 

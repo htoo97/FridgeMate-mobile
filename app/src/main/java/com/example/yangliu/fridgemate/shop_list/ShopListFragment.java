@@ -1,21 +1,19 @@
 package com.example.yangliu.fridgemate.shop_list;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -23,17 +21,7 @@ import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.yangliu.fridgemate.current_contents.RecipeSuggestion;
 
 import static com.example.yangliu.fridgemate.MainActivity.shopListAdapter;
 
@@ -92,39 +80,25 @@ public class ShopListFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         itemListView.setLayoutManager(llm);
-
         itemListView.setAdapter(shopListAdapter);
         itemListView.setVisibility(View.VISIBLE);
-        // select item just by clicking on it
-        itemListView.addOnItemTouchListener(new RecyclerItemClickListener(ShopListFragment.this, itemListView, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if (shopListAdapter.mSelectedItems.get(position)) {
-                    shopListAdapter.mSelectedItems.set(position, false);
-                    --shopListAdapter.sumAmount;
-                }
-                else{
-                    shopListAdapter.mSelectedItems.set(position, true);
-                    ++shopListAdapter.sumAmount;
-                }
-                shopListAdapter.notifyItemChanged(position);
-                addSelectedToFrdige.setText("FRIDGE THEM (" + shopListAdapter.sumAmount + ")");
-            }
-            @Override
-            public void onItemLongClick(View view, int position) {}
-        }));
+        ViewCompat.setNestedScrollingEnabled(itemListView, false);
 
         addItemToShopList = view.findViewById(R.id.add_to_shop_list);
         addItemToShopList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
+//                if (view != null) {
+//                    // hide keboard
+//                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//                }
                 String itemName = String.valueOf(name.getText());
-                if (itemName.length() != 0)
-                    shopListAdapter.addItem(itemName,Integer.valueOf(""+ amount.getText()));
+                if (itemName.length() != 0) {
+                    // capitalize item name
+                    itemName = itemName.substring(0, 1).toUpperCase() + itemName.substring(1);
+                    shopListAdapter.addItem(itemName, Integer.valueOf("" + amount.getText()));
+                }
                 else
                     Toast.makeText(getContext(), "Please give it a name", Toast.LENGTH_SHORT).show();
                 name.setText("");

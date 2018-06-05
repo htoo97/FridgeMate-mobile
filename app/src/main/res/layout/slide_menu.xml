@@ -3,30 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="170dp"
-    android:background="@drawable/background"
+    android:layout_height="200dp"
+    android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="10dp">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:contentDescription="profile_img"
-        android:transitionName="profile_img"
+        android:layout_width="142dp"
+        android:layout_height="163dp"
         android:layout_gravity="center"
+        android:layout_weight="1"
+        android:contentDescription="profile_img"
         android:src="@drawable/profile"
-        app:border_width="0dp" />
+        android:transitionName="profile_img" />
 
     <TextView
         android:id="@+id/user_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:layout_weight="4"
         android:gravity="center"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:text="example@ucsd.edu"
         android:textColor="@color/white"
         android:textSize="20sp" />

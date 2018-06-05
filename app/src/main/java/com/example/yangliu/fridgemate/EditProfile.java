@@ -33,6 +33,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -141,6 +142,12 @@ public class EditProfile extends TitleWithButtonsActivity {
         status = findViewById(R.id.status);
         profilePhoto = findViewById(R.id.profile_image);
         profilePhoto.setDrawingCacheEnabled(true);
+
+        byte[] profileBytes = getIntent().getByteArrayExtra("photo");
+        if (profileBytes != null && profileBytes.length > 1){
+            profilePhoto.setImageBitmap(BitmapFactory.decodeByteArray(profileBytes, 0, profileBytes.length));
+        }
+
         email = findViewById(R.id.email);
         name.setInputType(InputType.TYPE_CLASS_TEXT);
 

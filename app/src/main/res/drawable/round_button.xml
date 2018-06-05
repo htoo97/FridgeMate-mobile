@@ -3,8 +3,8 @@
     <item>
         <shape android:shape="oval">
             <stroke android:color="@color/colorAccentLight"
-                android:width="3dp" />
-            <solid android:color="@color/colorAccentLight" />
+                android:width="2dp" />
+            <!--<solid android:color="@color/colorAccentLightTransparent" />-->
             <size android:width="150dp" android:height="150dp"/>
         </shape>
     </item>

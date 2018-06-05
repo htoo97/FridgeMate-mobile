@@ -46,6 +46,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -148,6 +149,7 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
         adapter = new OcrItemListAdapter(this);
         recyclerView.setAdapter(adapter);
+        ViewCompat.setNestedScrollingEnabled(recyclerView, false);
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();

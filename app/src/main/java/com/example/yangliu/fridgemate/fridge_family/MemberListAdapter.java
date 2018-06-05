@@ -2,6 +2,7 @@ package com.example.yangliu.fridgemate.fridge_family;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -10,11 +11,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
 import com.example.yangliu.fridgemate.Fridge;
 import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
@@ -28,11 +32,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.security.spec.ECField;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -47,9 +48,9 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
             name = itemView.findViewById(R.id.name_view);
             imageView = itemView.findViewById(R.id.member_image);
+            imageView.setDrawingCacheEnabled(true);
             status = itemView.findViewById(R.id.status_view);
             textMemberView = itemView.findViewById(R.id.text_MemberView);
-
         }
     }
 
@@ -57,44 +58,35 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private int currentFridge = -1;
     private Context context;
     public List<DocumentReference> names;
-    // DATABASE:: set up images of members
-    //private Bitmap[] images;
-
 
     private FirebaseUser user;
     private FirebaseFirestore db;
     public DocumentReference fridgeDoc;
+
+    Animation animation;
 
     public MemberListAdapter(Context context) {
         this.context = context;
         currentFridge = SaveSharedPreference.getCurrentFridge(context);
         mInflater = LayoutInflater.from(context);
 
+        animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+
         names = new LinkedList<DocumentReference>();
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
+    }
+
+    public void syncMemberList(){
         MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final DocumentSnapshot userData = task.getResult();
                     fridgeDoc = userData.getDocumentReference("currentFridge");
+                    fetchMemberList();
                 }
             }
         });
-    }
-
-    public void syncMemberList(){
-        // if database connection is not ready yet, wait for 1.5 seconds
-        if (fridgeDoc == null){
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run() {
-                    fetchMemberList();
-                }
-            }, 500);
-        }
-        else
-            fetchMemberList();
     }
 
     public void fetchMemberList(){
@@ -148,6 +140,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
         try {
+            holder.itemView.startAnimation(animation);
             if (holder instanceof ItemViewHolder) {
                 final ItemViewHolder iholder = (ItemViewHolder) holder;
                 if (currentFridge != -1) {
@@ -171,8 +164,9 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                                 // DATABASE set up user's image
                                 String image = String.valueOf(userData.get("profilePhoto"));
-                                if (image != null && !image.equals("null"))
+                                if (image != null && !image.equals("null")) {
                                     Glide.with(context).load(Uri.parse(image)).centerCrop().into(iholder.imageView);
+                                }
                                 else {
                                     iholder.imageView.setImageResource(0);
                                     iholder.textMemberView.setText(String.valueOf(name.charAt(0)).toUpperCase());

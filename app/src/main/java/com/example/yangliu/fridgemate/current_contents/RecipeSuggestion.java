@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +39,7 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
     RecipeSuggestionAdapter recipeListAdapter;
     int page;
     private TextView textView;
-
+    private LayoutAnimationController animation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,10 +60,11 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
         callAPI(params);
 
         // set up ocr items
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvNumbers);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvNumbers);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recipeListAdapter = new RecipeSuggestionAdapter(this);
         recyclerView.setAdapter(recipeListAdapter);
+
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(RecipeSuggestion.this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -80,6 +83,7 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
         nextPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(RecipeSuggestion.this, R.anim.fall_from_right_layout));
                 page++;
                 callAPI(params);
             }
@@ -88,6 +92,7 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
             @Override
             public void onClick(View v) {
                 if (page > 1){
+                    recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(RecipeSuggestion.this, R.anim.fall_from_left_layout));
                     page--;
                     callAPI(params);
                 }

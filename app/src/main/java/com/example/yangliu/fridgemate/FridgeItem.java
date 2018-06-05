@@ -98,17 +98,29 @@ public class FridgeItem  implements Comparable<FridgeItem>{
                 return 1;
             if (dateCompareTo.after(thisDate))
                 return -1;
-            else
+            else {
+                // order alphabetically if dates are the same
+                int comparison = itemName.compareTo(o.itemName);
+                if (comparison > 0)
+                    return 1;
+                else if (comparison < 0)
+                    return -1;
                 return 0;
+            }
         }
         else{
-            if (expDate == "" && o.expDate == "")
+            if (expDate == "" && o.expDate == "") {
+                int comparison = itemName.compareTo(o.itemName);
+                if (comparison > 0)
+                    return 1;
+                else if (comparison < 0)
+                    return -1;
                 return 0;
+            }
             if (expDate == "")
                 return 1;
             else
                 return -1;
-
         }
     }
 

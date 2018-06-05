@@ -2,7 +2,6 @@ package com.example.yangliu.fridgemate.current_contents;
 
 import android.app.SearchManager;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +10,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +23,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.FridgeItem;
@@ -33,6 +35,7 @@ import com.example.yangliu.fridgemate.current_contents.receipt_scan.OcrCaptureAc
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -41,9 +44,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -51,6 +51,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.example.yangliu.fridgemate.MainActivity.contentListAdapter;
 
 public class ContentScrollingFragment extends Fragment implements FridgeItemTouchHelper.FridgeItemTouchHelpListener{
 
@@ -64,10 +65,12 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     FloatingActionMenu materialDesignFAM;
     com.github.clans.fab.FloatingActionButton addManual, addOCR;
 
-
+    private LinearLayout empty_list_prompt;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private DocumentReference fridgeDoc;
+
+    public static int currentListYPos = 0;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -75,15 +78,23 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
         storage = FirebaseStorage.getInstance();
         fridgeDoc = MainActivity.fridgeDoc;
+        empty_list_prompt = view.findViewById(R.id.empty_list);
 
         // List view
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
+        final RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
+        ViewCompat.setNestedScrollingEnabled(recyclerView, false);
+
         // Connect list to its adapter
-        recyclerView.setAdapter(MainActivity.adapter);
+        recyclerView.setAdapter(contentListAdapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        // set up fall in animation
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.fall_in_layout);
+        recyclerView.setLayoutAnimation(animation);
 
         // on item Click (modifying item)
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(ContentScrollingFragment.this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -91,7 +102,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(view.getContext(), AddItemManual.class);
                 Bundle extras = new Bundle();
-                FridgeItem i = MainActivity.adapter.mItemsOnDisplay.get(position);
+                FridgeItem i = contentListAdapter.mItemsOnDisplay.get(position);
                 extras.putString("name",i.getItemName());
                 extras.putString("expDate",i.getExpDate());
                 extras.putString("image",i.getImage().toString());
@@ -175,8 +186,8 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         //Floating action button for recipe suggest
         Intent intent = new Intent(getActivity(), RecipeSuggestion.class);
         String toSearch = "";
-        if (MainActivity.adapter.mItems != null) {
-            for (FridgeItem i : MainActivity.adapter.mItems) {
+        if (contentListAdapter.mItems != null) {
+            for (FridgeItem i : contentListAdapter.mItems) {
                 String searchStr = i.getItemName();
                 toSearch += searchStr.replace(' ',',') + ',';
             }
@@ -206,7 +217,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                     }
                     @Override
                     public boolean onQueryTextChange(String newText) {
-                        MainActivity.adapter.filterList(newText);
+                        contentListAdapter.filterList(newText);
                         return false;
                     }
 
@@ -221,12 +232,12 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         if (viewHolder instanceof ContentListAdapter.ItemViewHolder) {
             // DATABASE delete the item at position
 
-            String id = MainActivity.adapter.mItemsOnDisplay.get(position).getDocRef();
+            String id = contentListAdapter.mItemsOnDisplay.get(position).getDocRef();
             final DocumentReference itemDoc = fridgeDoc.collection("FridgeItems").document(id);
 
             final boolean[] deletePermananetly = {true};
 
-            MainActivity.adapter.remove(position);
+            contentListAdapter.remove(position);
             // DATABASE restore the item deletion (by delay or make a temporary copy)
             // showing snack bar with Undo option
             final Snackbar snackbar = Snackbar
@@ -235,8 +246,8 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                 @Override
                 public void onClick(View view) {
                     // undo is selected, restore the deleted item
-                    MainActivity.adapter.restore();
-                    MainActivity.adapter.notifyDataSetChanged();
+                    contentListAdapter.restore();
+                    contentListAdapter.notifyDataSetChanged();
                     deletePermananetly[0] = false;
                     return;
                 }
@@ -294,23 +305,35 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
     public void syncList(){
         // DATABASE: populate the local list
-
         final List<FridgeItem> mItems = new LinkedList<>();
-        if (fridgeDoc == null) return;
-        fridgeDoc.collection("FridgeItems").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
+        MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    final DocumentSnapshot userData = task.getResult();
+                    fridgeDoc = userData.getDocumentReference("currentFridge");
+                    fridgeDoc.collection("FridgeItems").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
 
-                    Uri image = Uri.parse(String.valueOf(document.get("imageID")));
-                    FridgeItem i = new FridgeItem(String.valueOf(document.get("itemName")),
-                            String.valueOf(document.get("expirationDate")),image, String.valueOf(document.getId()));
-                    mItems.add(i);
-                }
-                MainActivity.adapter.setItems(mItems);
-                MainActivity.adapter.notifyDataSetChanged();
+                                Uri image = Uri.parse(String.valueOf(document.get("imageID")));
+                                FridgeItem i = new FridgeItem(String.valueOf(document.get("itemName")),
+                                        String.valueOf(document.get("expirationDate")),image, String.valueOf(document.getId()));
+                                mItems.add(i);
+                            }
+                            contentListAdapter.setItems(mItems);
+                            contentListAdapter.notifyDataSetChanged();
+
+                            // After populating, notify user if the list is empty
+                            if (contentListAdapter.getItemCount()==0)
+                                empty_list_prompt.setVisibility(View.VISIBLE);
+                            else
+                                empty_list_prompt.setVisibility(View.INVISIBLE);
+                        }
+                    });}
             }
         });
+
     }
 
     public byte[] getBytes(InputStream inputStream) throws IOException {

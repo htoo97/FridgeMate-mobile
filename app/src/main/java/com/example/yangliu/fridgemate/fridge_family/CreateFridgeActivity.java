@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
 import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
 
@@ -65,6 +66,7 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
         createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                createBtn.setClickable(false);
                 // Create new fridge
                 Map<String, Object> fridgeData = new HashMap<>();
 
@@ -74,6 +76,7 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                 if(name.equals("")){
                     fridgeName.setError(getString(R.string.error_field_required));
                     fridgeName.requestFocus();
+                    createBtn.setClickable(true);
                     return;
                 }
 
@@ -117,6 +120,9 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+
+                                                MainActivity.memberListAdapter.syncMemberList();
+                                                MainActivity.contentSync = MainActivity.shopListSync= true;
                                                 finish();
 
                                             }

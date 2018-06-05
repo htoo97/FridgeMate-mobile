@@ -77,6 +77,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="48dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toRightOf="parent"
@@ -88,7 +89,7 @@
                 android:id="@+id/fridge_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/fridge_password"
+                android:hint="Password (beta)"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />

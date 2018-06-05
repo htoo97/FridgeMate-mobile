@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -56,9 +58,14 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
         db = FirebaseFirestore.getInstance();
 
         String memberId = getIntent().getStringExtra("memberId");
-
         email = findViewById(R.id.email);
+
+        // set up profile photo by cache
         profilePhoto = findViewById(R.id.profile_image);
+        byte[] profileBytes =  getIntent().getByteArrayExtra("photo");
+        if (profileBytes != null && profileBytes.length > 1){
+            profilePhoto.setImageBitmap(BitmapFactory.decodeByteArray(profileBytes, 0, profileBytes.length));
+        }
         profilePhoto.setClickable(false);
         status = findViewById(R.id.status);
         name = findViewById(R.id.user_name);
@@ -69,7 +76,7 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("Friend's Fridge ID", currentFridge.getText());
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(MemberProfileActivity.this, name.getText() + "'s current Fridge ID copied.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MemberProfileActivity.this, "Fridge ID copied.", Toast.LENGTH_SHORT).show();
             }
         });
 

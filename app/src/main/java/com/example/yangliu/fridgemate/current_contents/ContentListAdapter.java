@@ -6,12 +6,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.yangliu.fridgemate.Fridge;
 import com.example.yangliu.fridgemate.FridgeItem;
 import com.example.yangliu.fridgemate.R;
 
@@ -21,12 +22,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Handler;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.ItemViewHolder> {
 
-    public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -35,7 +36,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         private final TextView dateItemView;
         private final TextView freshDays;
         private ProgressBar progressBar;
-        public RelativeLayout viewBackground, viewForeground;
+        public RelativeLayout viewForeground;
 
         private ItemViewHolder(View itemView) {
             super(itemView);
@@ -45,7 +46,6 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             dateItemView = itemView.findViewById(R.id.date_view);
 
             itemImageView = itemView.findViewById(R.id.item_image);
-            viewBackground = itemView.findViewById(R.id.view_background);
             viewForeground = itemView.findViewById(R.id.view_foreground);
             progressBar = itemView.findViewById(R.id.progressBar);
         }
@@ -55,7 +55,6 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     public List<FridgeItem> mItems, mItemsOnDisplay;
     private Context context;
     int today;
-
     public ContentListAdapter(Context context) {
         this.context = context;
         mInflater = LayoutInflater.from(context);
@@ -90,13 +89,13 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ItemViewHolder holder, int position) {
+    public void onBindViewHolder(final ItemViewHolder holder, int position) {
         if (mItemsOnDisplay != null) {
             FridgeItem current = mItemsOnDisplay.get(position);
 
             // set date
             String expDate = current.getExpDate();
-            if (expDate != null)
+            if (expDate != null && !expDate.equals(""))
                 holder.dateItemView.setText(expDate);
 
             // set image
@@ -108,7 +107,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
 
             } else{
                 // avoic using Glide cache issue
-                holder.itemImageView.setImageResource(R.drawable.ic_ac_unit_black_24dp);
+                holder.itemImageView.setImageResource(R.color.white);
             }
             // set name
             holder.wordItemView.setText(current.getItemName());
@@ -125,17 +124,25 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             }
             if (strDate != null) {
                 int dayDiff = (int) (strDate.getTime() / (86400000)) - today;
+                ProgressBarAnimation anim = new ProgressBarAnimation(holder.progressBar, 0, (int)(dayDiff * 7.2));
+                anim.setDuration(1000);
+                holder.progressBar.startAnimation(anim);
                 if (dayDiff < 0) {
                     holder.progressBar.setProgress(0);
                     holder.freshDays.setText("Expired");
                 }
                 else {
-                    holder.progressBar.setProgress((int) (dayDiff * 3.3));
+                    holder.progressBar.setProgress((int) (dayDiff * 7.2));
                     if (dayDiff > 1)
                         holder.freshDays.setText(String.valueOf(dayDiff) + " Days");
                     else
                         holder.freshDays.setText("1 Day");
                 }
+            }
+            else{
+                ProgressBarAnimation anim = new ProgressBarAnimation(holder.progressBar, 50, 100);
+                anim.setDuration(1000);
+                holder.progressBar.startAnimation(anim);
             }
         } else {
             // Covers the case of data not being ready yet.
@@ -145,6 +152,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     }
 
     FridgeItem lastremoved;
+
     public void remove(int position){
         lastremoved = mItemsOnDisplay.get(position);
         // locate the item in the original list (if removing when searching)

@@ -161,7 +161,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                             itemProfile.setRotation(itemProfile.getRotation()+ 90);
                             image = itemProfile.getDrawingCache();
                         }
-                    }, 300);
+                    }, 320);
 
                 }
             }
@@ -210,7 +210,9 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                 final DocumentSnapshot userData = task.getResult();
 
                                 final Map<String, Object> itemData = new HashMap<>();
-                                itemData.put("itemName", mEditNameView.getText().toString());
+                                String name = mEditNameView.getText().toString();
+                                // capitalize name
+                                itemData.put("itemName", name.substring(0,1).toUpperCase() + name.substring(1));
                                 itemData.put("expirationDate", mEditDate.getText().toString());
                                 SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
                                 itemData.put("lastModifiedDate", mdyFormat.format(myCalendar.getTime()).toString());
@@ -356,7 +358,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
             if (dayDiff < 0)
                 progressBar.setProgress(0);
             else
-                progressBar.setProgress((int) (dayDiff*3.3));
+                progressBar.setProgress((int) (dayDiff*7.2));
         }
     }
 

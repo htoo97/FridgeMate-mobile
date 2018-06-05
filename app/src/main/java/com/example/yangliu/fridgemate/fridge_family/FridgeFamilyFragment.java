@@ -3,28 +3,36 @@ package com.example.yangliu.fridgemate.fridge_family;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.transition.Explode;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -42,14 +50,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
-import static com.example.yangliu.fridgemate.MainActivity.adapter;
 import static com.example.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
 import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
@@ -68,7 +77,7 @@ public class FridgeFamilyFragment extends Fragment {
 
     private int shortAnimTime;
 
-    public FridgeFamilyFragment() {}
+    public FridgeFamilyFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,7 +100,6 @@ public class FridgeFamilyFragment extends Fragment {
         MyLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mfridgeListView.setLayoutManager(MyLayoutManager);
         mfridgeListView.setAdapter(MainActivity.fridgeListAdapter);
-
         //  on item Click:: change current fridge
         mfridgeListView.addOnItemTouchListener(new RecyclerItemClickListener(FridgeFamilyFragment.this, mfridgeListView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -99,7 +107,7 @@ public class FridgeFamilyFragment extends Fragment {
                 if (position == fridgeListAdapter.selectedItemPos)
                     return;
                 // only when it is not the adding-member footer
-                if (position != memberListAdapter.getItemCount()) {
+                if (position != fridgeListAdapter.getItemCount()) {
                     // change focus color
                     int oldSelectedPos = fridgeListAdapter.selectedItemPos;
                     fridgeListAdapter.selectedItemPos = position;
@@ -110,7 +118,7 @@ public class FridgeFamilyFragment extends Fragment {
                     SaveSharedPreference.setCurrentFridge(getContext(), position);
 
                     // allow auto sync the content list, shopping list for once
-                    MainActivity.familySync = MainActivity.shopListSync = MainActivity.contentSync = true;
+                    MainActivity.shopListSync = MainActivity.contentSync = true;
 
                     // Update current fridge in database
                     if (fridgeListAdapter.mFridges != null &&
@@ -198,20 +206,45 @@ public class FridgeFamilyFragment extends Fragment {
 
         // for presentation: using the items as member adapters
         RecyclerView mRecyclerMemberView = view.findViewById(R.id.fridgeMemberList);
-        mRecyclerMemberView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        final LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
+        mRecyclerMemberView.setLayoutManager(llm);
         mRecyclerMemberView.setAdapter(memberListAdapter);
 
+        // set up entrance animation
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.bottom_up_layout);
+        mRecyclerMemberView.setLayoutAnimation(animation);
+
+        // check someone's profile
         mRecyclerMemberView.addOnItemTouchListener(new RecyclerItemClickListener(
                 FridgeFamilyFragment.this, mRecyclerMemberView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                // check someone's profile
+
+                // if it is not the footer "add member" button
                 if (position != memberListAdapter.getItemCount() - 1) {
-                    // if it is not the footer "add member" button
-                    // access the member profile
+
+
                     Intent intent = new Intent(view.getContext(), MemberProfileActivity.class);
                     intent.putExtra("memberId", memberListAdapter.names.get(position).getId());
-                    startActivity(intent);
+                    // get image cache
+                    Bitmap b = llm.findViewByPosition(position).findViewById(R.id.member_image).getDrawingCache();
+
+                    // if b has alpha that means this member doesn't have profile photo yet
+                    if (b != null && !b.hasAlpha()) {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        b.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] imageInByte = baos.toByteArray();
+                        intent.putExtra("photo",imageInByte);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        // Apply activity transition
+                        // inside your activity (if you did not enable transitions in your theme)
+                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
+                    } else {
+                        // Swap without transition
+                        startActivity(intent);
+                    }
+
                 }
             }
 
@@ -241,6 +274,8 @@ public class FridgeFamilyFragment extends Fragment {
                                                 // remove user from the member's list
                                                 final DocumentReference selectedFridge = db.collection("Fridges")
                                                         .document(fridgeListAdapter.mFridges.get(fridgeListAdapter.selectedItemPos).getFridgeid());
+
+
                                                 selectedFridge.update("members", memberListAdapter.names);
 
                                                 // remove the fridge from the user
@@ -348,14 +383,6 @@ public class FridgeFamilyFragment extends Fragment {
                 if (task.isSuccessful()) {
                     final DocumentSnapshot fridgeData = task.getResult();
 
-                    // remove and update the fridge locally
-                    fridgeListAdapter.mFridges.remove(fridge);
-                    if(fridgeListAdapter.getItemCount() > 0)
-                        fridgeListAdapter.selectedItemPos = 0;
-                    else
-                        fridgeListAdapter.selectedItemPos = -1;
-                    fridgeListAdapter.notifyDataSetChanged();
-
                     // Delete fridge if user is only member
                     final List<DocumentReference> members = (List)fridgeData.get("members");
                     if(members == null || members.isEmpty() || members.size() <= 1){
@@ -365,11 +392,36 @@ public class FridgeFamilyFragment extends Fragment {
                                 .setIcon(R.drawable.ic_dialog_alert_material)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
-                                        // remove the fridge and set another current fridge
-                                        removeFromFridgeList(fridge);
-                                        // just delete fridge from your data
-                                        fridge.delete();
 
+                                        // remove the image of all items
+                                        fridge.collection("FridgeItems").get().addOnCompleteListener(
+                                                new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        QuerySnapshot q = task.getResult();
+                                                        for (DocumentSnapshot dr : q.getDocuments()){
+                                                            String imageUri = (String) dr.get("imageID");
+                                                            if (imageUri != null && !imageUri.equals("") && !imageUri.equals("null"))
+                                                                MainActivity.storage.getReferenceFromUrl(imageUri).delete();
+                                                        }
+                                                        // just delete fridge from your data
+                                                        fridge.delete();
+
+                                                        // remove the fridge and set another current fridge
+                                                        removeFromFridgeList(fridge);
+
+                                                        // update the fridge locally
+                                                        syncFridgeList();
+//                                                        // remove and update the fridge locally
+//                                                        fridgeListAdapter.mFridges.remove(fridge);
+//                                                        if(fridgeListAdapter.getItemCount() > 0)
+//                                                            fridgeListAdapter.selectedItemPos = 0;
+//                                                        else
+//                                                            fridgeListAdapter.selectedItemPos = -1;
+//                                                        fridgeListAdapter.notifyDataSetChanged();
+                                                    }
+                                                }
+                                        );
 
                                     }})
                                 .setNegativeButton(android.R.string.no, null).show();
@@ -415,12 +467,14 @@ public class FridgeFamilyFragment extends Fragment {
                             userDoc.update("currentFridge", null);
                         }
 
+                        MainActivity.contentSync = MainActivity.shopListSync = true;
+
                         // Update fridge list display once removed
                         userDoc.update("fridges", fridges)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        syncFridgeList();
+                                        syncBothLists();
                                     }
                                 });
                     }

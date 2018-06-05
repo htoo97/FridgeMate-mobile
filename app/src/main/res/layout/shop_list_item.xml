@@ -1,81 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="75dp"
-    android:layout_marginEnd="10dip"
-    android:layout_marginStart="10dip"
-    android:layout_marginTop="3dip"
-    android:clickable="true"
-    android:foreground="?attr/selectableItemBackground"
-    android:padding="5dip"
-    android:stateListAnimator="@anim/animation"
-    app:cardBackgroundColor="@color/colorDeaccent"
-    app:cardCornerRadius="5dp">
+    android:layout_weight="3"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/shop_list_item_name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="15dp"
-            android:singleLine="true"
-            android:text="Item Name"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
+        android:layout_marginBottom="1dp"
+        android:weightSum="16">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:weightSum="15">
+            android:layout_weight="3"
+            android:orientation="vertical"
+            android:paddingBottom="2dp"
+            android:paddingLeft="20dp"
+            android:paddingStart="20dp">
 
-
-            <ImageButton
-                android:id="@+id/delete_shop_item"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/shop_list_item_name"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_delete_black_24dp" />
+                android:gravity="left|center_vertical"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Item Name"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:textColor="@color/colorPrimaryDark" />
 
-            <TextView
-                android:id="@+id/et_content2"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="12"
-                android:gravity="center_vertical"
-                android:text="Amount: "
-                android:textAlignment="textEnd"
-                android:textAllCaps="false"
-                android:textColor="@android:color/black"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/amount"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="1"
-                android:textColor="@android:color/black" />
-
-            <CheckBox
-                android:id="@+id/select_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:buttonTint="@color/colorPrimaryDark"
-                android:gravity="center_vertical"
-                android:text="Select" />
+                android:weightSum="15">
+
+                <TextView
+                    android:id="@+id/et_content2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Amount: "
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="1"
+                    android:textColor="@color/colorPrimary" />
 
 
+            </LinearLayout>
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/delete_shop_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:background="@android:color/transparent"
+            android:elevation="2dp"
+            app:srcCompat="@drawable/ic_delete_black_24dp" />
+
+        <CheckBox
+            android:id="@+id/select_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:buttonTint="@color/colorPrimary"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="Select"
+            android:textAlignment="textStart"
+            android:textColor="@color/colorPrimaryDark" />
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBad" />
+</LinearLayout>
+
+
+
