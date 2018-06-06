@@ -104,24 +104,28 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     void addSelectedToFridge(){
         List<Pair<String, Integer>> addedItems = new LinkedList<>();
 
+        List<String> shopListAfter = new LinkedList();
+
         // upload to database
         for (int i = 0; i < mSelectedItems.size(); i++){
+            Pair<String,Integer> currItem = mShopList.get(i);
             if (mSelectedItems.get(i)){
                 // DATABASE:: add this to the fridge database
                 final Map<String, Object> itemData = new HashMap<>();
-                Pair<String,Integer> itemToAdd = mShopList.get(i);
                 String itemName = "";
                 if (mShopList.get(i).second == 0)
-                    itemName = String.valueOf(itemToAdd.first);
+                    itemName = String.valueOf(currItem.first);
                 else
-                    itemName = String.valueOf(itemToAdd.second) + " " + itemToAdd.first;
+                    itemName = String.valueOf(currItem.second) + " " + currItem.first;
 
                 itemData.put("itemName", itemName);
                 itemData.put("expirationDate","");
                 fridgeDoc.collection("FridgeItems").add(itemData);
-                addedItems.add(itemToAdd);
+                addedItems.add(currItem);
 
                 mSelectedItems.set(i,false);
+            }else{
+                shopListAfter.add(currItem.first +"#"+String.valueOf(currItem.second));
             }
         }
 
@@ -133,8 +137,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 mSelectedItems.remove(0);
             }
 
-
-            fridgeDoc.update("shoppingList", mShopList);
+            fridgeDoc.update("shoppingList", shopListAfter);
             notifyDataSetChanged();
 
             // Let content list sync

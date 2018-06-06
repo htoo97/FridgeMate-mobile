@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -52,12 +53,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class AddItemManual extends TitleWithButtonsActivity {
-
-    public static final String NAME_KEY = "name";
-    public static final String DATE_KEY = "date";
-    public static final String IMAGE_KEY = "img";
-    public static final String ITEM_ID = "item_id";
-    public static final String Other_KEY = "other";
 
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     public static final int NEW_ITEM_ACTIVITY_REQUEST_CODE = 1;
@@ -113,7 +108,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         // DATABASE receive item info by item id
         Intent intent = getIntent();
         final Bundle extras = intent.getExtras();
-        String itemId = null;
+        final String itemId = null;
         if (extras != null) {
             mEditNameView.setText(extras.getString("name"));
             String expDate = extras.getString("expDate");
@@ -204,7 +199,13 @@ public class AddItemManual extends TitleWithButtonsActivity {
 
                                 // ************** if it has new profile image **********************
                                 if (image != null) {
-                                    byte[] imgToUpload = getBitmapAsByteArray(image);
+
+                                    // if image rotatedr
+                                    Matrix matrix = new Matrix();
+                                    matrix.postRotate(itemProfile.getRotation());
+                                    Bitmap toRotateBitmap = itemProfile.getDrawingCache();
+                                    byte[] imgToUpload = getBitmapAsByteArray(Bitmap.createBitmap(
+                                            toRotateBitmap, 0, 0, toRotateBitmap.getWidth(), toRotateBitmap.getHeight(), matrix, true));
                                     String imageName = db.collection("fridgeItems").document().getId();
                                     final StorageReference ref = storage.getReference().child(imageName);
                                     UploadTask uploadTask = ref.putBytes(imgToUpload);
@@ -360,7 +361,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         }
     }
 
-    // TODO:: DATABASE: this is the image compression method you can make the return value the image type you chose
+    // this is the image compression method
     public byte[] getBitmapAsByteArray(Bitmap bitmap) {
         if (bitmap == null) return null;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

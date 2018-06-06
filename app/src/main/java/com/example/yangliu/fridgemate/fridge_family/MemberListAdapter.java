@@ -141,6 +141,10 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             if(task.isSuccessful()) {
                                 DocumentSnapshot userData = task.getResult();
 
+                                String nickname = String.valueOf(userData.get("name"));
+                                if (nickname != null && !nickname.equals("null"))
+                                    iholder.name.setText(nickname);
+
                                 // set up user's status
                                 String status = String.valueOf(userData.get("status"));
                                 if (status != null && !status.equals("null"))
