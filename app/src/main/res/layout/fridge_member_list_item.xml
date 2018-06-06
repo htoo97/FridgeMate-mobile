@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:backgroundTint="@color/windowBackground"
         android:clickable="true"
+        android:focusable="true"
         android:elevation="5dp"
         android:foreground="?attr/selectableItemBackground"
         android:stateListAnimator="@anim/animation"
@@ -20,7 +21,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="fill_horizontal">
+            android:baselineAligned="false"
+            android:gravity="fill_horizontal"
+            android:weightSum="15">
 
             <!--android:id="@+id/member_image"-->
             <FrameLayout
@@ -40,9 +43,8 @@
                     android:id="@+id/member_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-
                     android:layout_gravity="center"
-                    android:contentDescription="ItemImage"
+                    android:contentDescription="@string/hint_image"
                     android:elevation="4dp"
                     android:requiresFadingEdge="none"
                     android:visibility="visible" />
@@ -54,19 +56,20 @@
                 android:layout_weight="5"
                 android:background="@color/colorDeaccent"
                 android:orientation="vertical"
-                android:paddingLeft="4dp">
+                android:paddingEnd="0dp"
+                android:paddingStart="4dp">
 
                 <TextView
                     android:id="@+id/name_view"
                     style="@android:style/Widget.DeviceDefault.TextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="0dp"
-                    android:layout_weight="4"
-                    android:gravity="left|center"
+                    android:layout_height="45dp"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
                     android:maxLines="1"
-                    android:paddingStart="@dimen/padd_10"
-                    android:text="Jack White"
+                    android:paddingEnd="0dp"
+                    android:paddingStart="10dp"
+                    android:text="@string/example_email"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/colorPrimaryDark"
                     android:textStyle="bold" />
@@ -77,10 +80,10 @@
                     style="@android:style/TextAppearance.DeviceDefault.Small"
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
-                    android:layout_margin="0dp"
                     android:layout_weight="1"
-                    android:gravity="left|center"
-                    android:paddingLeft="@dimen/padd_10"
+                    android:gravity="start|center"
+                    android:paddingEnd="0dp"
+                    android:paddingStart="10dp"
                     android:textStyle="italic" />
 
             </LinearLayout>

@@ -1,9 +1,6 @@
 package com.example.yangliu.fridgemate;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -11,21 +8,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.DashPathEffect;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.support.v7.widget.PopupMenu;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -33,24 +21,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.example.yangliu.fridgemate.authentication.LoginActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -60,36 +42,23 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.example.yangliu.fridgemate.MainActivity.fridgeDoc;
-import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
-import static com.example.yangliu.fridgemate.R.id.image;
-import static com.example.yangliu.fridgemate.R.id.local;
-import static com.example.yangliu.fridgemate.R.id.password;
-
 public class EditProfile extends TitleWithButtonsActivity {
-
-    private ConstraintLayout mEditFormView;
-    private ProgressBar mProgressView;
 
 
     private EditText name;
     private CircleImageView profilePhoto;
-    private TextView email;
     private EditText status;
     private Button saveBtn;
 
@@ -134,10 +103,9 @@ public class EditProfile extends TitleWithButtonsActivity {
             finish();
         }
 
-        mEditFormView = findViewById(R.id.edit_profile_form);
-        mProgressView = findViewById(R.id.progress);
+//        ConstraintLayout mEditFormView = findViewById(R.id.edit_profile_form);
+//        ProgressBar mProgressView = findViewById(R.id.progress);
 
-        saveBtn = findViewById(R.id.save_user_profile);
         name = findViewById(R.id.user_name);
         status = findViewById(R.id.status);
         profilePhoto = findViewById(R.id.profile_image);
@@ -148,7 +116,7 @@ public class EditProfile extends TitleWithButtonsActivity {
             profilePhoto.setImageBitmap(BitmapFactory.decodeByteArray(profileBytes, 0, profileBytes.length));
         }
 
-        email = findViewById(R.id.email);
+        TextView email = findViewById(R.id.email);
         name.setInputType(InputType.TYPE_CLASS_TEXT);
 
         // populate local data from the firebase
@@ -160,7 +128,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                 if (task.isSuccessful()){
                     DocumentSnapshot userData = task.getResult();
                     status.setText((CharSequence) userData.get("status"));
-                    oldProfileUri = String.valueOf(userData.get("profilePhoto"));;
+                    oldProfileUri = String.valueOf(userData.get("profilePhoto"));
                     if (oldProfileUri  != null && !oldProfileUri.equals("null"))
                         Glide.with(EditProfile.this).load(Uri.parse(oldProfileUri)).centerCrop()
                                 .into(profilePhoto);
@@ -171,12 +139,13 @@ public class EditProfile extends TitleWithButtonsActivity {
         // Uri i = user.getPhotoUrl();
         // profilePhoto.setImageBitmap();
         email.setText(user.getEmail());
+        saveBtn = findViewById(R.id.save_user_profile);
         saveBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 final Intent replyIntent = getIntent();
 
                 saveBtn.setClickable(false);
-                saveBtn.setText("(Saving. Please Wait) ");
+                saveBtn.setText(R.string.button_saving);
 
                 if (photoChanged) {
                     // add new photo to user's profile
@@ -189,13 +158,13 @@ public class EditProfile extends TitleWithButtonsActivity {
 
                     final Uri[] newProfile = new Uri[1];
                     byte[] imgToUpload = getBitmapAsByteArray(profileImg);
-                    final StorageReference ref = storage.getReference().child(user.getEmail());
+                    final StorageReference ref = storage.getReference().child(Objects.requireNonNull(user.getEmail()));
                     UploadTask uploadTask = ref.putBytes(imgToUpload);
-                    final Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                             if (!task.isSuccessful()) {
-                                throw task.getException();
+                                throw Objects.requireNonNull(task.getException());
                             }
                             // Continue with the task to get the download URL
                             return ref.getDownloadUrl();
@@ -205,7 +174,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
                                 newProfile[0] = task.getResult();
-                                saveBtn.setText("(Saving.. Please Wait) ");
+                                saveBtn.setText(R.string.button_saving);
                                 // update the name, status, profile
                                 String nameStr = String.valueOf(name.getText());
                                 userDoc.update("status",String.valueOf(status.getText()),"name",nameStr,"profilePhoto", String.valueOf(newProfile[0]))
@@ -221,7 +190,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                                         user.updateProfile(builder.build())
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
-                                                    public void onComplete(Task<Void> task) {
+                                                    public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()) {
                                                             Toast.makeText(getApplication(),R.string.profile_updated,
                                                                     Toast.LENGTH_LONG).show();
@@ -250,7 +219,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                     user.updateProfile(builder.build())
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
-                                public void onComplete(Task<Void> task) {
+                                public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(getApplication(), R.string.profile_updated,
                                                 Toast.LENGTH_LONG).show();
@@ -333,7 +302,7 @@ public class EditProfile extends TitleWithButtonsActivity {
 
                 // Set up the input
                 final EditText input = new EditText(EditProfile.this);
-                input.setText("no password needed for Google-linked accounts");
+                input.setText(R.string.no_password_needed);
                 LinearLayout linearLayout = new LinearLayout(EditProfile.this);
                 LinearLayout.LayoutParams layoutParams =
                         new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -357,11 +326,10 @@ public class EditProfile extends TitleWithButtonsActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                         finish();
-                        return;
                     }
                 });
                 builder.show();
-                AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(),pw[0]);
+                AuthCredential credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()),pw[0]);
                 // it means it's a google account
                 if (credential == null)
                     credential = GoogleAuthProvider.getCredential
@@ -381,16 +349,18 @@ public class EditProfile extends TitleWithButtonsActivity {
                                         DocumentSnapshot userData = task.getResult();
 
                                         // delete user's profile image
-                                        storage.getReferenceFromUrl((String) userData.get("profilePhoto")).delete();
+                                        storage.getReferenceFromUrl((String) Objects.requireNonNull(userData.get("profilePhoto"))).delete();
 
                                         // delete (or update) user's fridges
                                         List<DocumentReference> fridges = (List) userData.get("fridges");
+                                        assert fridges != null;
                                         for(final DocumentReference ref : fridges){
                                             ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 public void onComplete(Task<DocumentSnapshot> task) {
                                                     if(task.isSuccessful()) {
                                                         DocumentSnapshot fridgeData = task.getResult();
                                                         List<DocumentReference> membersList = (List<DocumentReference>) fridgeData.get("members");
+                                                        assert membersList != null;
                                                         for (DocumentReference member : membersList){
                                                             if (member == userDoc)
                                                                 membersList.remove(member);
@@ -445,8 +415,6 @@ public class EditProfile extends TitleWithButtonsActivity {
         }
     }
 
-    // photo editing
-    private static String path = "";//sd路径
     private Bitmap head;
     private static final int CAMERA_REQUEST = 1888;
     private static final int LOAD_IMAGE_REQUEST = 1889;

@@ -1,34 +1,20 @@
 package com.example.yangliu.fridgemate.fridge_family;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
-import com.example.yangliu.fridgemate.authentication.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,16 +23,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MemberProfileActivity extends TitleWithButtonsActivity {
 
-    private ConstraintLayout mEditFormView;
-
     private TextView name;
     private TextView status;
     private CircleImageView profilePhoto;
     private TextView email;
     private TextView currentFridge;
 
-
-    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +37,7 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
         setBackArrow();
         setTitle("Profile");
 
-        db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         String memberId = getIntent().getStringExtra("memberId");
         email = findViewById(R.id.email);
@@ -75,6 +57,7 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("Friend's Fridge ID", currentFridge.getText());
+                assert clipboard != null;
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MemberProfileActivity.this, "Fridge ID copied.", Toast.LENGTH_SHORT).show();
             }

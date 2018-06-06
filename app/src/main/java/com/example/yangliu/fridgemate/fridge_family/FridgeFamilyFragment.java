@@ -10,27 +10,22 @@ import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.transition.Explode;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
@@ -57,6 +52,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 import static com.example.yangliu.fridgemate.MainActivity.fridgeDoc;
@@ -67,7 +63,6 @@ import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
 public class FridgeFamilyFragment extends Fragment {
 
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ConstraintLayout constraintLayout;
     private View mProgressView;
     private RecyclerView mfridgeListView;
 
@@ -80,7 +75,7 @@ public class FridgeFamilyFragment extends Fragment {
     public FridgeFamilyFragment() { }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_fridge_family, container, false);
 
@@ -91,7 +86,7 @@ public class FridgeFamilyFragment extends Fragment {
         userDoc = setUpDatabase();
 
         mProgressView = view.findViewById(R.id.load_fridge_progress);
-        constraintLayout = view.findViewById(R.id.cl);
+        ConstraintLayout constraintLayout = view.findViewById(R.id.cl);
 
         // fridge list set up
         mfridgeListView = (RecyclerView) view.findViewById(R.id.fridgeList);
@@ -136,7 +131,7 @@ public class FridgeFamilyFragment extends Fragment {
             @Override
             public void onItemLongClick(View view, final int position) {
                 if (position != fridgeListAdapter.getItemCount() - 1) {
-                    PopupMenu popup = new PopupMenu(getContext(), view);
+                    PopupMenu popup = new PopupMenu(Objects.requireNonNull(getContext()), view);
                     popup.getMenuInflater().inflate(R.menu.menu_fridge, popup.getMenu());
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
@@ -189,8 +184,9 @@ public class FridgeFamilyFragment extends Fragment {
                                     builder.show();
                                     return true;
                                 case R.id.copyId:
-                                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
+                                    ClipboardManager clipboard = (ClipboardManager) Objects.requireNonNull(getActivity()).getSystemService(CLIPBOARD_SERVICE);
                                     ClipData clip = ClipData.newPlainText("Your Fridge ID", fridgeDoc.getId());
+                                    assert clipboard != null;
                                     clipboard.setPrimaryClip(clip);
                                     Toast.makeText(getContext(), "Fridge ID copied to clipboard.", Toast.LENGTH_SHORT).show();
                                 default:
@@ -254,7 +250,7 @@ public class FridgeFamilyFragment extends Fragment {
                 if (position != memberListAdapter.getItemCount() - 1) {
                     // if the position is not footer Nor yourself
                     final DocumentReference memberToBeDeleted = memberListAdapter.names.get(position);
-                    PopupMenu popup = new PopupMenu(getContext(), view);
+                    PopupMenu popup = new PopupMenu(Objects.requireNonNull(getContext()), view);
                     popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         public boolean onMenuItemClick(MenuItem item) {
@@ -347,7 +343,7 @@ public class FridgeFamilyFragment extends Fragment {
                                 .add(fridgeData)
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     public void onSuccess(DocumentReference documentReference) {
-                                        List<DocumentReference> fridges = new ArrayList<DocumentReference>();
+                                        List fridges = new ArrayList<DocumentReference>();
                                         if(userData.get("fridges") != null){
                                             fridges = (List)userData.get("fridges");
                                         }
@@ -384,7 +380,7 @@ public class FridgeFamilyFragment extends Fragment {
                     final DocumentSnapshot fridgeData = task.getResult();
 
                     // Delete fridge if user is only member
-                    final List<DocumentReference> members = (List)fridgeData.get("members");
+                    final List members = (List)fridgeData.get("members");
                     if(members == null || members.isEmpty() || members.size() <= 1){
                         new AlertDialog.Builder(getContext())
                                 .setTitle("Leave Fridge")
@@ -454,10 +450,11 @@ public class FridgeFamilyFragment extends Fragment {
                     final DocumentSnapshot userData = task.getResult();
                     final DocumentReference currentFridge = userData.getDocumentReference("currentFridge");
 
-                    List<DocumentReference> fridges;
+                    List fridges;
                     if(userData.get("fridges") != null){
                         fridges = (List)userData.get("fridges");
 
+                        assert fridges != null;
                         fridges.remove(fridge);
                         // Set new current fridge if deleting the current one
                         if(currentFridge.equals(fridge) && !fridges.isEmpty()){
@@ -512,7 +509,7 @@ public class FridgeFamilyFragment extends Fragment {
                                         fridgeListAdapter.setItems(userFridges);
 
                                         // Highlight current fridge
-                                        if (currentFridge.equals(ref)) {
+                                        if (currentFridge != null && currentFridge.equals(ref)) {
                                             fridgeListAdapter.selectedItemPos = userFridges.size() - 1;
                                         }
 
@@ -579,6 +576,7 @@ public class FridgeFamilyFragment extends Fragment {
 
         final String email = user.getEmail();
 
+        assert email != null;
         DocumentReference documentReference = db.collection("Users").document(email);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

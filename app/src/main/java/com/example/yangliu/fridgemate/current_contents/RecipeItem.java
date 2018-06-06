@@ -8,7 +8,7 @@ public class RecipeItem{
 
     private String itemLink;
 
-    public RecipeItem(String name, String uri, String link) {
+    RecipeItem(String name, String uri, String link) {
         imageUri = uri;
         itemName = name;
         itemLink = link;

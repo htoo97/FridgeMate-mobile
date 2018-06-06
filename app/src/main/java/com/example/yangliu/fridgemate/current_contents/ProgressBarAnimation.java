@@ -1,6 +1,5 @@
 package com.example.yangliu.fridgemate.current_contents;
 
-import android.service.autofill.Transformation;
 import android.view.animation.Animation;
 import android.widget.ProgressBar;
 
@@ -9,7 +8,7 @@ public class ProgressBarAnimation extends Animation {
     private int from;
     private int to;
 
-    public ProgressBarAnimation(ProgressBar progressBar, int from, int to) {
+    ProgressBarAnimation(ProgressBar progressBar, int from, int to) {
         super();
         this.progressBar = progressBar;
         this.from = from;

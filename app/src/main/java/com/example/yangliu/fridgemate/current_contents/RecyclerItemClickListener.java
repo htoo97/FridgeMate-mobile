@@ -21,7 +21,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
     private GestureDetector mGestureDetector;
 
     // for fridge content list
-    public RecyclerItemClickListener(ContentScrollingFragment context, final RecyclerView recyclerView, OnItemClickListener listener) {
+    RecyclerItemClickListener(ContentScrollingFragment context, final RecyclerView recyclerView, OnItemClickListener listener) {
         mListener = listener;
 
         mGestureDetector = new GestureDetector(context.getActivity(), new GestureDetector.SimpleOnGestureListener() {

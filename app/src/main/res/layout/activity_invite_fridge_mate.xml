@@ -13,7 +13,7 @@
         android:layout_width="255dp"
         android:layout_height="44dp"
         android:layout_marginTop="56dp"
-        android:text="Invite"
+        android:text="@string/invite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
         android:layout_marginTop="72dp"
         android:fontFamily="sans-serif-condensed"
         android:gravity="center"
-        android:text="My best friend is the one who brings out the best in me."
+        android:text="@string/mate_quote"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -43,10 +43,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="108dp"
         android:ems="10"
-        android:hint="Type ID here"
+        android:hint="@string/type_id_prompt"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/quote" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:text="@string/quote_name"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/quote" />
 
 </android.support.constraint.ConstraintLayout>

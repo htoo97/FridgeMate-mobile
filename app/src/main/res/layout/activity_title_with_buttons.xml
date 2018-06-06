@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="sans-serif"
-            android:text="FridgeMate"
+            android:text="@string/app_name"
             android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -32,6 +32,6 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"></RelativeLayout>
+        android:orientation="vertical"></RelativeLayout>
 
 </LinearLayout>

@@ -57,9 +57,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.support.v7.widget.RecyclerView;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import java.text.SimpleDateFormat;
@@ -68,7 +66,6 @@ import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.vision.text.Line;
 import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
@@ -83,10 +80,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 /**
  * Activity for the Ocr Detecting app.  This app detects text and displays the value with the
@@ -515,7 +508,7 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         }
 
         /**
-         * Responds to the end of a scale gesture. Reported by existing
+         * Responds to the up2 of a scale gesture. Reported by existing
          * pointers going up.
          * <p/>
          * Once a scale has ended, {@link ScaleGestureDetector#getFocusX()}

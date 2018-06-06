@@ -3,12 +3,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,9 +26,9 @@ public class SplashActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-        final ImageView myImageView= (ImageView)findViewById(R.id.splash);
-        final TextView myTextView = (TextView)findViewById(R.id.COOL);
-        final TextView myTextView2 = (TextView)findViewById(R.id.COOL2);
+        final ImageView myImageView= findViewById(R.id.splash);
+        final TextView myTextView = findViewById(R.id.COOL);
+        final TextView myTextView2 = findViewById(R.id.COOL2);
         Animation a = new AlphaAnimation(0.00f,1.00f);
         a.setDuration(1100);
         myImageView.startAnimation(a);

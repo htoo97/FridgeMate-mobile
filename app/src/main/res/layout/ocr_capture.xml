@@ -30,7 +30,7 @@
         android:layout_height="45dp"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="8dp"
-        android:text="Add All"
+        android:text="@string/add_all"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"

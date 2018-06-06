@@ -23,15 +23,7 @@ public class Fridge {
         return fridgeid;
     }
 
-    public void setFridgeid(String itemId) {
-        this.fridgeid = itemId;
-    }
-
     public String getFridgeName() {
         return fridgeName;
-    }
-
-    public void setFridgeName(@NonNull String fridgeName) {
-        this.fridgeName = fridgeName;
     }
 }

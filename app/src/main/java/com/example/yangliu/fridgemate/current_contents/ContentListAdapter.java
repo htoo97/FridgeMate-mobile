@@ -2,14 +2,13 @@ package com.example.yangliu.fridgemate.current_contents;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -22,7 +21,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Handler;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,7 +34,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         private final TextView dateItemView;
         private final TextView freshDays;
         private ProgressBar progressBar;
-        public RelativeLayout viewForeground;
+        public CardView viewForeground;
 
         private ItemViewHolder(View itemView) {
             super(itemView);
@@ -54,7 +52,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     private final LayoutInflater mInflater;
     public List<FridgeItem> mItems, mItemsOnDisplay;
     private Context context;
-    int today;
+    private int today;
     public ContentListAdapter(Context context) {
         this.context = context;
         mInflater = LayoutInflater.from(context);
@@ -83,13 +81,13 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     }
 
     @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.fridge_content_list_item, parent, false);
         return new ItemViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final ItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
         if (mItemsOnDisplay != null) {
             FridgeItem current = mItemsOnDisplay.get(position);
 
@@ -115,7 +113,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
             Date strDate = null;
             // if item has a expdate
-            if (expDate.length() != 0) {
+            if (expDate != null && expDate.length() != 0) {
                 try {
                     strDate = sdf.parse(expDate);
                 } catch (ParseException e) {
@@ -129,14 +127,14 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
                 holder.progressBar.startAnimation(anim);
                 if (dayDiff < 0) {
                     holder.progressBar.setProgress(0);
-                    holder.freshDays.setText("Expired");
+                    holder.freshDays.setText(R.string.expired);
                 }
                 else {
                     holder.progressBar.setProgress((int) (dayDiff * 7.2));
                     if (dayDiff > 1)
-                        holder.freshDays.setText(String.valueOf(dayDiff) + " Days");
+                        holder.freshDays.setText(String.valueOf(dayDiff) + " days");
                     else
-                        holder.freshDays.setText("1 Day");
+                        holder.freshDays.setText(R.string.one_day);
                 }
             }
             else{
@@ -146,12 +144,12 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             }
         } else {
             // Covers the case of data not being ready yet.
-            holder.wordItemView.setText("No Word");
+            holder.wordItemView.setText(R.string.this_is_null);
         }
 
     }
 
-    FridgeItem lastremoved;
+    private FridgeItem lastremoved;
 
     public void remove(int position){
         lastremoved = mItemsOnDisplay.get(position);

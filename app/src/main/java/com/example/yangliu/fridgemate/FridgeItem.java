@@ -30,15 +30,6 @@ public class FridgeItem  implements Comparable<FridgeItem>{
         docRef = ref;
     }
 
-    public FridgeItem(@NonNull String name, String expDate) {
-        this.itemName = name;
-        this.expDate = expDate;
-    }
-
-    public FridgeItem(@NonNull String name) {
-        this.itemName = name;
-        this.expDate = "";
-    }
 
     public FridgeItem(@NonNull FridgeItem item) {
         this.itemName = item.getItemName();
@@ -49,10 +40,6 @@ public class FridgeItem  implements Comparable<FridgeItem>{
 
     public int getItemId() {
         return itemId;
-    }
-
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
     }
 
     public Uri getImage() { return image; }
@@ -73,8 +60,8 @@ public class FridgeItem  implements Comparable<FridgeItem>{
         return expDate;
     }
 
-    public void setExpDate(String expDate) {
-        this.expDate = expDate;
+    public String getDocRef() {
+        return docRef;
     }
 
     @Override
@@ -126,11 +113,4 @@ public class FridgeItem  implements Comparable<FridgeItem>{
 
 
 
-    public String getDocRef() {
-        return docRef;
-    }
-
-    public void setDocRef(String docRef) {
-        this.docRef = docRef;
-    }
 }

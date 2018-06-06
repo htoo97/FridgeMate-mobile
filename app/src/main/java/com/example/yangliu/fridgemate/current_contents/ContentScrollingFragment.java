@@ -35,7 +35,6 @@ import com.example.yangliu.fridgemate.current_contents.receipt_scan.OcrCaptureAc
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,6 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -73,7 +73,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     public static int currentListYPos = 0;
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         constraintLayout = view.findViewById(R.id.cl);
 
         storage = FirebaseStorage.getInstance();
@@ -108,7 +108,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                 extras.putString("image",i.getImage().toString());
                 extras.putString("docRef",i.getDocRef());
                 intent.putExtras(extras);
-                getActivity().setResult(RESULT_OK, intent);
+                Objects.requireNonNull(getActivity()).setResult(RESULT_OK, intent);
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.item_image), "item_image");
                 startActivityForResult(intent, EDIT_ITEM_ACTIVITY_REQUEST_CODE, options.toBundle());
             }
@@ -167,13 +167,13 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // set up the search button for content list view
         setHasOptionsMenu(true);
         // the fragment won't get pushed up by the keyboard
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        Objects.requireNonNull(getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_scrolling, container, false);
     }
@@ -185,14 +185,14 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
         //Floating action button for recipe suggest
         Intent intent = new Intent(getActivity(), RecipeSuggestion.class);
-        String toSearch = "";
+        StringBuilder toSearch = new StringBuilder();
         if (contentListAdapter.mItems != null) {
             for (FridgeItem i : contentListAdapter.mItems) {
                 String searchStr = i.getItemName();
-                toSearch += searchStr.replace(' ',',') + ',';
+                toSearch.append(searchStr.replace(' ', ',')).append(',');
             }
         }
-        intent.putExtra("search string", toSearch);
+        intent.putExtra("search string", toSearch.toString());
         startActivityForResult(intent, RECIPE_ACTIVITY_REQUEST_CODE);
 
 
@@ -204,8 +204,9 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         inflater.inflate(R.menu.search_menu, menu);
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(ContentScrollingFragment.this.getActivity().SEARCH_SERVICE);
+        SearchManager searchManager = (SearchManager) Objects.requireNonNull(getActivity()).getSystemService(ContentScrollingFragment.this.getActivity().SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        assert searchManager != null;
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         // searchView.setSubmitButtonEnabled(true);
         searchView.setOnQueryTextListener(
@@ -249,7 +250,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                     contentListAdapter.restore();
                     contentListAdapter.notifyDataSetChanged();
                     deletePermananetly[0] = false;
-                    return;
                 }
             });
 //            snackbar.setAction("MOVE To SHOPPING LIST", new View.OnClickListener() {
@@ -311,6 +311,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                 if (task.isSuccessful()) {
                     final DocumentSnapshot userData = task.getResult();
                     fridgeDoc = userData.getDocumentReference("currentFridge");
+                    assert fridgeDoc != null;
                     fridgeDoc.collection("FridgeItems").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {

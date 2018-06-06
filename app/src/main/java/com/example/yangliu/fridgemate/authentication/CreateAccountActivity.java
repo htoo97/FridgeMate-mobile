@@ -32,6 +32,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.os.SystemClock.sleep;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -49,8 +51,10 @@ public class CreateAccountActivity extends TitleWithButtonsActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentLayout(R.layout.activity_create_account);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back_material);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back_material);
+        }
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -87,7 +91,7 @@ public class CreateAccountActivity extends TitleWithButtonsActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private boolean attemptSignUp() {
+    private void attemptSignUp() {
 
         // Reset errors.
         mEmailView.setError(null);
@@ -134,18 +138,20 @@ public class CreateAccountActivity extends TitleWithButtonsActivity {
                                 // Signup success, send verification email
                                 FirebaseUser user = mAuth.getCurrentUser();
 
-                                user.sendEmailVerification();
-                                Toast.makeText(getApplication(), R.string.email_verification,
-                                        Toast.LENGTH_LONG).show();
+                                if (user != null) {
+                                    user.sendEmailVerification();
+                                    Toast.makeText(getApplication(), R.string.email_verification,
+                                            Toast.LENGTH_LONG).show();
 
-                                // Add user to database
-                                Map<String, Object> userData = new HashMap<>();
-                                userData.put("email", email);
+                                    // Add user to database
+                                    Map<String, Object> userData = new HashMap<>();
+                                    userData.put("email", email);
 
-                                db.collection("Users").document(email)
-                                    .set(userData);
-
+                                    db.collection("Users").document(email)
+                                            .set(userData);
+                                }
                                 finish();
+                                showProgress(false);
 
                             } else {
                                 int errorMessage;
@@ -177,9 +183,7 @@ public class CreateAccountActivity extends TitleWithButtonsActivity {
                             }
                         }
                     });
-            return true;
         }
-        return false;
     }
 
     private boolean isEmailValid(String email) { return email.contains("@"); }

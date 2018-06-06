@@ -1,5 +1,6 @@
 package com.example.yangliu.fridgemate.shop_list;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static android.os.SystemClock.sleep;
 import static com.example.yangliu.fridgemate.MainActivity.userDoc;
 import static com.example.yangliu.fridgemate.shop_list.ShopListFragment.addSelectedToFrdige;
 
@@ -37,7 +37,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TextView amount;
         private CheckBox selectedItem;
 
-        public shopItemViewHolder(View itemView) {
+        shopItemViewHolder(View itemView) {
             super(itemView);
             name= itemView.findViewById(R.id.shop_list_item_name);
             amount = itemView.findViewById(R.id.amount);
@@ -51,6 +51,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
             selectedItem = itemView.findViewById(R.id.select_item);
             selectedItem.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("SetTextI18n")
                 @Override
                 public void onClick(View v) {
                     int pos = getAdapterPosition();
@@ -76,22 +77,20 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private final LayoutInflater mInflater;
     private List<Pair<String,Integer>> mShopList;
-    private Context context;
-    public List<Boolean> mSelectedItems;
-    public int sumAmount = 0;
+    private List<Boolean> mSelectedItems;
+    private int sumAmount = 0;
     public ShopListAdapter(final Context context) {
-        this.context = context;
         mInflater = LayoutInflater.from(context);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.shop_list_item, parent, false);
         return new shopItemViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         shopItemViewHolder iholder = (shopItemViewHolder) holder;
         if (mShopList != null) {
             Pair<String, Integer> current = mShopList.get(position);
@@ -107,7 +106,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         // upload to database
         for (int i = 0; i < mSelectedItems.size(); i++){
-            if (mSelectedItems.get(i) == true){
+            if (mSelectedItems.get(i)){
                 // DATABASE:: add this to the fridge database
                 final Map<String, Object> itemData = new HashMap<>();
                 Pair<String,Integer> itemToAdd = mShopList.get(i);
@@ -123,8 +122,6 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 addedItems.add(itemToAdd);
 
                 mSelectedItems.set(i,false);
-                // update local adapter (bad idea)
-                //MainActivity.adapter.addNonExpiringItem(new FridgeItem(itemName,""));
             }
         }
 
@@ -144,7 +141,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             MainActivity.contentSync = true;
         }
         sumAmount = 0;
-        ShopListFragment.addSelectedToFrdige.setText("FRIDGE THEM");
+        ShopListFragment.addSelectedToFrdige.setText(R.string.fridge_all);
         addSelectedToFrdige.setClickable(true);
     }
 
@@ -154,7 +151,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mSelectedItems.add(false);
         notifyDataSetChanged();
         fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            public void onComplete(Task<DocumentSnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 final DocumentSnapshot fridgeData = task.getResult();
 
                 List<String> shopList = new LinkedList();
@@ -171,7 +168,8 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     }
 
-    void removeItem(final int pos){
+    @SuppressLint("SetTextI18n")
+    private void removeItem(final int pos){
         //DATABASE: remove this item
         mShopList.remove(pos);
         if (mSelectedItems.get(pos)) {
@@ -190,6 +188,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     shopList = (List)fridgeData.get("shoppingList");
                 }
 
+                assert shopList != null;
                 shopList.remove(pos);
                 Map<String, Object> shopListHolder = new HashMap<>();
                 shopListHolder.put("shoppingList", shopList);
@@ -223,7 +222,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             }
                         }
                     });
-                    ShopListFragment.addSelectedToFrdige.setText("FRIDGE THEM");
+                    ShopListFragment.addSelectedToFrdige.setText(R.string.fridge_all);
                     sumAmount = 0;
                 }
             }

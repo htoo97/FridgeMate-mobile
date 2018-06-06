@@ -34,7 +34,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:gravity="top|center"
-            android:hint="username"
+            android:hint="@string/username"
             android:inputType="text|textNoSuggestions"
             android:maxLines="1"
             android:scrollHorizontally="true"
@@ -50,7 +50,7 @@
             android:layout_width="165dp"
             android:layout_height="132dp"
             android:layout_marginTop="16dp"
-            android:contentDescription="profile_img"
+            android:contentDescription="@string/profile_img"
             android:onClick="selectPhoto"
             android:src="@drawable/profile"
             android:transitionName="profile_img"
@@ -67,7 +67,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="SAVE"
+        android:text="@string/button_save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -91,6 +91,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/this_is_null"
             android:src="@drawable/ic_person_pin_black_24dp" />
 
         <EditText
@@ -98,38 +99,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:hint='"This is my status"'
+            android:hint='@string/status_hint'
+            android:inputType="text"
+            android:singleLine="true"
             android:textColor="#000000"
-            android:textStyle="bold"
-            android:singleLine="true"/>
+            android:textStyle="bold" />
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_marginBottom="8dp"
+        android:drawableStart="@drawable/ic_email_black_24dp"
         android:gravity="center"
         android:orientation="horizontal"
+        android:text="@string/example_email"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Photo">
-
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_email_black_24dp" />
-
-        <TextView
-            android:id="@+id/email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="useremail@gmail.com"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/Photo" />
 
 </android.support.constraint.ConstraintLayout>

@@ -33,10 +33,9 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:inputType="text|textNoSuggestions"
             android:maxLines="1"
             android:scrollHorizontally="true"
-            android:text="Name"
+            android:text="@string/username"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -61,93 +60,61 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <TextView
+        android:id="@+id/status"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:gravity="left|center"
+        android:drawableStart="@drawable/ic_person_pin_black_24dp"
+        android:gravity="start|center"
         android:orientation="horizontal"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        android:text='@string/example_status'
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/email" />
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_person_pin_black_24dp" />
 
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:text='"Hey yall!"'
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textSize="18sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
+    <TextView
+        android:id="@+id/email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:gravity="left|center"
+        android:drawableStart="@drawable/ic_email_black_24dp"
+        android:gravity="start|center"
         android:orientation="horizontal"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        android:text="@string/example_email"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Photo">
+        app:layout_constraintTop_toBottomOf="@+id/Photo" />
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_email_black_24dp" />
 
-        <TextView
-            android:id="@+id/email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:text="useremail@gmail.com"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textSize="18sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout4"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/current_fridge"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:gravity="left|center"
+        android:drawableStart="@drawable/ic_current_fridge_black_24dp"
+        android:gravity="start|center"
         android:orientation="horizontal"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        android:text="@string/this_is_null"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/status" />
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_current_fridge_black_24dp" />
-
-        <TextView
-            android:id="@+id/current_fridge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="(none)"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-
-    </LinearLayout>
 
     <TextView
         android:id="@+id/textView11"
@@ -156,10 +123,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_weight="1"
-        android:text="(Current Fridge ID)"
-        android:textSize="10sp"
+        android:text="@string/prompt_current_fridge"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+        app:layout_constraintTop_toBottomOf="@+id/current_fridge" />
 
 </android.support.constraint.ConstraintLayout>

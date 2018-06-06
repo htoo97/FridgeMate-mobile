@@ -13,7 +13,7 @@ public class FridgeItemTouchHelper extends ItemTouchHelper.SimpleCallback {
 
     private FridgeItemTouchHelpListener listener;
 
-    public FridgeItemTouchHelper(int dragDirs, int swipeDirs, FridgeItemTouchHelpListener listener) {
+    FridgeItemTouchHelper(int dragDirs, int swipeDirs, FridgeItemTouchHelpListener listener) {
         super(dragDirs, swipeDirs);
         this.listener = listener;
     }

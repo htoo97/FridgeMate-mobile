@@ -26,8 +26,7 @@
             android:layout_height="match_parent"
             android:layout_weight="3"
             android:ems="10"
-            android:gravity="left|center"
-            android:inputType="text"
+            android:gravity="start|center"
             android:text="@string/itemName"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small" />
 
@@ -35,7 +34,7 @@
             android:id="@+id/delete_ocr_item"
             android:layout_width="20dp"
             android:layout_height="15dp"
-            android:layout_gravity="right|center_vertical"
+            android:layout_gravity="end|center_vertical"
             android:layout_weight="1"
             android:background="@drawable/ic_clear_black_24dp"
             android:backgroundTint="@android:color/black" />

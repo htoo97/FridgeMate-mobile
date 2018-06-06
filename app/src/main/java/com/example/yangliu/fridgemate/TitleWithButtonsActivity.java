@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 public class TitleWithButtonsActivity extends AppCompatActivity {
 
     /**
@@ -33,13 +35,13 @@ public class TitleWithButtonsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_title_with_buttons);
         initView();
         setSupportActionBar(commonTitleTb);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     private void initView() {
-        commonTitleTv = (TextView) findViewById(R.id.common_title_tv);
-        commonTitleTb = (Toolbar) findViewById(R.id.common_title_tb);
-        content = (RelativeLayout) findViewById(R.id.content);
+        commonTitleTv =  findViewById(R.id.common_title_tv);
+        commonTitleTb =  findViewById(R.id.common_title_tb);
+        content = findViewById(R.id.content);
     }
 
 
@@ -53,7 +55,7 @@ public class TitleWithButtonsActivity extends AppCompatActivity {
         commonTitleTb = (Toolbar) content.findViewById(layout);
         setSupportActionBar(commonTitleTb);
         //设置actionBar的标题是否显示，对应ActionBar.DISPLAY_SHOW_TITLE。
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     /**
@@ -63,15 +65,6 @@ public class TitleWithButtonsActivity extends AppCompatActivity {
         commonTitleTb.setVisibility(View.GONE);
     }
 
-    /**
-     * menu的点击事件
-     *
-     * @param onclick
-     */
-    public void setToolBarMenuOnclick(Toolbar.OnMenuItemClickListener onclick) {
-        commonTitleTb.setOnMenuItemClickListener(onclick);
-    }
-
 
     /**
      * 设置左上角back按钮
@@ -79,7 +72,7 @@ public class TitleWithButtonsActivity extends AppCompatActivity {
     public void setBackArrow() {
         final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp);
         //给ToolBar设置左侧的图标
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+        Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(upArrow);
         // 给左上角图标的左边加上一个返回的图标 。对应ActionBar.DISPLAY_HOME_AS_UP
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //设置返回按钮的点击事件
@@ -99,6 +92,7 @@ public class TitleWithButtonsActivity extends AppCompatActivity {
      */
     public void setContentLayout(int layoutId) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        assert inflater != null;
         View contentView = inflater.inflate(layoutId, null);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);

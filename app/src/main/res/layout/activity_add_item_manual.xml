@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="Expiration Date:"
+            android:text="@string/exp_date"
             android:textAppearance="@style/TextAppearance.Design.Hint"
             custom:layout_constraintBottom_toTopOf="@+id/edit_date"
             custom:layout_constraintStart_toStartOf="parent"
@@ -30,9 +30,8 @@
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_marginStart="16dp"
-            android:text="Expiration Bar"
+            android:text="@string/exp_bar"
             android:textAppearance="@style/TextAppearance.Design.Hint"
             custom:layout_constraintBottom_toTopOf="@+id/item_progress_bar"
             custom:layout_constraintStart_toStartOf="parent"
@@ -127,7 +126,7 @@
                     android:layout_weight="3"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
-                    android:text="Name:"
+                    android:text="@string/name"
                     android:textAppearance="@style/TextAppearance.Design.Hint" />
 
                 <EditText

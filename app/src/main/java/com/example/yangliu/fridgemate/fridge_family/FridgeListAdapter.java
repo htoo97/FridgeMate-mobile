@@ -3,30 +3,28 @@ package com.example.yangliu.fridgemate.fridge_family;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.Fridge;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
-import com.example.yangliu.fridgemate.Fridge;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
+//    public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private final FrameLayout frame;
+        private final LinearLayout frame;
         private final ImageView imageView;
         private final TextView name;
         private final Drawable unpressed;
@@ -48,18 +46,16 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private final LayoutInflater mInflater;
     public List<Fridge> mFridges;
-    private Context context;
 
 
     public FridgeListAdapter(Context context) {
-        this.context = context;
         mInflater = LayoutInflater.from(context);
         selectedItemPos = SaveSharedPreference.getCurrentFridge(context);
     }
 
     private static final int FOOTER_VIEW = 1;
     public class FooterViewHolder extends RecyclerView.ViewHolder {
-        public FooterViewHolder(final View itemView) {
+        FooterViewHolder(final View itemView) {
             super(itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -70,8 +66,9 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             });
         }
     }
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View itemView;
         if (viewType == FOOTER_VIEW) {
@@ -91,7 +88,7 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return super.getItemViewType(position);
     }
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         try {
             if (holder instanceof ItemViewHolder) {
@@ -115,7 +112,7 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
                 else {
                     // Covers the case of data not being ready yet.
-                    iholder.name.setText("No String");
+                    iholder.name.setText(R.string.this_is_null);
                 }
             }
         }catch(Exception e){

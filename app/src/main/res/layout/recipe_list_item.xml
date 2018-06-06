@@ -6,6 +6,7 @@
     android:layout_margin="5dp"
     android:background="@color/colorAccentLight"
     android:clickable="true"
+    android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     android:stateListAnimator="@anim/animation">
 
@@ -21,6 +22,7 @@
 
         <ImageView
             android:id="@+id/recipeImg"
+            android:contentDescription="@string/this_is_null"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="2"
@@ -36,7 +38,7 @@
             android:elevation="4dp"
             android:gravity="center"
             android:maxLines="2"
-            android:text="TextView"
+            android:text="@string/hint_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/black" />
     </LinearLayout>

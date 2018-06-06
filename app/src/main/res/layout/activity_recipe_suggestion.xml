@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorBad"
         android:gravity="center"
-        android:text='Recommended Recipes'
+        android:text='@string/recipe_suggestion'
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -52,7 +52,6 @@
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="22dp"
             android:layout_marginEnd="28dp"
-            android:clickable="true"
             app:srcCompat="@drawable/ic_navigate_next_black_24dp" />
 
         <android.support.design.widget.FloatingActionButton
@@ -62,7 +61,6 @@
             android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/goNext"
             android:layout_marginStart="27dp"
-            android:clickable="true"
             app:srcCompat="@drawable/ic_navigate_before_black_24dp" />
 
     </RelativeLayout>
@@ -73,13 +71,8 @@
         android:layout_height="wrap_content"
         android:background="@color/colorBad"
         android:gravity="center"
-        android:text='Powered By recipepuppy'
+        android:text='@string/endorse'
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    <!--<TextView-->
-    <!--android:id="@+id/recipeResponse"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:text="TextView" />-->
 </android.support.constraint.ConstraintLayout>

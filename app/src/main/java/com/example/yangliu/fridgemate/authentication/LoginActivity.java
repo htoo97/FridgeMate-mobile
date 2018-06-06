@@ -1,6 +1,8 @@
 package com.example.yangliu.fridgemate.authentication;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
@@ -48,8 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // UI references.
     private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private Button forgotPasswordBtn;
+    private EditText mPasswordView;;
 
     private SignInButton mGoogleBtn;
     private static final int RC_SIGN_IN = 101;
@@ -57,6 +58,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "login with google";
 
     private Button mEmailSignInButton;
+
+    AnimationDrawable anim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,15 +76,18 @@ public class LoginActivity extends AppCompatActivity {
         if (user != null && user.isEmailVerified()) {
 
             View view = findViewById(android.R.id.content);
+            // enter app with animation
             Animation mLoadAnimation = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
             mLoadAnimation.setDuration(800);
             view.startAnimation(mLoadAnimation);
-
             Intent i = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(i);
             finish();
         }
 
+        anim = (AnimationDrawable) findViewById(R.id.log_in_layout).getBackground();
+        anim.setEnterFadeDuration(6000);
+        anim.setExitFadeDuration(2000);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mEmailView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
@@ -115,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        forgotPasswordBtn = findViewById(R.id.forgot_password);
+        Button forgotPasswordBtn = findViewById(R.id.forgot_password);
         forgotPasswordBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mGoogleBtn.setClickable(false);
                 signIn();
 
             }
@@ -148,6 +154,18 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (anim != null && !anim.isRunning())
+            anim.start();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (anim != null && anim.isRunning())
+            anim.stop();
+    }
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -168,6 +186,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
+                mGoogleBtn.setClickable(true);
                 // ...
             }
         }
@@ -204,10 +223,12 @@ public class LoginActivity extends AppCompatActivity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private boolean attemptLogin() {
+    private void attemptLogin() {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
+
+        mEmailSignInButton.setClickable(false);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
@@ -241,6 +262,14 @@ public class LoginActivity extends AppCompatActivity {
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
+
+            // avoid abusive loggin
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run() {
+                    mEmailSignInButton.setClickable(false);
+                }
+            }, 900);
             focusView.requestFocus();
         } else {
             mEmailSignInButton.setClickable(false);
@@ -252,7 +281,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
-
+                                if (user!= null){
                                 // Only sign in if user's email is verified
                                 if (user.isEmailVerified()) {
                                     Intent i = new Intent(LoginActivity.this, MainActivity.class);
@@ -263,6 +292,7 @@ public class LoginActivity extends AppCompatActivity {
                                     user.sendEmailVerification();
                                     Toast.makeText(getApplication(), R.string.error_email_not_validated,
                                             Toast.LENGTH_LONG).show();
+                                }
                                 }
 
                             } else { // Display error message if cannot login
@@ -287,9 +317,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                     });
-            return true;
         }
-        return false;
     }
 
     private boolean isEmailValid(String email) {

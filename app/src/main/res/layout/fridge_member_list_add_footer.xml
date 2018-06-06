@@ -14,6 +14,7 @@
     android:background="@drawable/round_ghost_add_rectangle">
 
     <ImageView
+        android:contentDescription="@string/this_is_null"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:srcCompat="@drawable/ic_add_gray_24dp" />

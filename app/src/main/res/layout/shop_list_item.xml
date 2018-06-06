@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:layout_weight="3"
@@ -20,25 +19,23 @@
             android:layout_weight="3"
             android:orientation="vertical"
             android:paddingBottom="2dp"
-            android:paddingLeft="20dp"
-            android:paddingStart="20dp">
+            android:paddingStart="20dp"
+            android:paddingEnd = "0dp">
 
             <TextView
                 android:id="@+id/shop_list_item_name"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="left|center_vertical"
+                android:layout_height="40dp"
+                android:gravity="bottom|start"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Item Name"
+                android:text="@string/hint_name"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:textColor="@color/colorPrimaryDark" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
                 android:weightSum="15">
 
                 <TextView
@@ -46,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:text="Amount: "
+                    android:text="@string/amount"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
@@ -56,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:text="1"
+                    android:text="@string/one"
                     android:textColor="@color/colorPrimary" />
 
 
@@ -68,6 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="7"
+            android:contentDescription="@string/this_is_null"
             android:background="@android:color/transparent"
             android:elevation="2dp"
             app:srcCompat="@drawable/ic_delete_black_24dp" />
@@ -80,8 +78,7 @@
             android:buttonTint="@color/colorPrimary"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:text="Select"
-            android:textAlignment="textStart"
+            android:text="@string/select"
             android:textColor="@color/colorPrimaryDark" />
     </LinearLayout>
 

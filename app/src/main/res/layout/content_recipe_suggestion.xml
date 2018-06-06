@@ -18,7 +18,7 @@
         android:autoLink="all"
         android:maxLines="50"
         android:scrollbars="vertical"
-        android:text="Loading recipes..."
+        android:text="@string/loading"
         android:textAppearance="@style/TextAppearance.AppCompat"
         android:textSize="14sp"
         android:typeface="normal"

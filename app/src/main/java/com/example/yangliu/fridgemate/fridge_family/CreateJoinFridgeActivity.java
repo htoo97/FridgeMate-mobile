@@ -3,11 +3,9 @@ package com.example.yangliu.fridgemate.fridge_family;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yangliu.fridgemate.MainActivity;
@@ -22,7 +20,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +30,6 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
     private Button createBtn;
     private Button joinBtn;
 
-    private FirebaseAuth mAuth;
-    private FirebaseUser user;
     private FirebaseFirestore db;
 
     private String email;
@@ -46,8 +41,8 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
         setBackArrow();
         setTitle("Create/Join a Fridge Family!");
 
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
         fridgeInput = findViewById(R.id.editText);
@@ -76,7 +71,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot fridgeData = task.getResult();
                         if (fridgeData.exists()) {
-                            List<DocumentReference> members = (List)fridgeData.get("members");
+                            List members = (List)fridgeData.get("members");
                             if(members == null){
                                 members = new ArrayList<>();
                             }
@@ -106,7 +101,6 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                         else {
                             Toast.makeText(CreateJoinFridgeActivity.this,
                                     R.string.join_fridge_error, Toast.LENGTH_LONG).show();
-                            return;
                         }
                     }
                 });
@@ -132,7 +126,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
             public void onComplete(Task<DocumentSnapshot> task) {
                 final DocumentSnapshot userData = task.getResult();
 
-                List<DocumentReference> fridges = (List)userData.get("fridges");
+                List fridges = (List)userData.get("fridges");
                 fridges.add(fridge);
 
                 userDoc.update("fridges", fridges)

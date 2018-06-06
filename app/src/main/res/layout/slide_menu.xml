@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:background="@color/colorPrimaryDark"
@@ -15,9 +13,9 @@
         android:layout_height="163dp"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:contentDescription="profile_img"
+        android:contentDescription="@string/hint_profile"
         android:src="@drawable/profile"
-        android:transitionName="profile_img" />
+        android:transitionName="@string/hint_profile" />
 
     <TextView
         android:id="@+id/user_name"
@@ -26,7 +24,7 @@
         android:layout_gravity="center"
         android:layout_weight="4"
         android:gravity="center"
-        android:text="example@ucsd.edu"
+        android:text="@string/example_email"
         android:textColor="@color/white"
         android:textSize="20sp" />
 

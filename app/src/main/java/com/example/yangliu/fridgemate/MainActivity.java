@@ -22,11 +22,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
@@ -57,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -72,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentTransaction fragmentTransaction;
 
     public static FirebaseAuth mAuth;
+    @SuppressLint("StaticFieldLeak")
     public static FirebaseFirestore db;
     public static DocumentReference userDoc;
     public static FirebaseStorage storage;
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawLayout.addDrawerListener(mToggle);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         mToggle.syncState();
         NavigationView navigationView = findViewById(R.id.navigation_view);
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                                 .add(fridgeData)
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     public void onSuccess(DocumentReference documentReference) {
-                                        List<DocumentReference> fridges = new ArrayList<DocumentReference>();
+                                        List fridges = new ArrayList<DocumentReference>();
                                         if(userData.get("fridges") != null){
                                             fridges = (List)userData.get("fridges");
                                         }
@@ -277,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
 
         final String email = user.getEmail();
 
+        assert email != null;
         DocumentReference documentReference = db.collection("Users").document(email);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -312,8 +313,6 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.current_fridge:
                     // check if it's already in current_fridge
-                    Fragment f = getFragmentManager().findFragmentByTag("content");
-
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment(),"content");
                     fragmentTransaction.commit();

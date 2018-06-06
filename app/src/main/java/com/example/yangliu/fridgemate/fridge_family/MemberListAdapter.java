@@ -2,10 +2,7 @@ package com.example.yangliu.fridgemate.fridge_family;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,24 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
-import com.example.yangliu.fridgemate.Fridge;
 import com.example.yangliu.fridgemate.MainActivity;
 import com.example.yangliu.fridgemate.R;
 import com.example.yangliu.fridgemate.SaveSharedPreference;
-import com.example.yangliu.fridgemate.Fridge;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +29,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
 
-    class ItemViewHolder extends RecyclerView.ViewHolder {
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView imageView;
         private final TextView name,status,textMemberView;
@@ -59,11 +49,9 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private Context context;
     public List<DocumentReference> names;
 
-    private FirebaseUser user;
-    private FirebaseFirestore db;
     public DocumentReference fridgeDoc;
 
-    Animation animation;
+    private Animation animation;
 
     public MemberListAdapter(Context context) {
         this.context = context;
@@ -72,9 +60,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
 
-        names = new LinkedList<DocumentReference>();
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        db = FirebaseFirestore.getInstance();
+        names = new LinkedList<>();
     }
 
     public void syncMemberList(){
@@ -89,7 +75,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
     }
 
-    public void fetchMemberList(){
+    private void fetchMemberList(){
         fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(Task<DocumentSnapshot> task) {
                 final DocumentSnapshot fridgeData = task.getResult();
@@ -105,7 +91,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private static final int FOOTER_VIEW = 1;
     public class FooterViewHolder extends RecyclerView.ViewHolder {
-        public FooterViewHolder(final View itemView) {
+        FooterViewHolder(final View itemView) {
             super(itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -117,7 +103,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView;
         if (viewType == FOOTER_VIEW) {
             itemView = mInflater.inflate(R.layout.fridge_member_list_add_footer, parent, false);
@@ -137,7 +123,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return super.getItemViewType(position);
     }
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
 
         try {
             holder.itemView.startAnimation(animation);
@@ -160,7 +146,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 if (status != null && !status.equals("null"))
                                     iholder.status.setText('"' +status+'"');
                                 else
-                                    iholder.status.setText("No status yet!");
+                                    iholder.status.setText(R.string.example_status);
 
                                 // DATABASE set up user's image
                                 String image = String.valueOf(userData.get("profilePhoto"));
@@ -178,7 +164,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
                 else {
                     // Covers the case of data not being ready yet.
-                    iholder.name.setText("No user");
+                    iholder.name.setText(R.string.this_is_null);
                 }
             }
         }catch (Exception e){

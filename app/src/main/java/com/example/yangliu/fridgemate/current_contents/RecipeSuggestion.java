@@ -4,16 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +22,6 @@ import com.example.yangliu.fridgemate.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -141,19 +135,12 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
                         // add data to list adapter
                         recipeListAdapter.setItems(dataArr);
 
-                        //String title1 = data.getJSONObject(0).getString("title");
-                        //String url1 = data.getJSONObject(0).getString("href");
-
-                        //String title2 = data.getJSONObject(1).getString("title");
-                        //String url2 = data.getJSONObject(1).getString("href");
-                        //recipeText.setText(title1 + ": " + url1 + "\n" + title2 + ": " + url2);
-
                         JSONArray res = response.getJSONArray("Response");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     if (recipeListAdapter.getItemCount() == 0)
-                        textView.setText("Sorry. We couldn't find relavant recipe for you at the moment.");
+                        textView.setText(R.string.no_result);
                     else
                         textView.setText("");
 
@@ -163,7 +150,7 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
             @Override
             public void onFailure( int statusCode, Header[] headers, String res, Throwable t){
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                textView.setText("Server Error");
+                textView.setText(R.string.server_err);
 
             }
         });

@@ -1,8 +1,25 @@
 <resources>
+
+    <!-- Strings related to the whole app -->=
     <string name="app_name">FridgeMate</string>
     <string name="fridge_name">Fridge Name</string>
-    <string name="fridge_password">Password (optional)</string>
     <string name="forget_password">An link will be sent to reset your password.</string>
+    <string name="this_is_null">(none)</string>
+
+    <!-- Strings related to welcome screen-->
+    <string name="COOL">Presented By C.O.O.L</string>
+
+    <!-- Example General settings/slide menu/edit profile -->
+    <string name="profile_updated">"User profile updated."</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="username">username</string>
+    <string name="profile_img">profile_img</string>
+    <string name="status_hint">"This is my status"</string>
+    <string name="example_email">useremail@gmail.com</string>
+    <string name="hint_profile">profile_img</string>
+    <string name="no_password_needed">"no password needed for Google-linked accounts"</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -20,144 +37,72 @@
     <string name="error_login">The following email and password could not be validated.</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required.</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
     <string name="email_verification">An email containing a verification link has been sent.</string>
-    <string name="delete">DELETE</string>
     <string name="error_load_data">Your user data could not be verified. Please login again.</string>
-
-    <string name="action_settings">Settings</string>
     <string name="title_activity_create_account">Signup</string>
-    <string name="action_sign_in">Sign in or register</string>
 
-    <string name="hint_name">Item Name...</string>
-    <string name="hint_date">Item Expiration Date... </string>
+    <!-- Strings related to the fridge contents -->
+    <string name="hint_name">Item Name&#8230;</string>
+    <string name="hint_date">Item Expiration Date&#8230; </string>
     <string name="button_save">Save</string>
+    <string name="button_saving">(Saving. Please Wait)</string>
     <string name="empty_not_saved">Item not saved.</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="no_items">You have no items in this fridge!</string>
+    <string name="exp_date">Expiration Date:</string>
+    <string name="exp_bar">Expiration Bar:</string>
+    <string name="name">Name:</string>
+    <string name="no_exp">No Expiration</string>
+    <string name="fresh">Fresh</string>
+    <string name="expired">Expired</string>
+    <string name="one_day">1 Day</string>
+    <string name="hint_image">item_image</string>
 
 
-    <string name="menu_refresh">Refresh</string>
-    <!-- Strings related to Settings -->
-
-
+    <!-- Strings related to the whole fridge family-->
     <string name="create_fridge">Create Fridge Family</string>
     <string name="leave_fridge">Leave</string>
     <string name="rename_fridge">Rename</string>
-
-    <string name="fridge_setup_message">Setting up your very own fridge...</string>
+    <string name="fridge_setup_message">Setting up your very own fridge&#8230;</string>
     <string name="fridge_setup_complete">Complete! View your newly-created fridge in the "Dashboard" tab.</string>
     <string name="delete_fridge_warning">Warning: You are the only member in this Fridge Family. If you leave this fridge, it will be permanently deleted!</string>
     <string name="leave_fridge_warning">Are you sure you want to leave this fridge?</string>
     <string name="one_fridge_error">You can\'t leave your only fridge!</string>
-
     <string name="join_fridge_error">No such fridge ID could be found.</string>
     <string name="join_fridge_duplicate">You are already in this Fridge Family!</string>
     <string name="join_fridge_success">Successfully joined %1$s!</string>
-
     <string name="join_fridge_hint">Paste fridge ID here</string>
+    <string name="fridge_quote">If music must be the food of love, play on.</string>
+    <string name="join">Join</string>
+    <string name="create">Create</string>
+    <string name="paste_id_prompt">(Long clicking on fridge icon -> you can get your Fridge ID)</string>
+    <string name="invite">Invite</string>
+    <string name="mate_quote">My best friend is the one who brings out the best in me.\n</string>
+    <string name="quote_name">- Henry Ford</string>
+    <string name="type_id_prompt">Type ID here</string>
+    <string name="example_status">"Hey yall!"</string>
+    <string name="prompt_current_fridge">(Current Fridge ID)</string>
 
-
-    <string name="no_items">You have no items in this fridge!</string>
-
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-
-    <string name="profile_updated">"User profile updated."</string>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string-array name="list_preference_entries">
-        <item>Entry 1</item>
-        <item>Entry 2</item>
-        <item>Entry 3</item>
-    </string-array>
-
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string-array name="multi_select_list_preference_default_value" />
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="current_fridge">Fridge</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="shopping_list">Wishlist</string>
-
+    <!-- Strings related to the Quick Add-->
     <string name="itemName">item</string>
-
-    <string name="open">Open</string>
-    <string name="close">Close</string>
-
-    <string name="Add_to_wishlist">Edit your shopping list</string>
-
     <string name="ok">OK</string>
+    <string name="add_all">Add All</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Ocr dependencies cannot be downloaded due to low device storage</string>
-    <string name="ocr_header">Click &quot;Detect Text&quot; to detect text</string>
-    <string name="read_text">Detect Text</string>
-    <string name="auto_focus">Auto Focus</string>
-    <string name="use_flash">Use Flash</string>
-    <string name="ocr_success">Text read successfully</string>
-    <string name="ocr_failure">No text captured</string>
-    <string name="ocr_error">"Error reading text: %1$s"</string>
 
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="family">Family</string>
+    <!-- Strings related to the Recipe Suggestion-->
+    <string name="endorse">Powered By recipepuppy</string>
+    <string name="recipe_suggestion">Recommended Recipes</string>
+    <string name="loading">Loading recipes&#8230;</string>
+    <string name="no_result">Sorry. We couldn\'t find relavant recipe for you at the moment.</string>
+    <string name="server_err">Server Error</string>
+
+    <!-- Strings related to the shopping list-->
+    <string name="one">1</string>
+    <string name="add">ADD</string>
+    <string name="fridge_all">Fridge Them (0)</string>
+    <string name="amount">Amount:</string>
+    <string name="select">Select</string>
+
 </resources>

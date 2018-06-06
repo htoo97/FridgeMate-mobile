@@ -2,9 +2,7 @@ package com.example.yangliu.fridgemate.fridge_family;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -27,18 +25,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
 import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
 
 public class CreateFridgeActivity extends TitleWithButtonsActivity {
 
     private EditText fridgeName;
-    private EditText fridgePassword;
+//    private EditText fridgePassword;
     private Button createBtn;
 
-    private FirebaseAuth mAuth;
-    private FirebaseUser user;
     private FirebaseFirestore db;
 
     @Override
@@ -49,11 +44,13 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
         setBackArrow();
         setTitle("Create Fridge Family");
 
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
+        assert user != null;
         final String email = user.getEmail();
+        assert email != null;
         final DocumentReference userDoc = db.collection("Users").document(email);
 
 
@@ -98,7 +95,7 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 public void onSuccess(DocumentReference documentReference) {
                                     // Add newly-created fridge to user's list of fridges
-                                    List<DocumentReference> fridges = new ArrayList<DocumentReference>();
+                                    List fridges = new ArrayList<DocumentReference>();
                                     if (userData.get("fridges") != null) {
                                         fridges = (List) userData.get("fridges");
                                     }
@@ -112,6 +109,7 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                                     memberListAdapter.notifyDataSetChanged();
 
                                     // update firebase
+                                    assert fridges != null;
                                     fridges.add(documentReference);
                                     // Set as current fridge
                                     userDoc.update(
