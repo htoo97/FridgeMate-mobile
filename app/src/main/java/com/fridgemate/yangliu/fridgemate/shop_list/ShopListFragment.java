@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.shop_list;
+package com.fridgemate.yangliu.fridgemate.shop_list;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -17,10 +17,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.yangliu.fridgemate.MainActivity;
-import com.example.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.MainActivity;
+import com.fridgemate.yangliu.fridgemate.R;
 
-import static com.example.yangliu.fridgemate.MainActivity.shopListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.shopListAdapter;
 
 public class ShopListFragment extends Fragment {
 

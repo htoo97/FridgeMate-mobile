@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.current_contents;
+package com.fridgemate.yangliu.fridgemate.current_contents;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -28,10 +28,10 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.yangliu.fridgemate.FridgeItem;
-import com.example.yangliu.fridgemate.MainActivity;
-import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.current_contents.receipt_scan.OcrCaptureActivity;
+import com.fridgemate.yangliu.fridgemate.FridgeItem;
+import com.fridgemate.yangliu.fridgemate.MainActivity;
+import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan.OcrCaptureActivity;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -51,7 +51,7 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static com.example.yangliu.fridgemate.MainActivity.contentListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.contentListAdapter;
 
 public class ContentScrollingFragment extends Fragment implements FridgeItemTouchHelper.FridgeItemTouchHelpListener{
 
@@ -164,6 +164,12 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             MainActivity.contentSync = false;
         }
 
+        // notify user if the list is empty
+        if (contentListAdapter.getItemCount()==0)
+            empty_list_prompt.setVisibility(View.VISIBLE);
+        else
+            empty_list_prompt.setVisibility(View.INVISIBLE);
+
     }
 
     @Override
@@ -263,6 +269,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 //                }
 //            });
             snackbar.show();
+            swipeRefreshLayout.setEnabled(false);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
@@ -277,10 +284,11 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                                     storage.getReferenceFromUrl(uri).delete();
                                 // delete its info
                                 itemDoc.delete();
+
                             }
                         });
-
                     }
+                    swipeRefreshLayout.setEnabled(true);
                 }
             }, 2000);
 

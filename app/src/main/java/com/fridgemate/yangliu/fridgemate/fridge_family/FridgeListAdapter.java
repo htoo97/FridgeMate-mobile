@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.fridge_family;
+package com.fridgemate.yangliu.fridgemate.fridge_family;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +12,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.yangliu.fridgemate.Fridge;
-import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.SaveSharedPreference;
+import com.fridgemate.yangliu.fridgemate.Fridge;
+import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
 
 import java.util.List;
 

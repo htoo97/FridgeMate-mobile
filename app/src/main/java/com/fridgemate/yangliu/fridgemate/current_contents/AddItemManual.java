@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.current_contents;
+package com.fridgemate.yangliu.fridgemate.current_contents;
 
 import android.Manifest;
 import android.app.Activity;
@@ -29,7 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,7 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
+import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -101,31 +101,44 @@ public class AddItemManual extends TitleWithButtonsActivity {
             }
         });
 
-        final Calendar myCalendar = Calendar.getInstance();
-
         itemProfile.setDrawingCacheEnabled(true);
 
         // DATABASE receive item info by item id
         Intent intent = getIntent();
         final Bundle extras = intent.getExtras();
-        final String itemId = null;
+        String expDate = null;
         if (extras != null) {
             mEditNameView.setText(extras.getString("name"));
-            String expDate = extras.getString("expDate");
-            if (expDate != null && !expDate.equals("")) {
+            expDate = extras.getString("expDate");
+            if (expDate != null && expDate.length() == 10) {
                 mEditDate.setText(expDate);
                 updateProgressBar(expDate);
+
             }
             oldImageUri = extras.getString("image");
-            if (oldImageUri != null && !oldImageUri.equals("")) {
+            if (oldImageUri != null && !oldImageUri.equals("") && !oldImageUri.equals("null")) {
                 Glide.with(this).load(Uri.parse(oldImageUri)).centerCrop().into(itemProfile);
             }
         }
 
+        // date picker
+        final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+        final Calendar myCalendar = Calendar.getInstance();
+        if (expDate != null && expDate.length() == 10){
+            try {
+                myCalendar.setTime(sdf.parse(expDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                myCalendar.setTime(Calendar.getInstance().getTime());
+            }
+        }
+
+
+        // rotate image button
         mRotateImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ((oldImageUri != null && !oldImageUri.equals("")) || image != null) {
+                if ((oldImageUri != null && !oldImageUri.equals("") && !oldImageUri.equals("null")) || image != null) {
                     RotateAnimation rotate = new RotateAnimation(0, 90, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                     rotate.setDuration(300);
                     rotate.setInterpolator(new LinearInterpolator());
@@ -154,6 +167,11 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                     != PackageManager.PERMISSION_GRANTED) {
                                 requestPermissions(new String[]{Manifest.permission.CAMERA},
                                         MY_CAMERA_PERMISSION_CODE);
+                                if((checkSelfPermission(Manifest.permission.CAMERA)
+                                        == PackageManager.PERMISSION_GRANTED)){
+                                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                                }
                             } else {
                                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
@@ -195,7 +213,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                 itemData.put("lastModifiedDate", mdyFormat.format(myCalendar.getTime()));
                                 itemData.put("purchaseDate", mdyFormat.format(myCalendar.getTime()));
                                 itemData.put("lastModifiedBy", userDoc);
-                                itemData.put("fridge", userData.get("currentFridge"));
+//                                itemData.put("fridge", userData.get("currentFridge"));
 
                                 // ************** if it has new profile image **********************
                                 if (image != null) {
@@ -210,7 +228,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                     final StorageReference ref = storage.getReference().child(imageName);
                                     UploadTask uploadTask = ref.putBytes(imgToUpload);
 
-                                    final Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                         @Override
                                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                                             if (!task.isSuccessful()) {
@@ -230,7 +248,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                                 // ************** if we are editing an item **********************
                                                 if (extras != null){
                                                     // delete the old image on database if there's any
-                                                    if (oldImageUri != null && !oldImageUri.equals("")) {
+                                                    if (oldImageUri != null && !oldImageUri.equals("") && !oldImageUri.equals("null")) {
                                                         storage.getReferenceFromUrl(oldImageUri).delete();
                                                         oldImageUri = String.valueOf(downloadUri);
                                                     }
@@ -308,8 +326,6 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                String myFormat = "MM/dd/yyyy";
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                 String expDateStr = sdf.format(myCalendar.getTime());
                 mEditDate.setText(expDateStr);
                 updateProgressBar(expDateStr);
@@ -327,7 +343,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
     }
 
     private void updateProgressBar(String expDate){
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         Date strDate = null;
         if (expDate.length() != 0) {
             try {

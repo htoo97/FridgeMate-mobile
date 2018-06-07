@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.yangliu.fridgemate.current_contents.receipt_scan;
+package com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan;
 
 /*
  * Copyright (C) The Android Open Source Project
@@ -62,8 +62,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import java.text.SimpleDateFormat;
 
-import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
+import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.text.Text;

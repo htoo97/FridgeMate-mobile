@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.fridge_family;
+package com.fridgemate.yangliu.fridgemate.fridge_family;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.yangliu.fridgemate.MainActivity;
-import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
+import com.fridgemate.yangliu.fridgemate.MainActivity;
+import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;

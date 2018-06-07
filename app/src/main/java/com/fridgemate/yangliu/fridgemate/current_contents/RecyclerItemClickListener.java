@@ -1,11 +1,11 @@
-package com.example.yangliu.fridgemate.current_contents;
+package com.fridgemate.yangliu.fridgemate.current_contents;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.yangliu.fridgemate.fridge_family.FridgeFamilyFragment;
-import com.example.yangliu.fridgemate.shop_list.ShopListFragment;
+import com.fridgemate.yangliu.fridgemate.fridge_family.FridgeFamilyFragment;
+import com.fridgemate.yangliu.fridgemate.shop_list.ShopListFragment;
 
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
 

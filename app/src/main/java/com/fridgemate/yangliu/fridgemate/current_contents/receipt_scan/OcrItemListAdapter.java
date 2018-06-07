@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.current_contents.receipt_scan;
+package com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.R;
 
 import java.util.LinkedList;
 import java.util.List;

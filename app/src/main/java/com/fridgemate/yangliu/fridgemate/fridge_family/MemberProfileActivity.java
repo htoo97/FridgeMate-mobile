@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.fridge_family;
+package com.fridgemate.yangliu.fridgemate.fridge_family;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -11,8 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
+import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;

@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.fridge_family;
+package com.fridgemate.yangliu.fridgemate.fridge_family;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.yangliu.fridgemate.Fridge;
-import com.example.yangliu.fridgemate.MainActivity;
-import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.SaveSharedPreference;
-import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
+import com.fridgemate.yangliu.fridgemate.Fridge;
+import com.fridgemate.yangliu.fridgemate.MainActivity;
+import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
+import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
-import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.memberListAdapter;
 
 public class CreateFridgeActivity extends TitleWithButtonsActivity {
 

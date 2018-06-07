@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.current_contents;
+package com.fridgemate.yangliu.fridgemate.current_contents;
 
 import android.view.animation.Animation;
 import android.widget.ProgressBar;

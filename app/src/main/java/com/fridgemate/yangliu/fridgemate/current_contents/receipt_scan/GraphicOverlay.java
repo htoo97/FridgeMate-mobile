@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.yangliu.fridgemate.current_contents.receipt_scan;
+package com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan;
 
 import android.content.Context;
 import android.graphics.Canvas;

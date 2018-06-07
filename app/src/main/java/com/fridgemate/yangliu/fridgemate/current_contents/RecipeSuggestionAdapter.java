@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.current_contents;
+package com.fridgemate.yangliu.fridgemate.current_contents;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.R;
 
 import java.util.LinkedList;
 import java.util.List;

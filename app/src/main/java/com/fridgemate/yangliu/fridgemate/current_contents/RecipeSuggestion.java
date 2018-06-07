@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.current_contents;
+package com.fridgemate.yangliu.fridgemate.current_contents;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -14,10 +14,10 @@ import android.widget.Toast;
 
 import cz.msebera.android.httpclient.Header;
 
-import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
+import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.loopj.android.http.*;
 
-import com.example.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

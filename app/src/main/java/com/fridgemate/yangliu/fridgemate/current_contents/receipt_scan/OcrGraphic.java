@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.yangliu.fridgemate.current_contents.receipt_scan;
+package com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
-import com.example.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.R;
 import com.google.android.gms.vision.text.Line;
 import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;

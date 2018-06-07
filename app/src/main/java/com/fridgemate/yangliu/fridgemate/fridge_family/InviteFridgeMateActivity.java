@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.fridge_family;
+package com.fridgemate.yangliu.fridgemate.fridge_family;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,9 +7,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.yangliu.fridgemate.MainActivity;
-import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.TitleWithButtonsActivity;
+import com.fridgemate.yangliu.fridgemate.MainActivity;
+import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.memberListAdapter;
 
 public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
 

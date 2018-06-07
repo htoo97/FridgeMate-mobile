@@ -1,8 +1,6 @@
-package com.example.yangliu.fridgemate.fridge_family;
+package com.fridgemate.yangliu.fridgemate.fridge_family;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
+
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.ClipData;
@@ -13,7 +11,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -26,17 +23,18 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.yangliu.fridgemate.Fridge;
-import com.example.yangliu.fridgemate.MainActivity;
-import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.SaveSharedPreference;
-import com.example.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
+import com.fridgemate.yangliu.fridgemate.Fridge;
+import com.fridgemate.yangliu.fridgemate.MainActivity;
+import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
+import com.fridgemate.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -55,22 +53,20 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
-import static com.example.yangliu.fridgemate.MainActivity.fridgeDoc;
-import static com.example.yangliu.fridgemate.MainActivity.fridgeListAdapter;
-import static com.example.yangliu.fridgemate.MainActivity.memberListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.memberListAdapter;
 
 
 public class FridgeFamilyFragment extends Fragment {
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private View mProgressView;
+    protected static SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView mfridgeListView;
 
     private FirebaseUser user;
     private FirebaseFirestore db;
     private DocumentReference userDoc;
 
-    private int shortAnimTime;
 
     public FridgeFamilyFragment() { }
 
@@ -79,14 +75,9 @@ public class FridgeFamilyFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_fridge_family, container, false);
 
-        shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
         userDoc = setUpDatabase();
-
-        mProgressView = view.findViewById(R.id.load_fridge_progress);
-        ConstraintLayout constraintLayout = view.findViewById(R.id.cl);
 
         // fridge list set up
         mfridgeListView = (RecyclerView) view.findViewById(R.id.fridgeList);
@@ -96,7 +87,9 @@ public class FridgeFamilyFragment extends Fragment {
         mfridgeListView.setLayoutManager(MyLayoutManager);
         mfridgeListView.setAdapter(MainActivity.fridgeListAdapter);
         //  on item Click:: change current fridge
-        mfridgeListView.addOnItemTouchListener(new RecyclerItemClickListener(FridgeFamilyFragment.this, mfridgeListView, new RecyclerItemClickListener.OnItemClickListener() {
+        mfridgeListView.addOnItemTouchListener(
+                new RecyclerItemClickListener(FridgeFamilyFragment.this, mfridgeListView,
+                        new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 if (position == fridgeListAdapter.selectedItemPos)
@@ -120,10 +113,12 @@ public class FridgeFamilyFragment extends Fragment {
                             position < fridgeListAdapter.mFridges.size()) {
                         final DocumentReference newCurrentFridgeDoc = db.collection("Fridges")
                                 .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
+
                         MainActivity.fridgeDoc = newCurrentFridgeDoc;
                         memberListAdapter.fridgeDoc = newCurrentFridgeDoc;
                         memberListAdapter.syncMemberList();
                         userDoc.update("currentFridge", newCurrentFridgeDoc);
+
                     }
                 }
             }
@@ -207,7 +202,7 @@ public class FridgeFamilyFragment extends Fragment {
         mRecyclerMemberView.setAdapter(memberListAdapter);
 
         // set up entrance animation
-        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.bottom_up_layout);
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.fall_in_layout);
         mRecyclerMemberView.setLayoutAnimation(animation);
 
         // check someone's profile
@@ -481,12 +476,11 @@ public class FridgeFamilyFragment extends Fragment {
     }
 
     // sync fridge list
-    public void syncFridgeList(){
-        showProgress(true);
-        int currentFridge = SaveSharedPreference.getCurrentFridge(getContext());
+    public static void syncFridgeList(){
+        //  int currentFridge = SaveSharedPreference.getCurrentFridge(getContext());
         final List<Fridge> userFridges = new ArrayList<>();
 
-        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final DocumentSnapshot userData = task.getResult();
@@ -518,53 +512,12 @@ public class FridgeFamilyFragment extends Fragment {
                             });
                         }
                     }
-                    showProgress(false);
                 }
             }
         });
 
     }
 
-    // Cancel active tasks when fragment is detached
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        showProgress(false);
-    }
-
-    /**
-     * Hide fridge interface while loading fridges.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            mfridgeListView.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-            mfridgeListView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mfridgeListView.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mfridgeListView.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-        }
-    }
     // Set up database functions when app opened
     private DocumentReference setUpDatabase(){
         if (user == null){

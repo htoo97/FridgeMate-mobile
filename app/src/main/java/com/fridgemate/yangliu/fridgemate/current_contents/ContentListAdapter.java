@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.current_contents;
+package com.fridgemate.yangliu.fridgemate.current_contents;
 
 import android.content.Context;
 import android.net.Uri;
@@ -12,8 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.yangliu.fridgemate.FridgeItem;
-import com.example.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.FridgeItem;
+import com.fridgemate.yangliu.fridgemate.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -140,6 +140,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             else{
                 ProgressBarAnimation anim = new ProgressBarAnimation(holder.progressBar, 50, 100);
                 anim.setDuration(1000);
+                holder.freshDays.setText(R.string.fresh);
                 holder.progressBar.startAnimation(anim);
             }
         } else {

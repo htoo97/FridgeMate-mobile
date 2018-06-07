@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.fridge_family;
+package com.fridgemate.yangliu.fridgemate.fridge_family;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.yangliu.fridgemate.MainActivity;
-import com.example.yangliu.fridgemate.R;
-import com.example.yangliu.fridgemate.SaveSharedPreference;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.fridgemate.yangliu.fridgemate.MainActivity;
+import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
+import static com.fridgemate.yangliu.fridgemate.fridge_family.FridgeFamilyFragment.swipeRefreshLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -24,6 +28,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.LinkedList;
 import java.util.List;
+
+//import android.view.animation.AnimationUtils;
 
 public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -51,19 +57,28 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public DocumentReference fridgeDoc;
 
-    private Animation animation;
+    private final Animation fadeOutAnim;
+    private final Animation fadeInAnim;
+    //private Animation animation;
 
     public MemberListAdapter(Context context) {
         this.context = context;
         currentFridge = SaveSharedPreference.getCurrentFridge(context);
         mInflater = LayoutInflater.from(context);
 
-        animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+        fadeOutAnim = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+        fadeInAnim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+//        animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
 
         names = new LinkedList<>();
     }
 
     public void syncMemberList(){
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.startAnimation(fadeOutAnim);
+            swipeRefreshLayout.setVisibility(View.INVISIBLE);
+        }
         MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -85,6 +100,10 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     names = new LinkedList();
                 notifyDataSetChanged();
 
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.startAnimation(fadeInAnim);
+                    swipeRefreshLayout.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -126,7 +145,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
 
         try {
-            holder.itemView.startAnimation(animation);
+            // indivisual animation
             if (holder instanceof ItemViewHolder) {
                 final ItemViewHolder iholder = (ItemViewHolder) holder;
                 if (currentFridge != -1) {

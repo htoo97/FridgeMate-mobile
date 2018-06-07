@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.shop_list;
+package com.fridgemate.yangliu.fridgemate.shop_list;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,8 +12,8 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.yangliu.fridgemate.MainActivity;
-import com.example.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.MainActivity;
+import com.fridgemate.yangliu.fridgemate.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.yangliu.fridgemate.MainActivity.userDoc;
-import static com.example.yangliu.fridgemate.shop_list.ShopListFragment.addSelectedToFrdige;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.userDoc;
+import static com.fridgemate.yangliu.fridgemate.shop_list.ShopListFragment.addSelectedToFrdige;
 
 public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

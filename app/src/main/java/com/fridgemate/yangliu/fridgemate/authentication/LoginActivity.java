@@ -1,4 +1,4 @@
-package com.example.yangliu.fridgemate.authentication;
+package com.fridgemate.yangliu.fridgemate.authentication;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -21,8 +21,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.yangliu.fridgemate.MainActivity;
-import com.example.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.IntroActivity;
+import com.fridgemate.yangliu.fridgemate.MainActivity;
+import com.fridgemate.yangliu.fridgemate.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -187,7 +188,6 @@ public class LoginActivity extends AppCompatActivity {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
                 mGoogleBtn.setClickable(true);
-                // ...
             }
         }
     }
@@ -204,10 +204,18 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(i);
-                            finish();
-                            Toast.makeText(getApplicationContext(),"user login successfully", Toast.LENGTH_LONG).show();
+
+                            boolean firstTime = getPreferences(MODE_PRIVATE).getBoolean("Intro", true);
+                            if (firstTime) {
+                                runTutorial(); // here you do what you want to do - an activity tutorial in my case
+                                getPreferences(MODE_PRIVATE).edit().putBoolean("Intro", false).apply();
+                            }
+                            else {
+                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(i);
+                                finish();
+                                Toast.makeText(getApplicationContext(), "user login successfully", Toast.LENGTH_LONG).show();
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -218,6 +226,10 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    public void runTutorial(){
+        Intent tutorialIntent = new Intent(getApplicationContext(), IntroActivity.class);
+        startActivity(tutorialIntent);
+    }
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -284,9 +296,16 @@ public class LoginActivity extends AppCompatActivity {
                                 if (user!= null){
                                 // Only sign in if user's email is verified
                                 if (user.isEmailVerified()) {
-                                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(i);
-                                    finish();
+                                    boolean firstTime = getPreferences(MODE_PRIVATE).getBoolean("Intro", true);
+                                    if (firstTime) {
+                                        runTutorial(); // here you do what you want to do - an activity tutorial in my case
+                                        getPreferences(MODE_PRIVATE).edit().putBoolean("Intro", false).apply();
+                                    }
+                                    else{
+                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(i);
+                                        finish();
+                                    }
                                 } else {
                                     // Re-send account validation email if not verified
                                     user.sendEmailVerification();
