@@ -6,7 +6,7 @@
     <color name="windowBackground">#f3f4f2</color>
     <color name="colorPrimaryDark">#373a3b</color>
     <color name="colorAccent">#2ed4ee</color>
-    <color name="colorAccentTransparent">#9c176c79</color>
+    <color name="colorAccentTransparent">#9c135863</color>
     <color name="colorAccentLight">#ccf8fa</color>
     <color name="colorAccentLightTransparent">#42ccf3f9</color>
     <color name="colorDeaccent">#e1effcfc</color>
@@ -17,7 +17,7 @@
     <color name="white">#dcffffff</color>
     <color name="red">#D50F25</color>
     <color name="yellow">#EEB211</color>
-    <color name="green">#3df55c</color>
+    <color name="green">#13ef38</color>
     <color name="greenLight">#a342f26d</color>
     <color name="blue">#33a0e8</color>
 </resources>

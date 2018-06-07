@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "1083148255837-r26sukma5dnor3lup1hkh5shbtqnjcev.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yangliu.fridgemate",
+            "certificate_hash": "4ebc837f134d3359a77e8f9fb420eeced2188f43"
+          }
+        },
+        {
+          "client_id": "1083148255837-m2ctrdponsdkpfh1rhpgoku1qbd78mrr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yangliu.fridgemate",
+            "certificate_hash": "168cdd84a27ae21d0850f5b1a06eab20933e50bf"
+          }
+        },
+        {
           "client_id": "1083148255837-2lfd9jdtlq7nih6r6mhdjkfg0q4hf1mk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -29,6 +45,58 @@
             "package_name": "com.example.yangliu.fridgemate",
             "certificate_hash": "9e2f11271cd6e335b207cba6bf67e1ecd6743d51"
           }
+        },
+        {
+          "client_id": "1083148255837-f6of0jkhfq2idpkh5fv56b1rt6sr0t0g.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1083148255837-f6of0jkhfq2idpkh5fv56b1rt6sr0t0g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPBHjZFUsF6CLNMs4Vk0lhf2iKkrQwHAw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1083148255837-f6of0jkhfq2idpkh5fv56b1rt6sr0t0g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083148255837:android:cacf32feeb36ffe2",
+        "android_client_info": {
+          "package_name": "com.fridgemate.yangliu.fridgemate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1083148255837-u1ibavt7q5ubg3h6j1md7c7649kovudu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fridgemate.yangliu.fridgemate",
+            "certificate_hash": "ebd029409005ad7b85d0c522c89999dc91a2eef9"
+          }
+        },
+        {
+          "client_id": "1083148255837-f6of0jkhfq2idpkh5fv56b1rt6sr0t0g.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
           "client_id": "1083148255837-f6of0jkhfq2idpkh5fv56b1rt6sr0t0g.apps.googleusercontent.com",

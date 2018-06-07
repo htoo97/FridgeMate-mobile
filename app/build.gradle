@@ -1,13 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'fridgemateKey'
+            keyPassword '0o9i8u7y6t'
+            storeFile file('/Users/YangLiu/fridgemateKey')
+            storePassword '0o9i8u7y6t'
+        }
+    }
     useLibrary 'org.apache.http.legacy'
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.yangliu.fridgemate"
+        applicationId "com.fridgemate.yangliu.fridgemate"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 1
+        versionCode 3
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -15,9 +23,19 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
         }
     }
     buildToolsVersion '27.0.3'
+}
+
+repositories {
+    mavenCentral()
+    maven() {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 dependencies {
@@ -25,15 +43,19 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    // firebase
     implementation 'com.google.firebase:firebase-auth:15.1.0'
     implementation 'com.google.android.gms:play-services-vision:15.0.0'
     implementation 'com.google.firebase:firebase-database:15.0.1'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    // Lifecycle components
-    implementation "android.arch.lifecycle:extensions:$rootProject.archLifecycleVersion"
-    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.archLifecycleVersion"
+
+    // unit testing
+//    testImplementation 'junit:junit:4.12'
+//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+//    // Lifecycle components
+//    implementation "android.arch.lifecycle:extensions:$rootProject.archLifecycleVersion"
+//    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.archLifecycleVersion"
+    // card view
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
@@ -50,12 +72,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:16.0.0'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
     implementation 'com.loopj.android:android-async-http:1.4.9'
-
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
-
     // list animation
     implementation 'com.android.support:support-dynamic-animation:27.1.1'
-
+    // tutorial
+    implementation 'com.github.apl-devs:appintro:v4.2.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

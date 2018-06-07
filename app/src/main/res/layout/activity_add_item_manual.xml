@@ -43,8 +43,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:focusable="false"
+            android:inputType="date"
             android:clickable="true"
+            android:focusable="false"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-light"
             android:hint="@string/hint_date"
@@ -84,7 +85,8 @@
             android:orientation="horizontal"
             custom:layout_constraintEnd_toEndOf="parent"
             custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toTopOf="parent">
+            custom:layout_constraintTop_toTopOf="parent"
+            android:baselineAligned="false">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -96,6 +98,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="25dp"
+                    android:backgroundTint="@color/windowBackground"
+                    android:contentDescription="@string/this_is_null"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_camera_alt_black_24dp" />
 
@@ -104,7 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:contentDescription="item_image"
+                    android:contentDescription="@string/hint_image"
                     android:transitionName="item_image"
                     custom:border_width="1dp" />
 
@@ -116,27 +120,28 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:orientation="vertical"
+                android:paddingEnd="0dp"
                 android:paddingStart="10dp">
 
                 <TextView
                     android:id="@+id/textView4"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
+                    android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
+                    android:paddingEnd="0dp"
                     android:text="@string/name"
                     android:textAppearance="@style/TextAppearance.Design.Hint" />
 
                 <EditText
                     android:id="@+id/edit_word"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="textAutoComplete"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
                     android:hint="@string/hint_name"
+                    android:inputType="textAutoComplete"
                     android:textSize="18sp"
                     custom:layout_constraintTop_toBottomOf="@+id/linearLayout3"
                     tools:layout_editor_absoluteX="16dp" />
@@ -168,6 +173,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="16dp"
+        android:backgroundTint="@color/windowBackground"
         custom:srcCompat="@drawable/ic_rotate_right_black_24dp" />
 
 </LinearLayout>

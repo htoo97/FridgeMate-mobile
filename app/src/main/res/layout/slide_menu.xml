@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -22,10 +22,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:layout_marginTop="10dp"
         android:layout_weight="4"
         android:gravity="center"
         android:text="@string/example_email"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
+        android:textColor="@color/black"
+        android:textSize="24sp" />
 
 </LinearLayout>

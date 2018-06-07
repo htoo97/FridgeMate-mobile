@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.973" />
 
-    <com.example.yangliu.fridgemate.current_contents.receipt_scan.CameraSourcePreview
+    <com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="wrap_content"
         android:layout_height="444dp"
@@ -49,11 +49,11 @@
         app:layout_constraintTop_toBottomOf="@id/relativeLayout"
         app:layout_constraintVertical_bias="0.0">
 
-        <com.example.yangliu.fridgemate.current_contents.receipt_scan.GraphicOverlay
+        <com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan.GraphicOverlay
             android:id="@+id/graphicOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </com.example.yangliu.fridgemate.current_contents.receipt_scan.CameraSourcePreview>
+    </com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan.CameraSourcePreview>
 
 </android.support.constraint.ConstraintLayout>

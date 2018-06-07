@@ -5,10 +5,10 @@
 
             <gradient
                 android:angle="225"
-                android:endColor="@color/greenLight"
-                android:startColor="@color/colorAccentLightTransparent"
+                android:endColor="@color/colorAccent"
+                android:startColor="@color/greenLight"
                 android:type="linear" />
-
+            <!--android:centerColor="@color/greenLight"-->
         </shape>
     </item>
 </selector>

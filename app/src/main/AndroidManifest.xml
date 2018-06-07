@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.yangliu.fridgemate"
+    package="com.fridgemate.yangliu.fridgemate"
     android:installLocation="auto">
 
     <uses-feature android:name="android.hardware.camera" />
@@ -83,11 +83,13 @@
         <activity
             android:name=".authentication.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".TitleWithButtonsActivity"></activity>
+        <activity android:name=".TitleWithButtonsActivity"/>
         <activity
             android:name=".current_contents.RecipeSuggestion"
             android:screenOrientation="portrait" />
-        <activity android:name=".fridge_family.MemberProfileActivity"></activity>
+        <activity android:name=".fridge_family.MemberProfileActivity"/>
+        <activity android:name=".IntroActivity"
+            android:label="@string/app_intro" />
     </application>
 
 </manifest>
