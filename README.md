@@ -2,10 +2,7 @@
 ### Powered By C.O.O.L. (Chill Our Old Leftovers) - CSE 110 Spring 2018, UC San Diego
 FridgeMate is the essential companion app to the most common utility found in every modern household. It helps the user keep on top of items in the fridge and plan out meals to avoid waste. It enables easily managing a shared fridge by streamlining the food sharing experience without worrying about crossing boundaries. It can also suggest the clueless user recipes of what to do with the ingredients in the fridge. With these features, FridgeMate would enrich the household experience and help prevent the food wastage problem.
 
-The URL for the video artifact on Youtube: 
-```
-//TODO
-```
+[Video Artifact on Youtube](https://www.youtube.com/watch?v=sVyp0JFh-9U)
 
 Login to the firebase:
 ```
@@ -35,6 +32,15 @@ RAM     : >= 1 GB
 Size    : 21MB
 Version : Release 1.3
 ```
+
+## Known Bug(s)
+* If you click the “Deactivate account” button in the Edit Profile page, the app will prompt for a password confirmation, but will fail to deactivate even with the right password because the feature is yet to be implemented.
+
+## Troubleshooting
+* If any unexpected behavior occurs, try refreshing the app by swipe down to refresh. 
+* If the issue persists, delete the app from recents list and relaunch by following the How-to-run Instructions. 
+* For persistent crashes, try clearing the cache and data of the app by going to app info, and then relaunching.
+
 
 ## Name and Phones for Technical Points contact
 
