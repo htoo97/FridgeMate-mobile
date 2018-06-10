@@ -201,6 +201,8 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void syncItems(){
+        if (ShopListFragment.shopListRefresh != null)
+            ShopListFragment.shopListRefresh.setRefreshing(true);
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -223,6 +225,8 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 }
                                 notifyDataSetChanged();
                             }
+                            if (ShopListFragment.shopListRefresh != null)
+                                ShopListFragment.shopListRefresh.setRefreshing(false);
                         }
                     });
                     ShopListFragment.addSelectedToFrdige.setText(R.string.fridge_all);

@@ -213,8 +213,9 @@ public class FridgeFamilyFragment extends Fragment {
                 // if it is not the footer "add member" button
                 if (position != memberListAdapter.getItemCount() - 1) {
 
-
                     Intent intent = new Intent(view.getContext(), MemberProfileActivity.class);
+                    if (memberListAdapter.names.get(position) == null || memberListAdapter.names.get(position).get() == null)
+                        return;
                     intent.putExtra("memberId", memberListAdapter.names.get(position).getId());
                     // get image cache
                     Bitmap b = llm.findViewByPosition(position).findViewById(R.id.member_image).getDrawingCache();
@@ -243,49 +244,60 @@ public class FridgeFamilyFragment extends Fragment {
             public void onItemLongClick(View view, final int position) {
                 if (position != memberListAdapter.getItemCount() - 1) {
                     // if the position is not footer Nor yourself
+
                     final DocumentReference memberToBeDeleted = memberListAdapter.names.get(position);
-                    PopupMenu popup = new PopupMenu(Objects.requireNonNull(getContext()), view);
-                    popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem item) {
-                            // position is the index of the member (to be deleted)
-                            new AlertDialog.Builder(getContext())
-                                    .setTitle("Remove Member")
-                                    .setMessage("Are you sure to remove " + memberToBeDeleted.getId() + "?")
-                                    .setIcon(R.drawable.ic_dialog_alert_material)
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            // if you are removing yourself
-                                            if (memberListAdapter.names.get(position).getId().equals(userDoc.getId()))
-                                                leaveFridge(fridgeDoc);
-                                            else {
-                                                memberListAdapter.names.remove(position);
-                                                memberListAdapter.notifyDataSetChanged();
-                                                // remove user from the member's list
-                                                final DocumentReference selectedFridge = db.collection("Fridges")
-                                                        .document(fridgeListAdapter.mFridges.get(fridgeListAdapter.selectedItemPos).getFridgeid());
+
+                    // if member is something werid, not a document reference
+                    if (memberToBeDeleted == null){
+                        final DocumentReference selectedFridge = db.collection("Fridges")
+                                .document(fridgeListAdapter.mFridges.get(fridgeListAdapter.selectedItemPos).getFridgeid());
+                        memberListAdapter.names.remove(position);
+                        selectedFridge.update("members", memberListAdapter.names);
+                    }else {
+                        PopupMenu popup = new PopupMenu(Objects.requireNonNull(getContext()), view);
+                        popup.getMenuInflater().inflate(R.menu.menu_for_item, popup.getMenu());
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            public boolean onMenuItemClick(MenuItem item) {
+                                // position is the index of the member (to be deleted)
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("Remove Member")
+                                        .setMessage("Are you sure to remove " + memberToBeDeleted.getId() + "?")
+                                        .setIcon(R.drawable.ic_dialog_alert_material)
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                // if you are removing yourself
+                                                if (memberListAdapter.names.get(position).getId().equals(userDoc.getId()))
+                                                    leaveFridge(fridgeDoc);
+                                                else {
+                                                    memberListAdapter.names.remove(position);
+                                                    memberListAdapter.notifyDataSetChanged();
+                                                    // remove user from the member's list
+                                                    final DocumentReference selectedFridge = db.collection("Fridges")
+                                                            .document(fridgeListAdapter.mFridges.get(fridgeListAdapter.selectedItemPos).getFridgeid());
 
 
-                                                selectedFridge.update("members", memberListAdapter.names);
+                                                    selectedFridge.update("members", memberListAdapter.names);
 
-                                                // remove the fridge from the user
-                                                memberToBeDeleted.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                        List<DocumentReference> fridges = (List<DocumentReference>) task.getResult().get("fridges");
-                                                        fridges.remove(selectedFridge);
-                                                        memberToBeDeleted.update("fridges", fridges);
-                                                    }
-                                                });
+                                                    // remove the fridge from the user to be removed
+                                                    memberToBeDeleted.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                            List<DocumentReference> fridges = (List<DocumentReference>) task.getResult().get("fridges");
+                                                            if (fridges == null || fridges.size() == 0)
+                                                                return;
+                                                            fridges.remove(selectedFridge);
+                                                            memberToBeDeleted.update("fridges", fridges);
+                                                        }
+                                                    });
+                                                }
+
                                             }
-
-                                        }
-                                    }).setNegativeButton(android.R.string.no, null).show();
-                            return true;
-                        }
-                    });
-                    popup.show();
-
+                                        }).setNegativeButton(android.R.string.no, null).show();
+                                return true;
+                            }
+                        });
+                        popup.show();
+                    }
                 }
             }
         }));
@@ -298,7 +310,6 @@ public class FridgeFamilyFragment extends Fragment {
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
                 syncBothLists();
-                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -392,10 +403,13 @@ public class FridgeFamilyFragment extends Fragment {
                                                     @Override
                                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                         QuerySnapshot q = task.getResult();
-                                                        for (DocumentSnapshot dr : q.getDocuments()){
+                                                        for (DocumentSnapshot dr : q.getDocuments()) {
                                                             String imageUri = (String) dr.get("imageID");
                                                             if (imageUri != null && !imageUri.equals("") && !imageUri.equals("null"))
                                                                 MainActivity.storage.getReferenceFromUrl(imageUri).delete();
+
+                                                            // delete the fridge item document, not recommended
+                                                            dr.getReference().delete();
                                                         }
                                                         // just delete fridge from your data
                                                         fridge.delete();
@@ -509,6 +523,8 @@ public class FridgeFamilyFragment extends Fragment {
                                             fridgeListAdapter.selectedItemPos = userFridges.size() - 1;
                                         }
 
+                                        if (swipeRefreshLayout != null)
+                                            swipeRefreshLayout.setRefreshing(false);
                                     }
                                 }
                             });

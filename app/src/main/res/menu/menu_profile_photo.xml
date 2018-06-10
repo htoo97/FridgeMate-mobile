@@ -5,10 +5,12 @@
 
     <item
         android:id="@+id/camera"
+        android:icon="@drawable/ic_camera_alt_black_24dp"
         android:title="Take a photo"
         />
     <item
         android:id="@+id/local"
+        android:icon="@drawable/ic_recipe_icon"
         android:title="Choose a photo"
         />
 </menu>

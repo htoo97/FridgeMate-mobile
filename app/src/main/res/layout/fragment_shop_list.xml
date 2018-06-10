@@ -60,7 +60,7 @@
                 android:layout_toStartOf="@+id/ibn_add1"
                 android:gravity="center"
                 android:hint="@string/one"
-                android:inputType="number"
+                android:inputType="numberSigned"
                 android:text="@string/one"
                 android:textAlignment="center"
                 android:textAllCaps="false"

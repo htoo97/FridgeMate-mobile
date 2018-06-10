@@ -33,7 +33,9 @@
     <string name="status_hint">"This is my status"</string>
     <string name="example_email">useremail@gmail.com</string>
     <string name="hint_profile">profile_img</string>
-    <string name="no_password_needed">"no password needed for Google-linked accounts"</string>
+    <string name="enter_password">Please enter your password:</string>
+    <string name="no_password_needed">"Leave it empty for Google accounts"</string>
+    <string name="cant_deactivate">Deactivate Failed</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -80,7 +82,7 @@
     <string name="leave_fridge">Leave</string>
     <string name="rename_fridge">Rename</string>
     <string name="fridge_setup_message">Setting up your very own fridge&#8230;</string>
-    <string name="fridge_setup_complete">Complete! A new fridge is in the "Dashboard" tab. Swipe down to refresh.</string>
+    <string name="fridge_setup_complete">Swipe down to see your fridge just created.</string>
     <string name="delete_fridge_warning">Warning: You are the only member in this Fridge Family. If you leave this fridge, it will be permanently deleted!</string>
     <string name="leave_fridge_warning">Are you sure you want to leave this fridge?</string>
     <string name="one_fridge_error">You can\'t leave your only fridge!</string>
@@ -107,6 +109,7 @@
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Ocr dependencies cannot be downloaded due to low device storage</string>
+    <string name="ocr_guide">Tap to Add. Pinch/Stretch to zoom</string>
 
     <!-- Strings related to the Recipe Suggestion-->
     <string name="endorse">Powered By recipepuppy</string>

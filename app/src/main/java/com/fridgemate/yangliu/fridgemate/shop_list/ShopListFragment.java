@@ -24,7 +24,7 @@ import static com.fridgemate.yangliu.fridgemate.MainActivity.shopListAdapter;
 
 public class ShopListFragment extends Fragment {
 
-    private SwipeRefreshLayout swipeRefreshLayout;
+    public static SwipeRefreshLayout shopListRefresh;
 
     private EditText name;
     @SuppressLint("StaticFieldLeak")
@@ -48,7 +48,10 @@ public class ShopListFragment extends Fragment {
             public void onClick(View v) {
                 int temp = Integer.parseInt(amount.getText().toString());
                 temp += 1;
-                amount.setText(String.valueOf(temp));
+                if (temp>99)
+                    amount.setText("99");
+                else
+                    amount.setText(String.valueOf(temp));
             }
         });
         decQuantity.setOnClickListener(new View.OnClickListener() {
@@ -102,24 +105,20 @@ public class ShopListFragment extends Fragment {
             }
         });
 
-        swipeRefreshLayout = view.findViewById(R.id.swiperefresh);
-        swipeRefreshLayout.setEnabled(true);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        shopListRefresh = view.findViewById(R.id.swiperefresh);
+        shopListRefresh.setEnabled(true);
+        shopListRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
                 shopListAdapter.syncItems();
-                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
 
         // avoid abusive syncing
         if (MainActivity.shopListSync){
-            swipeRefreshLayout.setRefreshing(true);
             shopListAdapter.syncItems();
             MainActivity.shopListSync = false;
-            swipeRefreshLayout.setRefreshing(false);
         }
         else{
             MainActivity.showProgress(false);

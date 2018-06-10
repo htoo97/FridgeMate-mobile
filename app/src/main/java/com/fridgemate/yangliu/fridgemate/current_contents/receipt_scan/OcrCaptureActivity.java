@@ -46,6 +46,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
@@ -161,6 +162,8 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         addListToFridgeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (adapter.mData == null || adapter.mData.size() == 0)
+                    return;
                 addListToFridgeBtn.setClickable(false);
                 List<String> toBeAdded = adapter.mData;
                 for (final String s: toBeAdded){
@@ -212,10 +215,11 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(graphicOverlay, "Tap to Add. Pinch/Stretch to zoom",
-                Snackbar.LENGTH_LONG)
-                .show();
-
+        Snackbar snackbar = Snackbar.make(graphicOverlay, R.string.ocr_guide,
+                Snackbar.LENGTH_LONG);
+        View snackBarView = snackbar.getView();
+        snackBarView.setBackgroundResource(R.color.colorPrimary);
+        snackbar.show();
     }
 
     /**
@@ -244,10 +248,11 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
             }
         };
 
-        Snackbar.make(graphicOverlay, R.string.permission_camera_rationale,
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.ok, listener)
-                .show();
+        Snackbar snackbar = Snackbar.make(graphicOverlay, R.string.permission_camera_rationale,
+                Snackbar.LENGTH_INDEFINITE).setAction(R.string.ok, listener);
+        View snackBarView = snackbar.getView();
+        snackBarView.setBackgroundResource(R.color.colorPrimary);
+        snackbar.show();
     }
 
     @Override

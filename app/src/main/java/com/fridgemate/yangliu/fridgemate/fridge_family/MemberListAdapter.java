@@ -68,7 +68,6 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         fadeOutAnim = AnimationUtils.loadAnimation(context, R.anim.fade_out);
         fadeInAnim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
-//        animation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
 
         names = new LinkedList<>();
     }
@@ -85,6 +84,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     final DocumentSnapshot userData = task.getResult();
                     fridgeDoc = userData.getDocumentReference("currentFridge");
                     fetchMemberList();
+                    MainActivity.showProgress(false);
                 }
             }
         });

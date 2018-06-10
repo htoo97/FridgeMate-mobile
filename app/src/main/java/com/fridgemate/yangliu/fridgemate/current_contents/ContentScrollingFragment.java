@@ -126,7 +126,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
                 syncList();
-                swipeRefreshLayout.setRefreshing(false);
             }
         });
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,R.color.green);
@@ -162,6 +161,8 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             syncList();
             MainActivity.contentSync = false;
         }
+        else
+            MainActivity.showProgress(false);
 
         // notify user if the list is empty
         if (contentListAdapter.getItemCount()==0)
@@ -257,16 +258,8 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                     deletePermananetly[0] = false;
                 }
             });
-//            snackbar.setAction("MOVE To SHOPPING LIST", new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    // undo is selected, restore the deleted item
-//                    MainActivity.adapter.restore();
-//                    MainActivity.adapter.notifyDataSetChanged();
-//                    deletePermananetly[0] = false;
-//                    return;
-//                }
-//            });
+            View snackBarView = snackbar.getView();
+            snackBarView.setBackgroundResource(R.color.colorPrimary);
             snackbar.show();
             swipeRefreshLayout.setEnabled(false);
             Handler handler = new Handler();
@@ -298,9 +291,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK){
-            if (requestCode == EDIT_ITEM_ACTIVITY_REQUEST_CODE) {
-
-            }
             syncList();
         }
         else if (requestCode == RESULT_CANCELED){
@@ -337,6 +327,9 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                                 empty_list_prompt.setVisibility(View.VISIBLE);
                             else
                                 empty_list_prompt.setVisibility(View.INVISIBLE);
+                            MainActivity.showProgress(false);
+                            if (swipeRefreshLayout != null)
+                                swipeRefreshLayout.setRefreshing(false);
                         }
                     });}
             }

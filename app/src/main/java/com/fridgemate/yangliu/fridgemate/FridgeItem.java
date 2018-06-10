@@ -27,7 +27,7 @@ public class FridgeItem  implements Comparable<FridgeItem>{
         this.itemName = name;
         this.expDate = expDate;
         this.image = image;
-        docRef = ref;
+        this.docRef = ref;
     }
 
 
@@ -36,6 +36,7 @@ public class FridgeItem  implements Comparable<FridgeItem>{
         this.expDate = item.getExpDate();
         this.image = item.getImage();
         this.itemId= item.getItemId();
+        this.docRef = item.getDocRef();
     }
 
     public int getItemId() {

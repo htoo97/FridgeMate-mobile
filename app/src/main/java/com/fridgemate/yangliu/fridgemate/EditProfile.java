@@ -118,11 +118,12 @@ public class EditProfile extends TitleWithButtonsActivity {
         status = findViewById(R.id.status);
         profilePhoto = findViewById(R.id.profile_image);
         profilePhoto.setDrawingCacheEnabled(true);
-
         byte[] profileBytes = getIntent().getByteArrayExtra("photo");
         if (profileBytes != null && profileBytes.length > 1){
             profilePhoto.setImageBitmap(BitmapFactory.decodeByteArray(profileBytes, 0, profileBytes.length));
         }
+        else
+            profilePhoto.setImageDrawable(getResources().getDrawable(R.drawable.profile));
 
         TextView email = findViewById(R.id.email);
         name.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -310,11 +311,11 @@ public class EditProfile extends TitleWithButtonsActivity {
                 // DATABASE: deactivate user account
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(EditProfile.this);
-                builder.setTitle("Please enter your password again:");
+                builder.setTitle(R.string.enter_password);
+                builder.setMessage(R.string.no_password_needed);
 
                 // Set up the input
                 final EditText input = new EditText(EditProfile.this);
-                input.setText(R.string.no_password_needed);
                 LinearLayout linearLayout = new LinearLayout(EditProfile.this);
                 LinearLayout.LayoutParams layoutParams =
                         new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -329,102 +330,104 @@ public class EditProfile extends TitleWithButtonsActivity {
                 builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        pw[0] = input.getText().toString();
-
-                        AuthCredential credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()),pw[0]);
-                        // it means it's a google account
-                        if (credential == null)
-                            credential = GoogleAuthProvider.getCredential
-                                    (String.valueOf(user.getIdToken(true)), String.valueOf(mAuth.getAccessToken(true)));
-                        else {
-                            finish();
-                            Toast.makeText(EditProfile.this, "Deactivate Failed", Toast.LENGTH_SHORT).show();
-                        }
-                        // Get auth credentials from the user for re-authentication. The example below shows
-                        // email and password credentials but there are multiple possible providers,
-                        // such as GoogleAuthProvider or FacebookAuthProvider.
-                        // Prompt the user to re-provide their sign-in credentials
-                        user.reauthenticate(credential)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                DocumentSnapshot userData = task.getResult();
-
-                                                // delete user's profile image
-                                                if (userData.get("profilePhoto") != null) {
-                                                    String profilelUri = (String) Objects.requireNonNull(userData.get("profilePhoto"));
-                                                    if (profilelUri != null && !profilelUri.equals("") && !profilelUri.equals("null"))
-                                                        storage.getReferenceFromUrl(profilelUri).delete();
-                                                }
-
-                                                // delete (or update) user's fridges
-                                                List<DocumentReference> fridges = (List) userData.get("fridges");
-                                                assert fridges != null;
-                                                for(final DocumentReference ref : fridges){
-                                                    ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                        public void onComplete(Task<DocumentSnapshot> task) {
-                                                            if(task.isSuccessful()) {
-                                                                DocumentSnapshot fridgeData = task.getResult();
-                                                                List<DocumentReference> membersList = (List<DocumentReference>) fridgeData.get("members");
-                                                                assert membersList != null;
-                                                                for (DocumentReference member : membersList){
-                                                                    if (member == userDoc)
-                                                                        membersList.remove(member);
-                                                                }
-
-                                                                //delete the fridge if the user is the last one
-                                                                if (membersList.size() == 0){
-                                                                    // delete items' images in Storage
-                                                                    ref.collection("FridgeItems").get().addOnCompleteListener(
-                                                                            new OnCompleteListener<QuerySnapshot>() {
-                                                                                @Override
-                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                    List<DocumentSnapshot> itemSnapshots= task.getResult().getDocuments();
-                                                                                    for (DocumentSnapshot each: itemSnapshots){
-                                                                                        String uri = (String) each.get("imageID");
-                                                                                        if (uri != null && !uri.equals("") && !uri.equals("null")){
-                                                                                            storage.getReferenceFromUrl(uri).delete();
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                    );
-                                                                    // delete all info in this fridge
-                                                                    ref.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                            Toast.makeText(EditProfile.this, "ALl data have been deleted", Toast.LENGTH_LONG).show();
-                                                                            Intent intent = new Intent(EditProfile.this,LoginActivity.class);
-                                                                            startActivity(intent);
-                                                                        }
-                                                                    });
-                                                                }
-                                                                else{
-                                                                    ref.update("members",membersList);
-                                                                }
-                                                            }
-                                                        }
-                                                    });
-                                                }
-
-                                            }
-                                        });
-//                                        user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        pw[0] = input.getText().toString();
+//                        AuthCredential credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()), pw[0]);
+//                        if (pw[0].length() == 0)
+//                            credential = GoogleAuthProvider.getCredential
+//                                    (String.valueOf(user.getIdToken(true)), String.valueOf(mAuth.getAccessToken(true)));
+//                        // it means it's a google account
+////                        if (credential.getSignInMethod() = EMAIL_PASSWORD_SIGN_IN_METHOD)
+//                        else {
+//                            finish();
+//                            Toast.makeText(EditProfile.this, R.string.cant_deactivate, Toast.LENGTH_SHORT).show();
+//                        }
+//                        // Get auth credentials from the user for re-authentication. The example below shows
+//                        // email and password credentials but there are multiple possible providers,
+//                        // such as GoogleAuthProvider or FacebookAuthProvider.
+//                        // Prompt the user to re-provide their sign-in credentials
+//                        user.reauthenticate(credential)
+//                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Void> task) {
+//                                        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 //                                            @Override
-//                                            public void onComplete(@NonNull Task<Void> task) {
-//                                                if (task.isSuccessful()) {
-//                                                    Toast.makeText(EditProfile.this, "ALl data have been deleted", Toast.LENGTH_LONG).show();
-//                                                    Intent intent = new Intent(EditProfile.this,LoginActivity.class);
-//                                                    startActivity(intent);
+//                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                                if (!task.isSuccessful()){
+//                                                    Toast.makeText(EditProfile.this, R.string.cant_deactivate, Toast.LENGTH_SHORT).show();
 //                                                }
+//
+//                                                DocumentSnapshot userData = task.getResult();
+//                                                // delete user's profile image
+//                                                if (userData.get("profilePhoto") != null) {
+//                                                    String profilelUri = (String) Objects.requireNonNull(userData.get("profilePhoto"));
+//                                                    if (profilelUri != null && !profilelUri.equals("") && !profilelUri.equals("null"))
+//                                                        storage.getReferenceFromUrl(profilelUri).delete();
+//                                                }
+//
+//                                                // delete (or update) user's fridges
+//                                                List<DocumentReference> fridges = (List) userData.get("fridges");
+//                                                assert fridges != null;
+//                                                for(final DocumentReference eachFridge : fridges){
+//                                                    eachFridge.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                                                        public void onComplete(Task<DocumentSnapshot> task) {
+//                                                            if(task.isSuccessful()) {
+//                                                                DocumentSnapshot fridgeData = task.getResult();
+//                                                                List<DocumentReference> membersList = (List<DocumentReference>) fridgeData.get("members");
+//                                                                assert membersList != null;
+//                                                                for (DocumentReference member : membersList){
+//                                                                    if (member == userDoc)
+//                                                                        membersList.remove(member);
+//                                                                }
+//
+//                                                                //delete the fridge if the user is the last one
+//                                                                if (membersList.size() == 0){
+//                                                                    // delete items' images in Storage
+//                                                                    eachFridge.collection("FridgeItems").get().addOnCompleteListener(
+//                                                                            new OnCompleteListener<QuerySnapshot>() {
+//                                                                                @Override
+//                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                                                                    List<DocumentSnapshot> itemSnapshots= task.getResult().getDocuments();
+//                                                                                    for (DocumentSnapshot each: itemSnapshots){
+//                                                                                        String uri = (String) each.get("imageID");
+//                                                                                        if (uri != null && !uri.equals("") && !uri.equals("null")){
+//                                                                                            storage.getReferenceFromUrl(uri).delete();
+//                                                                                        }
+//                                                                                    }
+//                                                                                }
+//                                                                            }
+//                                                                    );
+//                                                                    // delete all info in this fridge
+//                                                                    eachFridge.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                                        @Override
+//                                                                        public void onComplete(@NonNull Task<Void> task) {
+//                                                                            Toast.makeText(EditProfile.this, "ALl data have been deleted", Toast.LENGTH_LONG).show();
+//                                                                            Intent intent = new Intent(EditProfile.this,LoginActivity.class);
+//                                                                            startActivity(intent);
+//                                                                        }
+//                                                                    });
+//                                                                }
+//                                                                else{
+//                                                                    eachFridge.update("members",membersList);
+//                                                                }
+//                                                            }
+//                                                        }
+//                                                    });
+//                                                }
+//                                                user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                    @Override
+//                                                    public void onComplete(@NonNull Task<Void> task) {
+//                                                        if (task.isSuccessful()) {
+//                                                            Toast.makeText(EditProfile.this, "ALl data have been deleted", Toast.LENGTH_LONG).show();
+//                                                            Intent intent = new Intent(EditProfile.this,LoginActivity.class);
+//                                                            startActivity(intent);
+//                                                        }
+//                                                    }
+//                                                });
+//
 //                                            }
 //                                        });
-
-                                    }
-                                });
+//                                    }
+//                                });
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

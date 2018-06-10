@@ -47,6 +47,8 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
         byte[] profileBytes =  getIntent().getByteArrayExtra("photo");
         if (profileBytes != null && profileBytes.length > 1){
             profilePhoto.setImageBitmap(BitmapFactory.decodeByteArray(profileBytes, 0, profileBytes.length));
+        }else {
+            profilePhoto.setImageDrawable(getResources().getDrawable(R.drawable.profile));
         }
         profilePhoto.setClickable(false);
         status = findViewById(R.id.status);
@@ -70,6 +72,11 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot memberData = task.getResult();
                 String emailStr = String.valueOf(memberData.get("email"));
+                if (emailStr.equals("null")) {
+                    Toast.makeText(MemberProfileActivity.this, "No such user exist", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
                 email.setText(emailStr);
                 String imgUri = String.valueOf(memberData.get("profilePhoto"));
                 if (imgUri != null && !imgUri.equals("null") && !imgUri.equals(""))

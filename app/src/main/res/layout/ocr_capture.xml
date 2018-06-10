@@ -33,15 +33,14 @@
         android:text="@string/add_all"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.973" />
+        app:layout_constraintVertical_bias="0.929" />
 
     <com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="wrap_content"
-        android:layout_height="444dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

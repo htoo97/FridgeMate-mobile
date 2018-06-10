@@ -90,7 +90,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
-        if (mItemsOnDisplay != null) {
+        if (mItemsOnDisplay != null && mItemsOnDisplay.size() != 0) {
             FridgeItem current = mItemsOnDisplay.get(position);
 
             // set date
@@ -106,7 +106,6 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
                         .into(holder.itemImageView);
 
             } else{
-                // avoic using Glide cache issue
                 holder.itemImageView.setImageResource(R.color.white);
             }
             // set name
@@ -165,9 +164,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     public void remove(int position){
         lastremoved = mItemsOnDisplay.get(position);
         // locate the item in the original list (if removing when searching)
-        int index = mItems.indexOf(lastremoved);
         mItemsOnDisplay.remove(position);
-        //mItems.remove(index);
         notifyDataSetChanged();
     }
 

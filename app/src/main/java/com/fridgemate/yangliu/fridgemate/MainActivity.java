@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawLayout;
     private ActionBarDrawerToggle mToggle;
     public static ProgressBar loadProgress;
-    NavigationView navigationView;
     FragmentTransaction fragmentTransaction;
 
     public static FirebaseAuth mAuth;
@@ -179,6 +178,8 @@ public class MainActivity extends AppCompatActivity {
                     if (profileUri != null && !profileUri.equals("null")){
                         Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
                     }
+                    else
+                        profileImg.setImageDrawable(getResources().getDrawable(R.drawable.profile));
 
                     // only allow user to change tab after syncing
                     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -211,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         final Map<String, Object> itemData = new HashMap<>();
                                         // capitalize name
-                                        itemData.put("itemName", "Cobb Salad");
+                                        itemData.put("itemName", "Carrot");
                                         itemData.put("expirationDate", "06/30/2018");
 
                                         fridges.add(fridgeDoc);
@@ -271,8 +272,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.profile_settings:
                         intent = new Intent(MainActivity.this, EditProfile.class);
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, findViewById(R.id.profile_image), "profile_img");
-                        startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE, options.toBundle());
+                        startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE);
                         return true;
                     case R.id.setting:
                         intent = new Intent(MainActivity.this, Setting.class);
@@ -370,21 +370,21 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment(),"content");
                     fragmentTransaction.commit();
                     mToolbar.setTitle(R.string.contents);
-                    break;
+                    return true;
                 case R.id.navigation_dashboard:
                     mToolbar.setElevation(0);
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new FridgeFamilyFragment(),"family");
                     fragmentTransaction.commit();
                     mToolbar.setTitle(R.string.family);
-                    break;
+                    return true;
                 case R.id.shopping_list:
                     mToolbar.setElevation(0);
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ShopListFragment(),"wishlist");
                     fragmentTransaction.commit();
                     mToolbar.setTitle(R.string.shoplist);
-                    break;
+                    return true;
             }
             return false;
         }
