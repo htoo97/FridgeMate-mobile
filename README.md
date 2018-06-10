@@ -1,5 +1,5 @@
 # FridgeMate
-# Powered By C.O.O.L. (Chill Our Old Leftovers) - CSE 110 Spring 2018, UC San Diego
+### Powered By C.O.O.L. (Chill Our Old Leftovers) - CSE 110 Spring 2018, UC San Diego
 
 The URL for the video artifact on Youtube: 
 ```
@@ -26,7 +26,7 @@ Password : nicefridge
 Installation:
 Download on [Play Store](https://play.google.com/store/apps/details?id=com.fridgemate.yangliu.fridgemate). Compatible with Android phones with version 5.0 or above.
 
-# Name and Phones for Technical Points contact
+## Name and Phones for Technical Points contact
 
 User Authentication, Fridge Contents: 
 ```
