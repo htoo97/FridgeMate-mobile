@@ -23,10 +23,8 @@ User 3   : freshfoodcool@gmail.com (New User - to be used for account creation t
 Password : nicefridge
 ```
 
-Installation instructions:
-```
-Download on [Play Store](https://play.google.com/store/apps/details?id=com.fridgemate.yangliu.fridgemate). COmpatible with Android phones with version 5.0 or above.
-```
+Installation:
+Download on [Play Store](https://play.google.com/store/apps/details?id=com.fridgemate.yangliu.fridgemate). Compatible with Android phones with version 5.0 or above.
 
 # Name and Phones for Technical Points contact
 
