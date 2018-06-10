@@ -30,39 +30,39 @@ Requirements:
 System  : Android 5.0+, connected to WiFi, Google Services Framework installed
 RAM     : >= 1 GB
 Size    : 21MB
-Version : Release 1.3
+Version : Release 1.6
 ```
 
 ## Known Bug(s)
 * If you click the “Deactivate account” button in the Edit Profile page, the app will prompt for a password confirmation, but will fail to deactivate even with the right password because the feature is yet to be implemented.
 
 ## Troubleshooting
-* If any unexpected behavior occurs, try refreshing the app by swipe down to refresh. 
-* If the issue persists, delete the app from recents list and relaunch by following the How-to-run Instructions. 
+* If any unexpected behavior occurs, try refreshing the app by swipe down to refresh.
+* If the issue persists, delete the app from recents list and relaunch by following the How-to-run Instructions.
 * For persistent crashes, try clearing the cache and data of the app by going to app info, and then relaunching.
 
 
 ## Name and Phones for Technical Points contact
 
-User Authentication, Fridge Contents: 
+User Authentication, Fridge Contents:
 ```
 Yang Liu
 (919) 909-1455
 ```
 
-OCR Receipt Recognition: 
+Quick Add, OCR Receipt Recognition:
 ```
 Bingjie (Helen) Zhou
 (858) 247-8903
 ```
 
-Fridge Families, General Firebase: 
+Fridge Families, General Firebase:
 ```
 Coleen Wu
 (626) 466-7370
 ```
 
-Recipe Suggestion: 
+Recipe Suggestion:
 ```
 Cameron Gropp
 (661) 803-5530
