@@ -23,7 +23,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
@@ -95,7 +94,7 @@ public class FridgeFamilyFragment extends Fragment {
                 if (position == fridgeListAdapter.selectedItemPos)
                     return;
                 // only when it is not the adding-member footer
-                if (position != fridgeListAdapter.getItemCount()) {
+                if (position != fridgeListAdapter.getItemCount() - 1) {
                     // change focus color
                     int oldSelectedPos = fridgeListAdapter.selectedItemPos;
                     fridgeListAdapter.selectedItemPos = position;
@@ -137,7 +136,7 @@ public class FridgeFamilyFragment extends Fragment {
                             switch (item.getItemId()) {
                                 case R.id.leave_fridge:
                                     if(fridgeListAdapter.getItemCount() == 2){
-                                        Toast.makeText(getContext(), "@string/one_fridge_error", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), R.string.one_fridge_error, Toast.LENGTH_SHORT).show();
                                         return false;
                                     }
 
@@ -312,10 +311,13 @@ public class FridgeFamilyFragment extends Fragment {
                 syncBothLists();
             MainActivity.familySync = false;
         }
+        else
+            MainActivity.showProgress(false);
+
         return view;
     }
 
-    private void createFirstFridge(){
+    private void setupFirstFridge(){
         // Create fridge if user has no fridges
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(Task<DocumentSnapshot> task) {
@@ -550,7 +552,7 @@ public class FridgeFamilyFragment extends Fragment {
         });
 
         userDoc = documentReference;
-        createFirstFridge();
+        setupFirstFridge();
         return documentReference;
     }
 }

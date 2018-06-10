@@ -5,9 +5,11 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -58,12 +60,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static long shortAnimTime;
     private Toolbar mToolbar;
     private CircleImageView profileImg;
     private TextView name;
     private DrawerLayout mDrawLayout;
     private ActionBarDrawerToggle mToggle;
-    public ProgressBar loadProgress;
+    public static ProgressBar loadProgress;
     NavigationView navigationView;
     FragmentTransaction fragmentTransaction;
 
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     public static DocumentReference fridgeDoc;
 
     public static final int PROFILE_EDIT_REQUEST_CODE = 4;
+    public static final int THEME_CHANGE_REQUEST_CODE = 3;
 
     public static ContentListAdapter contentListAdapter = null;
     public static MemberListAdapter memberListAdapter;
@@ -88,13 +92,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // set theme
+        if (SaveSharedPreference.getTheme(this) == false)
+            setTheme(R.style.AppTheme);
+        else
+            setTheme(R.style.AppTheme2);
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-        setTitle("FridgeMate");
+        setTitle(R.string.contents);
 
         // progress spinning bar set up
         loadProgress = findViewById(R.id.spin_progress);
+        shortAnimTime = MainActivity.this.getResources().getInteger(android.R.integer.config_shortAnimTime);
         showProgress(true);
         // these are the indicator: true for needed to sync
         // allow first time sync when user enters the app
@@ -154,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                     fridgeDoc = userData.getDocumentReference("currentFridge");
                     // finish database connection set up:
 
-                    // entrace
+                    // entrance
                     View view = findViewById(R.id.main_container);
                     Animation mLoadAnimation = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
                     mLoadAnimation.setDuration(800);
@@ -163,12 +172,7 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
                     fragmentTransaction.commit();
-                    showProgress(false);
 
-                    // sync lists when entering the app for better transitions
-                    memberListAdapter.syncMemberList();
-                    FridgeFamilyFragment.syncFridgeList();
-                    familySync = false;
 
                     // load user profile image
                     String profileUri = (String) task.getResult().get("profilePhoto");
@@ -178,6 +182,8 @@ public class MainActivity extends AppCompatActivity {
 
                     // only allow user to change tab after syncing
                     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+                    // cancel progressbar
+                    showProgress(false);
 
                     // create the first fridge if necessary
                     // Create fridge if user has no fridges
@@ -192,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
                         members.add(userDoc);
                         fridgeData.put("members", members);
 
+                        contentSync = false;
 
                         db.collection("Fridges")
                                 .add(fridgeData)
@@ -212,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                                                 .add(itemData)
                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                     public void onSuccess(DocumentReference documentReference) {
-                                                        finish();
+                                                        //finish();
                                                     }
                                                 });
 
@@ -228,6 +235,12 @@ public class MainActivity extends AppCompatActivity {
                                                 });
                                     }
                                 });
+                    }
+                    else{
+                        // sync lists when entering the app for better transitions
+                        memberListAdapter.syncMemberList();
+                        FridgeFamilyFragment.syncFridgeList();
+                        familySync = false;
                     }
                 }
             }
@@ -254,12 +267,28 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("RestrictedApi")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+                Intent intent;
                 switch (item.getItemId()) {
                     case R.id.profile_settings:
-                        Intent intent = new Intent(MainActivity.this, EditProfile.class);
+                        intent = new Intent(MainActivity.this, EditProfile.class);
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, findViewById(R.id.profile_image), "profile_img");
                         startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE, options.toBundle());
+                        return true;
+                    case R.id.setting:
+                        intent = new Intent(MainActivity.this, Setting.class);
+                        startActivityForResult(intent,THEME_CHANGE_REQUEST_CODE);
+                        return true;
+                    case R.id.feedback:
+                        Intent i = new Intent(Intent.ACTION_SEND);
+                        i.setType("message/rfc822");
+                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"fridgematehelp@gmail.com"});
+                        i.putExtra(Intent.EXTRA_SUBJECT, "Hi, about FridgeMate... ");
+                        i.putExtra(Intent.EXTRA_TEXT   , "");
+                        try {
+                            startActivity(Intent.createChooser(i, "Send mail..."));
+                        } catch (android.content.ActivityNotFoundException ex) {
+                            Toast.makeText(MainActivity.this, R.string.cantemail, Toast.LENGTH_SHORT).show();
+                        }
                         return true;
                     case R.id.log_out:
                         // Sign out user from database and go back to signin screen
@@ -327,27 +356,35 @@ public class MainActivity extends AppCompatActivity {
             Animation mLoadAnimation = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
             mLoadAnimation.setDuration(800);
             view.startAnimation(mLoadAnimation);
+            showProgress(true);
+            // check internet connection
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm.getActiveNetworkInfo() == null)
+                Toast.makeText(MainActivity.this, R.string.connecting, Toast.LENGTH_SHORT).show();
+
             switch (item.getItemId()) {
                 case R.id.current_fridge:
+                    mToolbar.setElevation(2);
                     // check if it's already in current_fridge
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment(),"content");
                     fragmentTransaction.commit();
-                    mToolbar.setTitle("Current Contents");
-
-                    return true;
+                    mToolbar.setTitle(R.string.contents);
+                    break;
                 case R.id.navigation_dashboard:
+                    mToolbar.setElevation(0);
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new FridgeFamilyFragment(),"family");
                     fragmentTransaction.commit();
-                    mToolbar.setTitle("Fridge Family");
-                    return true;
+                    mToolbar.setTitle(R.string.family);
+                    break;
                 case R.id.shopping_list:
+                    mToolbar.setElevation(0);
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ShopListFragment(),"wishlist");
                     fragmentTransaction.commit();
-                    mToolbar.setTitle("Shopping List");
-                    return true;
+                    mToolbar.setTitle(R.string.shoplist);
+                    break;
             }
             return false;
         }
@@ -356,7 +393,6 @@ public class MainActivity extends AppCompatActivity {
     // Open/close the slide menu by clicking action button onthe tool bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (this.mDrawLayout.isDrawerOpen(GravityCompat.START)) {
@@ -400,19 +436,22 @@ public class MainActivity extends AppCompatActivity {
                 name.setText(user.getDisplayName());
             }
 
+        }else if (requestCode == THEME_CHANGE_REQUEST_CODE){
+                recreate();
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     /**
      * Shows the progress UI and hides the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public void showProgress(final boolean show) {
+    public static void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             loadProgress.setVisibility(show ? View.GONE : View.VISIBLE);
             loadProgress.animate().setDuration(shortAnimTime).alpha(

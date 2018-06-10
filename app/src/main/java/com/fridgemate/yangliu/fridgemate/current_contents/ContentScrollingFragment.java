@@ -89,7 +89,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
         // Connect list to its adapter
         recyclerView.setAdapter(contentListAdapter);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         // set up fall in animation

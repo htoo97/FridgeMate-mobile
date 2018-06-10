@@ -5,18 +5,15 @@
     android:id="@+id/one_item_frame"
     android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:layout_marginBottom="5dp"
     android:layout_marginEnd="15dp"
-    android:layout_marginLeft="15dp"
-    android:layout_marginRight="15dp"
     android:layout_marginStart="15dp"
-    android:layout_marginTop="5dp"
+    android:layout_marginTop="10dp"
     android:background="@drawable/round_ghost_add_rectangle">
 
     <ImageView
-        android:contentDescription="@string/this_is_null"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/this_is_null"
         app:srcCompat="@drawable/ic_add_gray_24dp" />
 
 </FrameLayout>

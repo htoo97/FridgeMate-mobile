@@ -152,14 +152,19 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                     // set up each member
                     // set name
-                    final String name = names.get(position).getId();
-                    iholder.name.setText(name);
+                    String name = names.get(position).getId();
+                    // parse away @ part and capitalize string
+                    if (name.length() != 0 && name.indexOf("@") != -1)
+                        name = name.substring(0,1).toUpperCase() + name.substring(1,name.indexOf("@"));
+                    final String finalName = name;
+                    iholder.name.setText(finalName);
                     names.get(position).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if(task.isSuccessful()) {
                                 DocumentSnapshot userData = task.getResult();
 
+                                // if user has a nickname set nickname
                                 String nickname = String.valueOf(userData.get("name"));
                                 if (nickname != null && !nickname.equals("null"))
                                     iholder.name.setText(nickname);
@@ -167,7 +172,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 // set up user's status
                                 String status = String.valueOf(userData.get("status"));
                                 if (status != null && !status.equals("null"))
-                                    iholder.status.setText('"' +status+'"');
+                                    iholder.status.setText(status);
                                 else
                                     iholder.status.setText(R.string.example_status);
 
@@ -177,8 +182,12 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     Glide.with(context).load(Uri.parse(image)).centerCrop().into(iholder.imageView);
                                 }
                                 else {
+                                    // no profile image
                                     iholder.imageView.setImageResource(0);
-                                    iholder.textMemberView.setText(String.valueOf(name.charAt(0)).toUpperCase());
+                                    if (nickname != null && !nickname.equals("null"))
+                                        iholder.textMemberView.setText(String.valueOf(nickname.charAt(0)).toUpperCase());
+                                    else
+                                        iholder.textMemberView.setText(String.valueOf(finalName.charAt(0)).toUpperCase());
                                 }
                             }
                         }

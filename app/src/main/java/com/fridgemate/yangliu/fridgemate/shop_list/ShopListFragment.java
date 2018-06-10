@@ -121,6 +121,11 @@ public class ShopListFragment extends Fragment {
             MainActivity.shopListSync = false;
             swipeRefreshLayout.setRefreshing(false);
         }
+        else{
+            MainActivity.showProgress(false);
+        }
+
+
         return view;
     }
 

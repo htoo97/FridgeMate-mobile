@@ -311,6 +311,7 @@ public class LoginActivity extends AppCompatActivity {
                                     user.sendEmailVerification();
                                     Toast.makeText(getApplication(), R.string.error_email_not_validated,
                                             Toast.LENGTH_LONG).show();
+                                    mEmailSignInButton.setClickable(true);
                                 }
                                 }
 

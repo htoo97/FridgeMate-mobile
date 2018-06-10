@@ -11,7 +11,7 @@
         android:id="@+id/content_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/windowBackground"
+        android:background="?android:toolbarStyle"
         android:elevation="2dp"
         android:isScrollContainer="true"
         android:orientation="vertical"
@@ -23,15 +23,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:backgroundTint="@color/windowBackground"
+            android:backgroundTint="?android:toolbarStyle"
             android:gravity="start|center_vertical"
             android:hint="@string/hint_name"
             android:inputType="text"
-            android:paddingStart="5dip"
             android:paddingEnd="0dp"
+            android:paddingStart="5dip"
             android:singleLine="true"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -44,10 +44,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:contentDescription="@string/this_is_null"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/ic_add_24dp"
+                android:background="@drawable/ic_add_gray_24dp"
+                android:contentDescription="@string/this_is_null"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/et_content2"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,30 +56,31 @@
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="36dp"
                 android:layout_toStartOf="@+id/ibn_add1"
                 android:gravity="center"
+                android:hint="@string/one"
                 android:inputType="number"
                 android:text="@string/one"
-                android:hint="@string/one"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@android:color/black"
                 android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/ibn_del1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/ibn_del1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/this_is_null"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
                 android:background="@drawable/ic_remove_black_24dp"
+                android:contentDescription="@string/this_is_null"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/et_content2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -90,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:text="@string/add"
-                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -123,16 +124,17 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorBad" />
+        android:background="?android:listDivider" />
 
     <Button
         android:id="@+id/add_selected_to_fridge"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/windowBackground"
-        android:elevation="2dp"
-        android:text="@string/fridge_all"
-        android:textColor="@color/black" />
+        android:background="?android:toolbarStyle"
+        android:clickable="true"
+        android:elevation="1dp"
+        android:focusable="false"
+        android:text="@string/fridge_all" />
 
 </LinearLayout>

@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!--<color name="colorPrimary">#fcfdfa</color>-->
+    <color name="colorPrimaryDark">#2e3131</color>
+    <color name="icon">#2e3131</color>
     <color name="colorPrimary">#8c9497</color>
-    <color name="colorBars">#dddfdc</color>
-    <color name="windowBackground">#f3f4f2</color>
-    <color name="colorPrimaryDark">#373a3b</color>
-    <color name="colorAccent">#2ed4ee</color>
+    <color name="colorBadAccent">#d05c5c5c</color>
+    <color name="colorBad">#75bfbebd</color>
+    <color name="BarBackground">#e9eae8</color>
+    <color name="colorAccent">#60e5fa</color>
     <color name="colorAccentTransparent">#9c135863</color>
     <color name="colorAccentLight">#ccf8fa</color>
-    <color name="colorAccentLightTransparent">#42ccf3f9</color>
-    <color name="colorDeaccent">#e1effcfc</color>
-    <color name="colorBadAccent">#d0939291</color>
-    <color name="colorBad">#75bfbebd</color>
+
+    <color name="colorPrimaryDark2">#71beb7</color>
+    <color name="icon2">#71c4c1</color>
+    <color name="colorPrimary2">#27323c</color>
+    <color name="colorBadAccent2">#5cbca7</color>
+    <color name="colorBad2">#75ecebeb</color>
+    <color name="BarBackground2">#3d6ca1</color>
+    <color name="colorAccent2">#e8572b</color>
+    <color name="windowBackGround">#83bbdf</color>
+    <!--<color name="colorAccentTransparent2">#9c135863</color>-->
+    <!--<color name="colorAccentLight2">#ccf8fa</color>-->
+
+    <color name="transparent">#00ffffff</color>
 
     <color name="black">#040404</color>
     <color name="white">#dcffffff</color>

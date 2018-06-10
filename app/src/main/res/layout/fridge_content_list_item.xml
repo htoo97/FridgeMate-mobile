@@ -4,12 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/one_item_frame"
     android:layout_width="match_parent"
-    android:layout_height="90dp"
-    android:layout_marginBottom="10dp"
-    android:layout_marginEnd="10dp"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginStart="10dp">
+    android:layout_height="100dp"
+    android:layout_margin="1dp">
 
     <android.support.v7.widget.CardView
         android:id="@+id/view_foreground"
@@ -17,16 +13,15 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true"
-        android:elevation="3dp"
         android:foreground="?attr/selectableItemBackground"
-        android:stateListAnimator="@anim/animation">
+        android:stateListAnimator="@anim/animation"
+        app:cardCornerRadius="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="fill_horizontal"
-            android:paddingStart="5dp"
-            android:paddingEnd="0dp">
+            android:gravity="center_vertical|fill_horizontal"
+            android:padding="5dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/item_image"
@@ -46,7 +41,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:layout_weight="5"
                 android:orientation="vertical">
 
@@ -63,7 +58,7 @@
                     android:paddingStart="10dp"
                     android:paddingTop="5dp"
                     android:text="@string/hint_name"
-                    android:textSize="22sp" />
+                    android:textSize="20sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -89,6 +84,7 @@
                         android:layout_weight="1"
                         android:gravity="end|center_vertical"
                         android:text="@string/fresh"
+                        android:textColor="?colorPrimaryDark"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -97,6 +93,9 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
                     android:progress="100"
                     android:progressDrawable="@drawable/greenprogress" />
 
@@ -105,5 +104,22 @@
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="33dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="36dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_delete_sweep_black_24dp" />
+    </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>

@@ -9,19 +9,17 @@
     <ProgressBar
         android:id="@+id/spin_progress"
         style="?android:attr/progressBarStyleLarge"
-        android:layout_width="5dp"
-        android:layout_height="4dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="80dp"
+        android:layout_width="51dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="100dp"
+        android:indeterminate="true"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.61" />
+        app:layout_constraintVertical_bias="0.673" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,9 +30,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/windowBackground"
+            android:background="?android:toolbarStyle"
+            android:elevation="2dp"
             android:gravity="center"
-            android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme" />
 
         <android.support.v4.widget.DrawerLayout
@@ -53,21 +51,28 @@
                 <FrameLayout
                     android:id="@+id/main_container"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="56dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@+id/navigation"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="parent">
+                    app:layout_constraintTop_toTopOf="parent">
 
                 </FrameLayout>
 
+                <View
+                    android:id="@+id/divider6"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:listDivider"
+                    app:layout_constraintBottom_toTopOf="@+id/navigation" />
+
                 <android.support.design.widget.BottomNavigationView
                     android:id="@+id/navigation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/windowBackground"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:background="?android:toolbarStyle"
+                    app:elevation="2dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:menu="@menu/navigation">
@@ -81,7 +86,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
-                android:background="@color/colorDeaccent"
                 app:headerLayout="@layout/slide_menu"
                 app:menu="@menu/menu_scrolling">
 

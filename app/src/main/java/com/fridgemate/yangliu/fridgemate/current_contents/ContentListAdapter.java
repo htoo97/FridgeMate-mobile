@@ -1,5 +1,6 @@
 package com.fridgemate.yangliu.fridgemate.current_contents;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -86,6 +87,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         return new ItemViewHolder(itemView);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final ItemViewHolder holder, int position) {
         if (mItemsOnDisplay != null) {
@@ -122,23 +124,31 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             }
             if (strDate != null) {
                 int dayDiff = (int) (strDate.getTime() / (86400000)) - today;
-                ProgressBarAnimation anim = new ProgressBarAnimation(holder.progressBar, 0, (int)(dayDiff * 7.2));
-                anim.setDuration(1000);
-                holder.progressBar.startAnimation(anim);
-                if (dayDiff < 0) {
-                    holder.progressBar.setProgress(0);
+                if (dayDiff <= 0) {
                     holder.freshDays.setText(R.string.expired);
+                    holder.progressBar.setProgress(0);
                 }
-                else {
+                else if (dayDiff == 1){
+                    holder.freshDays.setText(R.string.one_day);
+                    holder.progressBar.setProgress(1);
+                }
+                else{
+                    // more than 1 daysDiff
+                    ProgressBarAnimation anim;
+                    holder.freshDays.setText(dayDiff + " Days");
                     holder.progressBar.setProgress((int) (dayDiff * 7.2));
-                    if (dayDiff > 1)
-                        holder.freshDays.setText(String.valueOf(dayDiff) + " days");
-                    else
-                        holder.freshDays.setText(R.string.one_day);
+                    if (dayDiff <= 14){
+                        anim = new ProgressBarAnimation(holder.progressBar, 0, (int)(dayDiff * 7.2));
+                    }
+                    else{
+                        anim = new ProgressBarAnimation(holder.progressBar, 0, 100);
+                    }
+                    anim.setDuration(1000);
+                    holder.progressBar.startAnimation(anim);
                 }
             }
             else{
-                ProgressBarAnimation anim = new ProgressBarAnimation(holder.progressBar, 50, 100);
+                ProgressBarAnimation anim = new ProgressBarAnimation(holder.progressBar, 0, 100);
                 anim.setDuration(1000);
                 holder.freshDays.setText(R.string.fresh);
                 holder.progressBar.startAnimation(anim);

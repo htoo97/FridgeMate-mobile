@@ -31,6 +31,11 @@ public class TitleWithButtonsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // set theme
+        if (SaveSharedPreference.getTheme(this) == false)
+            setTheme(R.style.AppTheme);
+        else
+            setTheme(R.style.AppTheme2);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title_with_buttons);
         initView();
@@ -70,11 +75,11 @@ public class TitleWithButtonsActivity extends AppCompatActivity {
      * 设置左上角back按钮
      */
     public void setBackArrow() {
-        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp);
-        //给ToolBar设置左侧的图标
-        Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(upArrow);
+//        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp);
+//        //给ToolBar设置左侧的图标
+//        Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(upArrow);
         // 给左上角图标的左边加上一个返回的图标 。对应ActionBar.DISPLAY_HOME_AS_UP
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         //设置返回按钮的点击事件
         commonTitleTb.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

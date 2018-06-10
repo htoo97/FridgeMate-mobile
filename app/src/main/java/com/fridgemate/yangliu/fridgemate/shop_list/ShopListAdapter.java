@@ -227,6 +227,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     });
                     ShopListFragment.addSelectedToFrdige.setText(R.string.fridge_all);
                     sumAmount = 0;
+                    MainActivity.showProgress(false);
                 }
             }
         });

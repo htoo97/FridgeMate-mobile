@@ -12,7 +12,7 @@
     <item
         android:id="@+id/recipe_button"
         android:enabled="true"
-        android:icon="@drawable/ic_photo_album_black_24dp"
+        android:icon="@drawable/ic_recipe_icon"
         android:launchMode="singleTop"
         android:title="Recipe Suggestion"
         android:visible="true"

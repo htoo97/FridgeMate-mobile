@@ -2,15 +2,13 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape>
-            <stroke android:color="@color/colorBad"
-                android:width="1dp" />
-            <corners android:radius="5dip" />
+            <solid android:color="?android:progressBackgroundTint"/>
+            <corners android:radius="5dip"/>
             <!--<gradient-->
-                <!--android:startColor="@color/colorBad"-->
-                <!--android:centerColor="@color/colorBadAccent"-->
-                <!--android:centerY="0.6"-->
-                <!--android:endColor="@color/colorBad"-->
                 <!--android:angle="270"-->
+                <!--android:centerY="0.6"-->
+                <!--android:startColor="@color/windowBackground"-->
+                <!--android:endColor="@color/windowBackground"-->
                 <!--/>-->
         </shape>
     </item>
@@ -21,12 +19,10 @@
         <clip>
             <shape>
                 <corners
-                    android:radius="5dip" />
+                    android:radius="4dip" />
                 <gradient
-                    android:centerColor="@color/greenLight"
-                    android:startColor="@color/green"
-                    android:centerY="0.9"
-                    android:endColor="@color/colorDeaccent"
+                    android:startColor="@color/colorAccentLight"
+                    android:endColor="@color/colorAccentLight"
                     android:angle="180" />
             </shape>
         </clip>

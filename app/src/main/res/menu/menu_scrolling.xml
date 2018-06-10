@@ -6,8 +6,21 @@
     <item
         android:id="@+id/profile_settings"
         android:icon="@drawable/ic_person_pin_black_24dp"
-        android:title="Edit Profile"
+        android:title="@string/edit_profile"
         />
+
+    <item
+        android:id="@+id/setting"
+        android:icon="@drawable/ic_border_clear_black_24dp"
+        android:title="@string/theme"
+        />
+
+    <item
+        android:id="@+id/feedback"
+        android:icon="@drawable/ic_message_black_24dp"
+        android:title="@string/feedback"
+        />
+
     <item
         android:id="@+id/log_out"
         android:orderInCategory="101"

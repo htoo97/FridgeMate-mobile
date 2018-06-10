@@ -25,12 +25,10 @@ public class ForgotPasswordActivity extends TitleWithButtonsActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentLayout(R.layout.activity_forgot_password);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back_material);
+        setBackArrow();
+        setTitle(R.string.title_activity_forgot_password);
 
         email = findViewById(R.id.email_address_find);
-
 
         forgotBtn = findViewById(R.id.forgotBtn);
         forgotBtn.setOnClickListener(new View.OnClickListener() {

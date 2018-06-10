@@ -3,18 +3,29 @@
     <!-- Strings related to the whole app -->
     <string name="app_name">FridgeMate</string>
     <string name="fridge_name">Fridge Name</string>
-    <string name="forget_password">An link will be sent to reset your password.</string>
+    <string name="forget_password">You will receive an email to reset your password.</string>
     <string name="this_is_null">(none)</string>
+    <string name="connecting">Internet is not available</string>
+    <string name="contents">Contents</string>
+    <string name="family">Fridges &amp; Members</string>
+    <string name="shoplist">Grocery</string>
+    <string name="feedback">Questions / Feedback</string>
+    <string name="cantemail">There may be some email client issues.</string>
 
     <!-- Strings related to the Intro -->
     <string name="app_intro">Intro</string>
     <!--More Strings are in the IntroActivity.java-->
 
+    <!-- Strings related to the setting -->
+    <string name="theme">Themes</string>
+
+
     <!-- Strings related to welcome screen-->
     <string name="COOL">Presented By C.O.O.L</string>
 
     <!-- Example General settings/slide menu/edit profile -->
-    <string name="profile_updated">"User profile updated."</string>
+    <string name="profile_updated">User profile updated.</string>
+    <string name="edit_profile">Edit Profile</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="username">username</string>
@@ -43,11 +54,12 @@
     <string name="error_field_required">This field is required.</string>
     <string name="email_verification">An email containing a verification link has been sent.</string>
     <string name="error_load_data">Your user data could not be verified. Please login again.</string>
-    <string name="title_activity_create_account">Signup</string>
+    <string name="title_activity_create_account">Sign up</string>
+    <string name="title_activity_forgot_password">Reset Password</string>
 
     <!-- Strings related to the fridge contents -->
-    <string name="hint_name">Item Name&#8230;</string>
-    <string name="hint_date">Item Expiration Date&#8230; </string>
+    <string name="hint_name">Item Name</string>
+    <string name="hint_date">Item Expiration Date</string>
     <string name="button_save">Save</string>
     <string name="button_saving">(Saving. Please Wait)</string>
     <string name="empty_not_saved">Item not saved.</string>
@@ -68,7 +80,7 @@
     <string name="leave_fridge">Leave</string>
     <string name="rename_fridge">Rename</string>
     <string name="fridge_setup_message">Setting up your very own fridge&#8230;</string>
-    <string name="fridge_setup_complete">Complete! View your newly-created fridge in the "Dashboard" tab.</string>
+    <string name="fridge_setup_complete">Complete! A new fridge is in the "Dashboard" tab. Swipe down to refresh.</string>
     <string name="delete_fridge_warning">Warning: You are the only member in this Fridge Family. If you leave this fridge, it will be permanently deleted!</string>
     <string name="leave_fridge_warning">Are you sure you want to leave this fridge?</string>
     <string name="one_fridge_error">You can\'t leave your only fridge!</string>

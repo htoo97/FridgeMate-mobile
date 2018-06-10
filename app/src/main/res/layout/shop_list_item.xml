@@ -30,8 +30,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="@string/hint_name"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,21 +39,21 @@
 
                 <TextView
                     android:id="@+id/et_content2"
+                    style="@android:style/TextAppearance.DeviceDefault.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="@string/amount"
                     android:textAllCaps="false"
-                    android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/amount"
+                    style="@android:style/TextAppearance.DeviceDefault.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:text="@string/one"
-                    android:textColor="@color/colorPrimary" />
+                    android:text="@string/one" />
 
 
             </LinearLayout>
@@ -75,18 +74,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="6"
-            android:buttonTint="@color/colorPrimary"
+            android:buttonTint="?android:colorPrimary"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:text="@string/select"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="?android:textColor" />
     </LinearLayout>
 
     <View
         android:id="@+id/divider4"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorBad" />
+        android:background="?android:listDivider" />
 </LinearLayout>
 
 

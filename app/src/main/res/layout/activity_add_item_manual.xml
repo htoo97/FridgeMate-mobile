@@ -67,7 +67,6 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:background="@color/colorAccent"
             android:elevation="4dp"
             android:text="@string/button_save"
             custom:layout_constraintBottom_toBottomOf="parent"
@@ -98,7 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="25dp"
-                    android:backgroundTint="@color/windowBackground"
+                    android:backgroundTint="?android:progressBackgroundTint"
                     android:contentDescription="@string/this_is_null"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_camera_alt_black_24dp" />
@@ -109,8 +108,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:contentDescription="@string/hint_image"
-                    android:transitionName="item_image"
-                    custom:border_width="1dp" />
+                    android:transitionName="item_image" />
 
             </FrameLayout>
 
@@ -157,7 +155,7 @@
             android:layout_margin="16dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="32dp"
-            android:progress="50"
+            android:progress="100"
             android:transitionName="progress_bar"
             custom:layout_constraintBottom_toBottomOf="parent"
             custom:layout_constraintEnd_toEndOf="parent"
@@ -173,7 +171,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="16dp"
-        android:backgroundTint="@color/windowBackground"
+        android:backgroundTint="?android:progressBackgroundTint"
         custom:srcCompat="@drawable/ic_rotate_right_black_24dp" />
 
 </LinearLayout>

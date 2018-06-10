@@ -3,17 +3,40 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:progressBackgroundTint">@color/transparent</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:toolbarStyle">@color/BarBackground</item>
+        <item name="android:buttonTint">@color/colorAccent</item>
+        <item name="android:icon">@color/colorPrimaryDark</item>
         <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
         <item name="android:windowContentTransitions">true</item>
         <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="android:listDivider">@color/colorBad</item>
     </style>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme2" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary2</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark2</item>
+        <item name="android:progressBackgroundTint">@color/colorBadAccent2</item>
+        <item name="colorAccent">@color/colorAccent2</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:windowBackground">@color/windowBackGround</item>
+        <item name="android:toolbarStyle">@color/BarBackground2</item>
+        <item name="android:buttonTint">@color/colorAccentLight</item>
+        <item name="android:icon">@color/black</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:listDivider">@color/colorBad2</item>
+        <item name="android:statusBarColor">@color/BarBackground2</item>
+    </style>
+
+
 
     <!-- The default font for RecyclerView items is too small.
     The margin is a simple delimiter between the words. -->

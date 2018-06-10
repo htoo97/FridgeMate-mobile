@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/animation_gradient"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -12,6 +12,7 @@
         android:layout_width="142dp"
         android:layout_height="163dp"
         android:layout_gravity="center"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:contentDescription="@string/hint_profile"
         android:src="@drawable/profile"
@@ -26,7 +27,7 @@
         android:layout_weight="4"
         android:gravity="center"
         android:text="@string/example_email"
-        android:textColor="@color/black"
+        android:textColor="?colorPrimary"
         android:textSize="24sp" />
 
 </LinearLayout>

@@ -22,7 +22,6 @@
             android:name="com.example.yangliu.fridgemate.FridgeFamilyFragment"
             android:layout_width="match_parent"
             android:layout_height="383dp"
-            android:elevation="2dp"
             tools:context=".fridge_family.FridgeFamilyFragment"
             tools:listitem="@layout/fridge_member_list_item">
 
@@ -35,7 +34,8 @@
         android:id="@+id/fridgeListLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/windowBackground"
+        android:background="?android:toolbarStyle"
+        android:clipToPadding="true"
         android:elevation="2dp"
         android:orientation="vertical">
 
@@ -46,13 +46,11 @@
             android:layout_width="match_parent"
             android:layout_height="95dp"
             android:layout_marginTop="8dp"
-            android:background="@android:color/transparent"
-            android:clipToPadding="false"
             android:foregroundGravity="center"
+            android:layoutAnimation="@anim/bottom_up_layout"
             android:paddingBottom="10dp"
             tools:context=".fridge_family.FridgeFamilyFragment"
-            tools:listitem="@layout/fridge_list_item"
-            android:layoutAnimation="@anim/bottom_up_layout">
+            tools:listitem="@layout/fridge_list_item">
             <!--android:orientation="horizontal"-->
             <!--android:scrollbarAlwaysDrawHorizontalTrack="true"-->
 

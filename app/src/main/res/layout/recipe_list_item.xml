@@ -14,18 +14,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginStart="5dp"
+        android:layout_margin="1dp"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/recipeImg"
-            android:contentDescription="@string/this_is_null"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
             android:layout_weight="2"
+            android:contentDescription="@string/this_is_null"
             android:elevation="4dp"
             android:padding="10dp"
             android:scaleType="fitCenter" />

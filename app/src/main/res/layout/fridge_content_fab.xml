@@ -16,11 +16,11 @@
         fab:menu_animationDelayPerItem="55"
         fab:menu_backgroundColor="@android:color/transparent"
         fab:menu_buttonSpacing="0dp"
-        fab:menu_colorNormal="@color/colorAccent"
-        fab:menu_colorPressed="@color/colorAccent"
+        fab:menu_colorNormal="?colorAccent"
+        fab:menu_colorPressed="?colorAccent"
         fab:menu_fab_label="Cancel"
         fab:menu_fab_size="normal"
-        fab:menu_icon="@drawable/fab_add"
+        fab:menu_icon="@drawable/ic_add_gray_24dp"
         fab:menu_labels_colorNormal="#333"
         fab:menu_labels_colorPressed="#444"
         fab:menu_labels_cornerRadius="3dp"
@@ -41,8 +41,9 @@
             android:id="@+id/material_design_floating_action_menu_item1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_24dp"
-            fab:fab_colorNormal="@color/colorAccent"
+            android:src="@drawable/ic_add_gray_24dp"
+            fab:fab_colorNormal="?colorAccent"
+            fab:fab_colorPressed="?colorAccent"
             fab:fab_label="Add an item"
             fab:fab_size="mini" />
 
@@ -51,7 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_center_focus_strong_black_24dp"
-            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorNormal="?colorAccent"
+            fab:fab_colorPressed="?colorAccent"
             fab:fab_label="Quick Add"
             fab:fab_size="mini" />
 
