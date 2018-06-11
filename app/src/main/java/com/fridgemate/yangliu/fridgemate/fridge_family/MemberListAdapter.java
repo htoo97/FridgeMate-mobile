@@ -154,7 +154,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     // set name
                     String name = names.get(position).getId();
                     // parse away @ part and capitalize string
-                    if (name.length() != 0 && name.indexOf("@") != -1)
+                    if (name.length() != 0 && name.contains("@"))
                         name = name.substring(0,1).toUpperCase() + name.substring(1,name.indexOf("@"));
                     final String finalName = name;
                     iholder.name.setText(finalName);
@@ -166,7 +166,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                                 // if user has a nickname set nickname
                                 String nickname = String.valueOf(userData.get("name"));
-                                if (nickname != null && !nickname.equals("null"))
+                                if (nickname != null && !nickname.equals("null") && !nickname.equals(""))
                                     iholder.name.setText(nickname);
 
                                 // set up user's status
@@ -184,7 +184,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 else {
                                     // no profile image
                                     iholder.imageView.setImageResource(0);
-                                    if (nickname != null && !nickname.equals("null"))
+                                    if (nickname != null && !nickname.equals("null") && !nickname.equals(""))
                                         iholder.textMemberView.setText(String.valueOf(nickname.charAt(0)).toUpperCase());
                                     else
                                         iholder.textMemberView.setText(String.valueOf(finalName.charAt(0)).toUpperCase());
