@@ -43,6 +43,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="reset_password">Reset Password</string>
     <string name="Register">Create New Account</string>
+    <string name="log_in_success">user login successfully</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_log_out">Log Out</string>
     <string name="error_invalid_email">Format: example@ucsd.edu</string>
@@ -82,8 +83,8 @@
     <string name="leave_fridge">Leave</string>
     <string name="rename_fridge">Rename</string>
     <string name="fridge_setup_message">Setting up your very own fridge&#8230;</string>
-    <string name="fridge_setup_complete">Swipe down to see your fridge just created.</string>
-    <string name="delete_fridge_warning">Warning: You are the only member in this Fridge Family. If you leave this fridge, it will be permanently deleted!</string>
+    <string name="fridge_setup_complete">Swipe down to see the contents of your fridge.</string>
+    <string name="delete_fridge_warning">Warning: If you leave this fridge, it will be permanently deleted!</string>
     <string name="leave_fridge_warning">Are you sure you want to leave this fridge?</string>
     <string name="one_fridge_error">You can\'t leave your only fridge!</string>
     <string name="join_fridge_error">No such fridge ID could be found.</string>
@@ -101,6 +102,7 @@
     <string name="type_email_prompt">Type email here</string>
     <string name="example_status">"Hey yall!"</string>
     <string name="prompt_current_fridge">(Current Fridge ID)</string>
+    <string name="member_removed">Member removed</string>
 
     <!-- Strings related to the Quick Add-->
     <string name="itemName">item</string>
@@ -117,6 +119,8 @@
     <string name="loading">Loading recipes&#8230;</string>
     <string name="no_result">Sorry. We couldn\'t find relavant recipe for you at the moment.</string>
     <string name="server_err">Server Error</string>
+    <string name="first_page">This is the first page.</string>
+    <string name="last_page">This is the last page.</string>
 
     <!-- Strings related to the shopping list-->
     <string name="one">1</string>

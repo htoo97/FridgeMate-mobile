@@ -40,10 +40,11 @@ public class ForgotPasswordActivity extends TitleWithButtonsActivity {
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(ForgotPasswordActivity.this, "Email Sent", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
+                                // if(task.isSuccessful())
+                                Toast.makeText(ForgotPasswordActivity.this, "Email Sent", Toast.LENGTH_SHORT).show();
+                                finish();
+
+                                // may not be sent if the email doesn't exist
                             }
                         });
                 else{
@@ -57,7 +58,7 @@ public class ForgotPasswordActivity extends TitleWithButtonsActivity {
     }
 
     private boolean isEmailValid(String email) {
-        return email.contains("@");
+        return email.contains("@") && email.contains(".");
     }
 
 

@@ -68,6 +68,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
     private FirebaseStorage storage;
     private DocumentReference  userDoc;
     private DocumentReference fridgeDoc;
+    private ImageButton mRotateImg;
 
     private Bitmap image; // indicator of a new image added
     private String oldImageUri; // indicator of there exist an old image
@@ -83,7 +84,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         mEditDate = findViewById(R.id.edit_date);
         mEditNameView = findViewById(R.id.edit_word);
         progressBar = findViewById(R.id.item_progress_bar);
-        ImageButton mRotateImg = findViewById(R.id.rotateImg);
+        mRotateImg = findViewById(R.id.rotateImg);
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
@@ -372,6 +373,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
             //itemProfile.setImageBitmap(photo);
             Glide.with(AddItemManual.this).load(ba).asBitmap().centerCrop().into(itemProfile);
             image = photo;
+            mRotateImg.setVisibility(View.VISIBLE);
             }
 
         }

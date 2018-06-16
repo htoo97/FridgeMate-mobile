@@ -91,7 +91,7 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
                     callAPI(params);
                 }
                 else{
-                    Toast.makeText(RecipeSuggestion.this, "This is the first page.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RecipeSuggestion.this, R.string.first_page, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -139,6 +139,13 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    // if the last page is already unavaiable
+                    if (textView.getText().length() > 0){
+                        // decreament the already imcreamented page
+                        --page;
+                        Toast.makeText(RecipeSuggestion.this, R.string.last_page, Toast.LENGTH_SHORT).show();
+                    }
+
                     if (recipeListAdapter.getItemCount() == 0)
                         textView.setText(R.string.no_result);
                     else

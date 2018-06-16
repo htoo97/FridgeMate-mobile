@@ -134,6 +134,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                         @Override
                         public void onSuccess(Void aVoid) {
                             finish();
+                            FridgeFamilyFragment.syncFridgeList();
                         }
                     });
             }

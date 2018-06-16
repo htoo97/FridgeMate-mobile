@@ -57,22 +57,22 @@ public class IntroActivity extends AppIntro {
         SliderPage sliderPage5 = new SliderPage();
         sliderPage5.setTitleTypeface("casual");
         sliderPage5.setTitle("Fridge? Friends?");
-        sliderPage5.setDescription("You can invite your friends to your \"fridge family\". \n Connect people with their foods.");
+        sliderPage5.setDescription("Invite friends to your \"fridge family\". \n Connect with people and their foods.");
         sliderPage5.setImageDrawable(R.drawable.intro4);
         sliderPage5.setBgColor(Color.TRANSPARENT);
         addSlide(AppIntroFragment.newInstance(sliderPage5));
 
         SliderPage sliderPage6 = new SliderPage();
         sliderPage6.setTitleTypeface("casual");
-        sliderPage6.setTitle("Something's missing in my fridge...");
-        sliderPage6.setDescription("Don't worry.\nShopping list will remind you what to buy.");
+        sliderPage6.setTitle("Need a reminder about what to buy?");
+        sliderPage6.setDescription("Of course, here's your shopping list.");
         sliderPage6.setImageDrawable(R.drawable.intro5);
         sliderPage6.setBgColor(Color.TRANSPARENT);
         addSlide(AppIntroFragment.newInstance(sliderPage6));
 
         // Instead of fragments, you can also use our default slide
         // Just set a title, description, background and image. AppIntro will do the rest.
-        addSlide(AppIntroFragment.newInstance("This is FridgeMate.", "Enjoy!", R.drawable.icon1, R.drawable.animation_gradient));
+        addSlide(AppIntroFragment.newInstance("Welcome to FridgeMate.", "Enjoy! - C.O.O.L", R.drawable.icon1, R.drawable.animation_gradient));
         // OPTIONAL METHODS
         // Override bar/separator color.
         setBarColor(parseColor("#8c9497"));

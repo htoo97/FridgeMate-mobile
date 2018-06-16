@@ -3,20 +3,20 @@ package com.fridgemate.yangliu.fridgemate;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -25,8 +25,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +38,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.fridgemate.yangliu.fridgemate.authentication.LoginActivity;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -64,11 +73,14 @@ public class EditProfile extends TitleWithButtonsActivity {
     private CircleImageView profilePhoto;
     private EditText status;
     private Button saveBtn;
+    private ImageButton mRotateImg;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private FirebaseStorage storage;
     private DocumentReference userDoc;
+
+    private AuthCredential credential;
 
     private boolean photoChanged = false;
     private String oldProfileUri;
@@ -86,6 +98,30 @@ public class EditProfile extends TitleWithButtonsActivity {
         setContentLayout(R.layout.activity_edit_profile);
         setBackArrow();
         setTitle("Edit Profile");
+
+        // set up rotate button
+        mRotateImg = findViewById(R.id.rotateImg);
+        // rotate image button
+        mRotateImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (imageUri != null && !imageUri.equals("") && !imageUri.equals("null")) {
+                    RotateAnimation rotate = new RotateAnimation(0, 90, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    rotate.setDuration(300);
+                    rotate.setInterpolator(new LinearInterpolator());
+                    profilePhoto.startAnimation(rotate);
+                    // image changed
+
+                    new Handler().postDelayed(new Runnable(){
+                        @Override
+                        public void run() {
+                            profilePhoto.setRotation(profilePhoto.getRotation()+ 90);
+                        }
+                    }, 320);
+
+                }
+            }
+        });
 
         // make keyboard push the page up
         this.getWindow().setSoftInputMode(
@@ -165,8 +201,18 @@ public class EditProfile extends TitleWithButtonsActivity {
                         e.printStackTrace();
                     }
 
+                    float rotated = profilePhoto.getRotation();
+                    byte[] imgToUpload = null;
                     final Uri[] newProfile = new Uri[1];
-                    byte[] imgToUpload = getBitmapAsByteArray(profileImg);
+                    if (rotated % 360 != 0) {
+                        Matrix matrix = new Matrix();
+                        matrix.postRotate(profilePhoto.getRotation());
+                        imgToUpload = getBitmapAsByteArray(Bitmap.createBitmap(
+                                profileImg, 0, 0, profileImg.getWidth(), profileImg.getHeight(), matrix, true));
+
+                    } else{
+                        imgToUpload = getBitmapAsByteArray(profileImg);
+                    }
                     final StorageReference ref = storage.getReference().child(Objects.requireNonNull(user.getEmail()));
                     UploadTask uploadTask = ref.putBytes(imgToUpload);
                     uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -185,7 +231,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                                 newProfile[0] = task.getResult();
                                 saveBtn.setText(R.string.button_saving);
                                 // update the name, status, profile
-                                String nameStr = String.valueOf(name.getText());
+                                final String nameStr = String.valueOf(name.getText());
                                 userDoc.update("status",String.valueOf(status.getText()),"name",nameStr,"profilePhoto", String.valueOf(newProfile[0]))
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
@@ -194,7 +240,7 @@ public class EditProfile extends TitleWithButtonsActivity {
 
                                         // update this basic stuff that will be depreciated soon
                                         UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
-                                        builder.setDisplayName(String.valueOf(name.getText()));
+                                        builder.setDisplayName(nameStr);
                                         // Update username
                                         user.updateProfile(builder.build())
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -330,104 +376,16 @@ public class EditProfile extends TitleWithButtonsActivity {
                 builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        pw[0] = input.getText().toString();
-//                        AuthCredential credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()), pw[0]);
-//                        if (pw[0].length() == 0)
-//                            credential = GoogleAuthProvider.getCredential
-//                                    (String.valueOf(user.getIdToken(true)), String.valueOf(mAuth.getAccessToken(true)));
-//                        // it means it's a google account
-////                        if (credential.getSignInMethod() = EMAIL_PASSWORD_SIGN_IN_METHOD)
-//                        else {
-//                            finish();
-//                            Toast.makeText(EditProfile.this, R.string.cant_deactivate, Toast.LENGTH_SHORT).show();
-//                        }
-//                        // Get auth credentials from the user for re-authentication. The example below shows
-//                        // email and password credentials but there are multiple possible providers,
-//                        // such as GoogleAuthProvider or FacebookAuthProvider.
-//                        // Prompt the user to re-provide their sign-in credentials
-//                        user.reauthenticate(credential)
-//                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<Void> task) {
-//                                        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                            @Override
-//                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                                if (!task.isSuccessful()){
-//                                                    Toast.makeText(EditProfile.this, R.string.cant_deactivate, Toast.LENGTH_SHORT).show();
-//                                                }
-//
-//                                                DocumentSnapshot userData = task.getResult();
-//                                                // delete user's profile image
-//                                                if (userData.get("profilePhoto") != null) {
-//                                                    String profilelUri = (String) Objects.requireNonNull(userData.get("profilePhoto"));
-//                                                    if (profilelUri != null && !profilelUri.equals("") && !profilelUri.equals("null"))
-//                                                        storage.getReferenceFromUrl(profilelUri).delete();
-//                                                }
-//
-//                                                // delete (or update) user's fridges
-//                                                List<DocumentReference> fridges = (List) userData.get("fridges");
-//                                                assert fridges != null;
-//                                                for(final DocumentReference eachFridge : fridges){
-//                                                    eachFridge.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                                        public void onComplete(Task<DocumentSnapshot> task) {
-//                                                            if(task.isSuccessful()) {
-//                                                                DocumentSnapshot fridgeData = task.getResult();
-//                                                                List<DocumentReference> membersList = (List<DocumentReference>) fridgeData.get("members");
-//                                                                assert membersList != null;
-//                                                                for (DocumentReference member : membersList){
-//                                                                    if (member == userDoc)
-//                                                                        membersList.remove(member);
-//                                                                }
-//
-//                                                                //delete the fridge if the user is the last one
-//                                                                if (membersList.size() == 0){
-//                                                                    // delete items' images in Storage
-//                                                                    eachFridge.collection("FridgeItems").get().addOnCompleteListener(
-//                                                                            new OnCompleteListener<QuerySnapshot>() {
-//                                                                                @Override
-//                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                                                                                    List<DocumentSnapshot> itemSnapshots= task.getResult().getDocuments();
-//                                                                                    for (DocumentSnapshot each: itemSnapshots){
-//                                                                                        String uri = (String) each.get("imageID");
-//                                                                                        if (uri != null && !uri.equals("") && !uri.equals("null")){
-//                                                                                            storage.getReferenceFromUrl(uri).delete();
-//                                                                                        }
-//                                                                                    }
-//                                                                                }
-//                                                                            }
-//                                                                    );
-//                                                                    // delete all info in this fridge
-//                                                                    eachFridge.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                                                        @Override
-//                                                                        public void onComplete(@NonNull Task<Void> task) {
-//                                                                            Toast.makeText(EditProfile.this, "ALl data have been deleted", Toast.LENGTH_LONG).show();
-//                                                                            Intent intent = new Intent(EditProfile.this,LoginActivity.class);
-//                                                                            startActivity(intent);
-//                                                                        }
-//                                                                    });
-//                                                                }
-//                                                                else{
-//                                                                    eachFridge.update("members",membersList);
-//                                                                }
-//                                                            }
-//                                                        }
-//                                                    });
-//                                                }
-//                                                user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                                    @Override
-//                                                    public void onComplete(@NonNull Task<Void> task) {
-//                                                        if (task.isSuccessful()) {
-//                                                            Toast.makeText(EditProfile.this, "ALl data have been deleted", Toast.LENGTH_LONG).show();
-//                                                            Intent intent = new Intent(EditProfile.this,LoginActivity.class);
-//                                                            startActivity(intent);
-//                                                        }
-//                                                    }
-//                                                });
-//
-//                                            }
-//                                        });
-//                                    }
-//                                });
+                        pw[0] = input.getText().toString();
+                        if (pw[0].length() != 0) {
+                            credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()), pw[0]);
+                            authenticateAndDelteAcc();
+                        }
+                        else {
+                            // it means it's a google account
+                            googleAuthDelete();
+
+                        }
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -445,32 +403,159 @@ public class EditProfile extends TitleWithButtonsActivity {
         }
     }
 
-    private Bitmap head;
+    private void authenticateAndDelteAcc(){
+        user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(EditProfile.this, R.string.cant_deactivate, Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
+                        deleteAcc();
+                    }
+                });
+    }
+
+    private void deleteAcc(){
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                DocumentSnapshot userData = task.getResult();
+                // delete user's profile image
+                if (userData.get("profilePhoto") != null) {
+                    String profilelUri = (String) Objects.requireNonNull(userData.get("profilePhoto"));
+                    if (profilelUri != null && !profilelUri.equals("") && !profilelUri.equals("null"))
+                        storage.getReferenceFromUrl(profilelUri).delete();
+                }
+
+                // delete (or update) user's fridges
+                List<DocumentReference> fridges = (List) userData.get("fridges");
+                assert fridges != null;
+                for(final DocumentReference eachFridge : fridges){
+                    eachFridge.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        public void onComplete(Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()) {
+                                DocumentSnapshot fridgeData = task.getResult();
+                                List<DocumentReference> membersList = (List<DocumentReference>) fridgeData.get("members");
+                                assert membersList != null;
+                                for (DocumentReference member : membersList){
+                                    if (member.getId().equals(userDoc.getId())) {
+                                        membersList.remove(member);
+                                        break;
+                                    }
+                                }
+
+                                //delete the fridge if the user is the last one
+                                if (membersList.size() == 0){
+                                    // delete items' images in Storage
+                                    eachFridge.collection("FridgeItems").get().addOnCompleteListener(
+                                            new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    List<DocumentSnapshot> itemSnapshots= task.getResult().getDocuments();
+                                                    for (DocumentSnapshot each: itemSnapshots){
+                                                        String uri = (String) each.get("imageID");
+                                                        if (uri != null && !uri.equals("") && !uri.equals("null")){
+                                                            storage.getReferenceFromUrl(uri).delete();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                    ).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            // delete all info in this fridge
+                                            eachFridge.delete();
+                                        }
+                                    });
+
+                                }
+                                else{
+                                    eachFridge.update("members",membersList);
+                                }
+                            }
+                        }
+                    });
+                }
+                // delete user
+                userDoc.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(EditProfile.this, "ALl data have been deleted", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(EditProfile.this,LoginActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void googleAuthDelete() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, 101);
+    }
+
+
+
+
     private static final int CAMERA_REQUEST = 1888;
     private static final int LOAD_IMAGE_REQUEST = 1889;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        photoChanged = true;
-        switch  (requestCode) {
-            //从相册里面取相片的返回结果
-            case LOAD_IMAGE_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    imageUri = data.getData();
-                    Glide.with(this).load(imageUri).centerCrop()
-                            .into(profilePhoto);
-                }
-                break;
+        if (requestCode == 101) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                authenticateAndDelteAcc();
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Toast.makeText(this, "Sign in failed", Toast.LENGTH_SHORT).show();
+            }
+        }
+        // photo change
+        else {
+            photoChanged = true;
+            // allow user to rotate after getting a new image
+            mRotateImg.setVisibility(View.VISIBLE);
+            switch (requestCode) {
+                //从相册里面取相片的返回结果
+                case LOAD_IMAGE_REQUEST:
+                    if (resultCode == RESULT_OK) {
+                        imageUri = data.getData();
+                        Glide.with(this).load(imageUri).centerCrop()
+                                .into(profilePhoto);
+                    }
+                    break;
 
-            case CAMERA_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    Glide.with(this).load(imageUri).centerCrop()
-                            .into(profilePhoto);
-                }
-                break;
-            default:
-                Toast.makeText(getApplicationContext(), "You have not selected and image", Toast.LENGTH_SHORT).show();
+                case CAMERA_REQUEST:
+                    if (resultCode == RESULT_OK) {
+                        Glide.with(this).load(imageUri).centerCrop()
+                                .into(profilePhoto);
 
+                    }
+                    break;
+                default:
+                    Toast.makeText(getApplicationContext(), "You have not selected and image", Toast.LENGTH_SHORT).show();
+
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -482,6 +567,7 @@ public class EditProfile extends TitleWithButtonsActivity {
         Log.d("Img size: " ,String.valueOf(outputStream.size()/1024) + "kb");
         return outputStream.toByteArray();
     }
+
 
     // Return to previous screen on back button
     @Override

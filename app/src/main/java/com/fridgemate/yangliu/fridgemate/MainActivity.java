@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.navigation_view);
         View headerView =  navigationView.getHeaderView(0);
         profileImg = headerView.findViewById(R.id.profile_image);
+        // allow user to click the profile only after a connection to the database
+        profileImg.setClickable(false);
         profileImg.setDrawingCacheEnabled(true);
         profileImg.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
@@ -336,6 +338,7 @@ public class MainActivity extends AppCompatActivity {
 
                         db.collection("Users").document(email)
                                 .set(userData);
+                        profileImg.setClickable(true);
                     }
                 } else {
                     Log.d("set_up_database", "get failed with ", task.getException());

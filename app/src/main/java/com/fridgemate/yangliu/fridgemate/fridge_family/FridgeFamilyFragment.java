@@ -135,12 +135,6 @@ public class FridgeFamilyFragment extends Fragment {
                             // Get reference to selected fridge
                             switch (item.getItemId()) {
                                 case R.id.leave_fridge:
-                                    if(fridgeListAdapter.getItemCount() == 2){
-                                        Toast.makeText(getContext(), R.string.one_fridge_error, Toast.LENGTH_SHORT).show();
-                                        return false;
-                                    }
-
-                                    // Remove user from the fridge, delete fridge if they are the only one left
                                     leaveFridge(selectedFridge);
                                     return true;
                                 case R.id.rename_fridge:
@@ -287,6 +281,7 @@ public class FridgeFamilyFragment extends Fragment {
                                                                 return;
                                                             fridges.remove(selectedFridge);
                                                             memberToBeDeleted.update("fridges", fridges);
+                                                            Toast.makeText(getActivity(), R.string.member_removed, Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                                 }
@@ -382,6 +377,13 @@ public class FridgeFamilyFragment extends Fragment {
         memberListAdapter.syncMemberList();
     }
     private void leaveFridge(final DocumentReference fridge){
+
+        // Remove user from the fridge, delete fridge if they are the only one left
+        if(fridgeListAdapter.getItemCount() == 2){
+            Toast.makeText(getContext(), R.string.one_fridge_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         fridge.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -412,20 +414,19 @@ public class FridgeFamilyFragment extends Fragment {
                                                             dr.getReference().delete();
                                                         }
                                                         // just delete fridge from your data
-                                                        fridge.delete();
+                                                        fridge.delete().addOnCompleteListener(
+                                                                new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        // remove the fridge and set another current fridge
+                                                                        removeFromFridgeList(fridge);
 
-                                                        // remove the fridge and set another current fridge
-                                                        removeFromFridgeList(fridge);
+                                                                        // update the fridge locally
+                                                                        syncFridgeList();
+                                                                    }
+                                                                }
+                                                        );
 
-                                                        // update the fridge locally
-                                                        syncFridgeList();
-//                                                        // remove and update the fridge locally
-//                                                        fridgeListAdapter.mFridges.remove(fridge);
-//                                                        if(fridgeListAdapter.getItemCount() > 0)
-//                                                            fridgeListAdapter.selectedItemPos = 0;
-//                                                        else
-//                                                            fridgeListAdapter.selectedItemPos = -1;
-//                                                        fridgeListAdapter.notifyDataSetChanged();
                                                     }
                                                 }
                                         );
@@ -571,4 +572,5 @@ public class FridgeFamilyFragment extends Fragment {
         setupFirstFridge();
         return documentReference;
     }
+
 }
