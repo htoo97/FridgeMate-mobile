@@ -4,13 +4,7 @@ FridgeMate is the essential companion app to the most common utility found in ev
 
 [Video Artifact on Youtube](https://www.youtube.com/watch?v=sVyp0JFh-9U)
 
-Login to the firebase:
-```
-Account  : fridgematesocool@gmail.com
-Password : nicefridge
-```
-
-Existing Users for the App (you can use them log in):
+Existing Users for the App (you can use them to log in):
 ```
 User 1   : 2845929791@qq.com (clean account)
 Password : ucsdbest
@@ -18,7 +12,7 @@ Password : ucsdbest
 User 2   : fridgematesocool@gmail.com (with pre-populated data)
 Password : nicefridge
 
-User 3   : freshfoodcool@gmail.com (New User - to be used for account creation testing)
+User 3   : freshfoodcool@gmail.com
 Password : nicefridge
 ```
 
@@ -29,25 +23,25 @@ Requirements:
 ```
 System  : Android 5.0+, connected to WiFi, Google Services Framework installed
 RAM     : >= 1 GB
-Size    : 21MB
-Version : Release 1.6
+Size    : 40MB
+Version : Release 2.0
 ```
 
 ## Known Bug(s)
-* If you click the “Deactivate account” button in the Edit Profile page, the app will prompt for a password confirmation, but will fail to deactivate even with the right password because the feature is yet to be implemented.
+* If User's internet were VERY slow and the User is trying to enter FridgeMate with a new account. The app might crash.
 
 ## Troubleshooting
 * If any unexpected behavior occurs, try refreshing the app by swipe down to refresh.
-* If the issue persists, delete the app from recents list and relaunch by following the How-to-run Instructions.
-* For persistent crashes, try clearing the cache and data of the app by going to app info, and then relaunching.
+* If the issue persists, quit and relaunch the app.
+* For persistent crashes, please submit post an Issue with precice description. Possible bugs will be fixed asap.
 
 
 ## Name and Phones for Technical Points contact
 
-User Authentication, Fridge Contents:
+General Questions
 ```
 Yang Liu
-(919) 909-1455
+mikerliuyang@gmail.com
 ```
 
 Quick Add, OCR Receipt Recognition:
@@ -66,10 +60,4 @@ Recipe Suggestion:
 ```
 Cameron Gropp
 (661) 803-5530
-```
-
-Shopping List:
-```
-Shuyu (Frank) Lu
-(619) 581-8098
 ```
