@@ -23,7 +23,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme2">
+        android:theme="@style/AppTheme">
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
@@ -106,7 +106,7 @@
         <activity
             android:name=".IntroActivity"
             android:label="@string/app_intro" />
-        <activity android:name=".themeActivity"></activity>
+        <activity android:name=".themeActivity"/>
     </application>
 
 </manifest>

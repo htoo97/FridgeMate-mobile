@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+
+import java.util.List;
 
 import static com.fridgemate.yangliu.fridgemate.MainActivity.shopListAdapter;
 
@@ -48,8 +55,14 @@ public class ShopListFragment extends Fragment {
         incQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int temp = Integer.parseInt(amount.getText().toString());
-                temp += 1;
+                int temp;
+                String a = String.valueOf(amount.getText());
+                if (a.equals(""))
+                    temp = 2;
+                else{
+                    temp = Integer.parseInt(a);
+                    temp += 1;
+                }
                 if (temp>99)
                     amount.setText("99");
                 else
@@ -59,7 +72,13 @@ public class ShopListFragment extends Fragment {
         decQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int temp = Integer.parseInt(amount.getText().toString());
+                String a = String.valueOf(amount.getText());
+                int temp;
+                if (a.equals(""))
+                    temp = 1;
+                else{
+                    temp = Integer.parseInt(a);
+                }
                 if (temp!=1) {
                     temp -= 1;
                 }
@@ -89,12 +108,17 @@ public class ShopListFragment extends Fragment {
                 if (itemName.length() != 0) {
                     // capitalize item name
                     itemName = itemName.substring(0, 1).toUpperCase() + itemName.substring(1);
-                    shopListAdapter.addItem(itemName, Integer.valueOf("" + amount.getText()));
+                    String num = String.valueOf(amount.getText());
+                    int amt;
+                    if (num.equals(""))
+                        amt = 1;
+                    else
+                        amt = Integer.valueOf(num);
+                    shopListAdapter.addItem(itemName, amt);
                 }
                 else
                     Toast.makeText(getContext(), "Please give it a name", Toast.LENGTH_SHORT).show();
                 name.setText("");
-                amount.setText("1");
             }
         });
         addSelectedToFrdige  = view.findViewById(R.id.add_selected_to_fridge);
@@ -104,7 +128,6 @@ public class ShopListFragment extends Fragment {
             public void onClick(View v) {
                 addSelectedToFrdige.setClickable(false);
                 shopListAdapter.addSelectedToFridge();
-                Toast.makeText(getContext(), R.string.all_fridged, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -117,18 +140,37 @@ public class ShopListFragment extends Fragment {
             }
         });
 
+        // TODO remove this progress bar
+        MainActivity.showProgress(false);
 
-        // avoid abusive syncing
-        if (MainActivity.shopListSync){
-            shopListAdapter.syncItems();
-            MainActivity.shopListSync = false;
-        }
-        else{
-            MainActivity.showProgress(false);
-        }
-
-
+        setUpRealTimeListener();
         return view;
+    }
+
+    public void setUpRealTimeListener(){
+        MainActivity.fridgeDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                final String TAG = "RealTime Listener";
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
+                        ? "Local" : "Server";
+
+                if (snapshot != null && snapshot.exists()) {
+//                    Log.d(TAG, source + " data: " + snapshot.getData());
+                    shopListAdapter.populateAdapter((List<String>) snapshot.getData().get("shoppingList"));
+
+                } else {
+//                    Log.d(TAG, source + " data: null");
+
+                }
+            }
+        });
     }
 
 }

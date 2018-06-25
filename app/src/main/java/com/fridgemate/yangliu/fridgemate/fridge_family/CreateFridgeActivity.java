@@ -118,10 +118,9 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-
-                                                MainActivity.memberListAdapter.syncMemberList();
-                                                MainActivity.contentSync = MainActivity.shopListSync= true;
-                                                FridgeFamilyFragment.syncFridgeList(); // this step maybe unnecessary since adapter is synced by changing it locally TODO:: observe pattern
+//                                                MainActivity.memberListAdapter.syncMemberList();
+//                                                MainActivity.contentSync = MainActivity.shopListSync= true;
+//                                                FridgeFamilyFragment.syncFridgeList(); // this step maybe unnecessary since adapter is synced by changing it locally
                                                 finish();
 
                                             }

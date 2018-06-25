@@ -96,7 +96,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                                     getResources().getString(R.string.join_fridge_success, fridgeName),
                                     Toast.LENGTH_LONG).show();
                             // allow syncing again
-                            MainActivity.familySync = true;
+//                            MainActivity.familySync = true;
                         }
                         else {
                             Toast.makeText(CreateJoinFridgeActivity.this,
@@ -129,14 +129,14 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                 List fridges = (List)userData.get("fridges");
                 fridges.add(fridge);
 
-                userDoc.update("fridges", fridges)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            finish();
-                            FridgeFamilyFragment.syncFridgeList();
-                        }
-                    });
+                userDoc.update("fridges", fridges);
+//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                        @Override
+//                        public void onSuccess(Void aVoid) {
+//                            finish();
+//                            FridgeFamilyFragment.syncFridgeList();
+//                        }
+//                    });
             }
         });
     }

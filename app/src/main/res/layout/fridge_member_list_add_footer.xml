@@ -26,7 +26,7 @@
         android:layout_width="102dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Add Member"
+        android:text="Add Members"
         android:textAlignment="center"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"

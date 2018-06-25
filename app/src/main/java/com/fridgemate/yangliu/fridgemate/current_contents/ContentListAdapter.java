@@ -2,7 +2,6 @@ package com.fridgemate.yangliu.fridgemate.current_contents;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -17,8 +16,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.fridgemate.yangliu.fridgemate.FridgeItem;
 import com.fridgemate.yangliu.fridgemate.R;
-
-import java.nio.InvalidMarkException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -178,17 +175,59 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         notifyDataSetChanged();
     }
 
+    public void removeAll(){
+        if (mItems == null) return;
+        mItemsOnDisplay.clear();
+        mItems.clear();
+    }
+
+    public void remove(FridgeItem i){
+        for(int j = 0; j < mItems.size(); ++j){
+            if (mItems.get(j).getDocRef().equals(i.getDocRef())){
+                mItems.remove(j);
+                break;
+            }
+        }
+        for(int j = 0; j < mItemsOnDisplay.size(); ++j){
+            if (mItemsOnDisplay.get(j).getDocRef().equals(i.getDocRef())){
+                mItemsOnDisplay.remove(j);
+                break;
+            }
+        }
+    }
+
+    public void add(FridgeItem i){
+        if (mItems == null){
+            mItems = new LinkedList<>();
+            mItemsOnDisplay = mItems;
+        }
+        mItems.add(i);
+        Collections.sort(mItems);
+//        mItemsOnDisplay.add(i);
+//        Collections.sort(mItemsOnDisplay);
+    }
+
+    public void update(FridgeItem i){
+        for (int j = 0; j<mItems.size(); ++j){
+            if (mItems.get(j).getDocRef().equals(i.getDocRef())){
+                mItems.set(j, i);
+            }
+        }
+        Collections.sort(mItems);
+//        for (FridgeItem o : mItemsOnDisplay){
+//            if (o.getDocRef().equals(i.getDocRef())){
+//                o = i;
+//            }
+//        }
+//        Collections.sort(mItemsOnDisplay);
+    }
+
     public void restore(){
         mItems.add(lastremoved);
         Collections.sort(mItems);
         mItemsOnDisplay = mItems;
     }
 
-    // adding an item
-    public void addNonExpiringItem(FridgeItem i) {
-        mItems.add(i);
-        notifyDataSetChanged();
-    }
 
     void setItems(List<FridgeItem> items){
         Collections.sort(items);

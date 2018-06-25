@@ -47,7 +47,7 @@
     <string name="reset_password">Reset Password</string>
     <string name="Register">Create New Account</string>
     <string name="log_in_success">user login successfully</string>
-    <string name="action_sign_in_short">Sign in with Email</string>
+    <string name="action_sign_in_short">Sign in</string>
     <string name="action_log_out">Log Out</string>
     <string name="error_invalid_email">Format: example@ucsd.edu</string>
     <string name="error_invalid_password">Passwords must be a minimum of 6 characters.</string>
@@ -115,8 +115,6 @@
     <string name="create_option">Option 2: Create a fridge</string>
     <string name="invite_option">Invite a new member to your fridge:</string>
 
-
-
     <!-- Strings related to the Quick Add-->
     <string name="itemName">item</string>
     <string name="ok">OK</string>
@@ -141,7 +139,7 @@
     <string name="fridge_all">Fridge Them (0)</string>
     <string name="amount">Amount:</string>
     <string name="select">Select</string>
-    <string name="hint_shoplist_item">Item to buy</string>
-    <string name="all_fridged">Moved to Contents</string>
+    <string name="hint_shoplist_item">What to buy?</string>
+    <string name="no_fridged">There is Nothing to Fridge</string>
 
 </resources>

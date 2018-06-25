@@ -310,12 +310,13 @@ public class LoginActivity extends AppCompatActivity {
                 Log.w(TAG, "Google sign in failed" + e.getMessage(), e);
                 mGoogleBtn.setClickable(true);
             }
+            mLoginProgressBar.setVisibility(View.GONE);
         }
         else {
             // Pass the activity result back to the Facebook SDK
+            mLoginProgressBar.setVisibility(View.VISIBLE);
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
-        mLoginProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {

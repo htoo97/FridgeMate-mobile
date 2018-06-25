@@ -87,14 +87,15 @@ public class MainActivity extends AppCompatActivity {
     public static FridgeListAdapter fridgeListAdapter;
     public static ShopListAdapter shopListAdapter;
 
-    public static boolean contentSync;
-    public static boolean familySync;
-    public static boolean shopListSync;
+    // these indicators were used when FridgeMate didn't have real time listener
+    //    public static boolean contentSync;
+    //    public static boolean shopListSync;
+    //    public static boolean familySync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // set theme
-        if (SaveSharedPreference.getTheme(this) == false)
+        if (!SaveSharedPreference.getTheme(this))
             setTheme(R.style.AppTheme);
         else
             setTheme(R.style.AppTheme2);
@@ -108,8 +109,7 @@ public class MainActivity extends AppCompatActivity {
         showProgress(true);
         // these are the indicator: true for needed to sync
         // allow first time sync when user enters the app
-        familySync = shopListSync = contentSync = true;
-
+//        familySync = shopListSync = contentSync = true;
 
         // set up data base
         mAuth = FirebaseAuth.getInstance();
@@ -157,6 +157,14 @@ public class MainActivity extends AppCompatActivity {
 
         //bottom navigation
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+
+        //list adapters
+        contentListAdapter = new ContentListAdapter(this);
+        fridgeListAdapter = new FridgeListAdapter(this);
+        memberListAdapter = new MemberListAdapter(this);
+        shopListAdapter = new ShopListAdapter(this);
+
+
         // check and sync with user's documents
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -166,11 +174,12 @@ public class MainActivity extends AppCompatActivity {
                     fridgeDoc = userData.getDocumentReference("currentFridge");
                     // finish database connection set up:
 
-                    // entrance
+                    // entrance animation
                     View view = findViewById(R.id.main_container);
                     Animation mLoadAnimation = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
                     mLoadAnimation.setDuration(800);
                     view.startAnimation(mLoadAnimation);
+
                     // initialize the first tab page
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
@@ -179,12 +188,12 @@ public class MainActivity extends AppCompatActivity {
 
                     // load user profile image
                     String profileUri = (String) task.getResult().get("profilePhoto");
-                    if (profileUri != null && !profileUri.equals("null")){
+                    if (profileUri != null && !profileUri.equals("null"))
                         Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
-                    }
-                    else{
+                    else {
+                        // load from google/faceboook account
                         profileUri = String.valueOf(getIntent().getExtras().get("photo"));
-                        if (profileUri != null && !profileUri.equals(""))
+                        if (profileUri != null && !profileUri.equals("") && !profileUri.equals("null"))
                             Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
                         else
                             profileImg.setImageDrawable(getResources().getDrawable(R.drawable.profile));
@@ -196,12 +205,11 @@ public class MainActivity extends AppCompatActivity {
                     // cancel progressbar
                     showProgress(false);
 
-                    // create the first fridge if necessary
-                    // Create fridge if user has no fridges
-                    // Perform first-time fridge setup
-                    if(userData.get("currentFridge") == null
-                            && ( userData.get("fridges") == null || ((List)userData.get("fridges")).isEmpty() )) {
+                    // Create fridge if user has no fridges, Perform first-time fridge setup
+                    if (userData.get("currentFridge") == null && (userData.get("fridges") == null
+                            || ((List) userData.get("fridges")).isEmpty())) {
                         Toast.makeText(MainActivity.this, R.string.fridge_setup_message, Toast.LENGTH_SHORT).show();
+                        // create the first fridge contents
                         Map<String, Object> fridgeData = new HashMap<>();
                         fridgeData.put("fridgeName", "My Fridge");
                         fridgeData.put("owner", userDoc);
@@ -209,54 +217,53 @@ public class MainActivity extends AppCompatActivity {
                         members.add(userDoc);
                         fridgeData.put("members", members);
 
-                        contentSync = false;
-
                         db.collection("Fridges")
                                 .add(fridgeData)
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    public void onSuccess(DocumentReference fridgeDoc) {
+                                    public void onSuccess(DocumentReference fridgeDocRef) {
                                         List fridges = new ArrayList<DocumentReference>();
-                                        if(userData.get("fridges") != null){
-                                            fridges = (List)userData.get("fridges");
+                                        if (userData.get("fridges") != null) {
+                                            fridges = (List) userData.get("fridges");
                                         }
 
                                         final Map<String, Object> itemData = new HashMap<>();
                                         // capitalize name
-                                        itemData.put("itemName", "Carrots");
+                                        itemData.put("itemName", "Carrot");
                                         itemData.put("amount", "7");
                                         itemData.put("expirationDate", "07/30/2018");
-                                        itemData.put("imageID","https://diabetesmealplans.com/wp-content/uploads/2015/11/carrots.jpg");
+                                        itemData.put("imageID", "https://diabetesmealplans.com/wp-content/uploads/2015/11/carrots.jpg");
                                         List<String> shopList = new LinkedList<>();
-                                        shopList.add("Apples#10");
+                                        shopList.add("Apple#10");
                                         shopList.add("Banana#1");
-                                        fridgeDoc.update("shoppingList",shopList);
-                                        fridges.add(fridgeDoc);
-                                        fridgeDoc.collection("FridgeItems").add(itemData);
+                                        fridgeDocRef.update("shoppingList", shopList);
+                                        fridges.add(fridgeDocRef);
+                                        fridgeDocRef.collection("FridgeItems").add(itemData);
 
                                         userDoc.update(
-                                                "currentFridge", fridgeDoc,
+                                                "currentFridge", fridgeDocRef,
                                                 "fridges", fridges)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
                                                         Toast.makeText(MainActivity.this,
                                                                 R.string.fridge_setup_complete, Toast.LENGTH_LONG).show();
-                                                        shopListAdapter.syncItems();
-                                                        shopListSync = false;
-                                                        contentSync = true;
+//                                                        shopListAdapter.syncItems();
+//                                                        shopListSync = false;
+//                                                        contentSync = true;
                                                     }
                                                 });
                                     }
                                 });
                     }
-                    else{
+                    // the user has fridges
+                    else {
                         // sync lists when entering the app for better transitions
                         memberListAdapter.syncMemberList();
                         FridgeFamilyFragment.syncFridgeList();
-                        familySync = false;
+//                        familySync = false;
 
-                        shopListAdapter.syncItems();
-                        shopListSync = false;
+//                        shopListAdapter.syncItems();
+//                        shopListSync = false;
                     }
                 }
             }
@@ -269,13 +276,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        contentListAdapter = new ContentListAdapter(this);
-        fridgeListAdapter = new FridgeListAdapter(this);
-        memberListAdapter = new MemberListAdapter(this);
-        shopListAdapter = new ShopListAdapter(this);
-
-
-        final String email = user.getEmail();
+        //final String email = user.getEmail();
 
         // slide menu options function set up
         navigationView = findViewById(R.id.navigation_view);
@@ -385,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.current_fridge:
-                    mToolbar.setElevation(2);
+                    mToolbar.setElevation(4);
                     // check if it's already in current_fridge
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment(),"content");
@@ -498,5 +499,4 @@ public class MainActivity extends AppCompatActivity {
             loadProgress.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
-
 }

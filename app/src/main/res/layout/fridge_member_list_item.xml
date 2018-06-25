@@ -96,10 +96,9 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical|start"
-                    android:paddingBottom="2dp"
                     android:paddingEnd="0dp"
                     android:paddingStart="10dp"
-                    android:paddingTop="2dp"
+                    android:paddingTop="5dp"
                     android:textStyle="italic" />
 
             </LinearLayout>

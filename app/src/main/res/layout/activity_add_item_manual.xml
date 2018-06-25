@@ -30,12 +30,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="35dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="?android:progressBackgroundTint"
                 android:contentDescription="@string/this_is_null"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_camera_alt_black_24dp"
-                tools:layout_editor_absoluteX="25dp"
-                tools:layout_editor_absoluteY="25dp" />
+                custom:layout_constraintBottom_toBottomOf="parent"
+                custom:layout_constraintEnd_toEndOf="parent"
+                custom:layout_constraintStart_toStartOf="parent"
+                custom:layout_constraintTop_toTopOf="parent" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/item_image"
@@ -46,8 +52,8 @@
 
             <ImageButton
                 android:id="@+id/rotateImg"
-                android:layout_width="45dp"
-                android:layout_height="44dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_weight="1"
                 android:backgroundTint="@android:color/transparent"
                 android:contentDescription="@string/this_is_null"

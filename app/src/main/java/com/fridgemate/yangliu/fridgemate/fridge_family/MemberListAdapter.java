@@ -20,6 +20,8 @@ import com.bumptech.glide.request.target.Target;
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
 import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
+
+import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.fridgemate.yangliu.fridgemate.fridge_family.FridgeFamilyFragment.swipeRefreshLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -54,9 +56,6 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private int currentFridge = -1;
     private Context context;
     public List<DocumentReference> names;
-
-    public DocumentReference fridgeDoc;
-
     private final Animation fadeOutAnim;
     private final Animation fadeInAnim;
     //private Animation animation;
@@ -70,6 +69,11 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         fadeInAnim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
 
         names = new LinkedList<>();
+    }
+
+    public void populateAdapter(List<DocumentReference> dataList){
+        names = dataList;
+        notifyDataSetChanged();
     }
 
     public void syncMemberList(){

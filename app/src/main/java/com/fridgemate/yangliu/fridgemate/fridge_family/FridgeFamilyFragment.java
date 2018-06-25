@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,12 +42,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -105,7 +109,7 @@ public class FridgeFamilyFragment extends Fragment {
                     SaveSharedPreference.setCurrentFridge(getContext(), position);
 
                     // allow auto sync the content list, shopping list for once
-                    MainActivity.shopListSync = MainActivity.contentSync = true;
+//                    MainActivity.shopListSync = MainActivity.contentSync = true;
 
                     // Update current fridge in database
                     if (fridgeListAdapter.mFridges != null &&
@@ -114,10 +118,9 @@ public class FridgeFamilyFragment extends Fragment {
                                 .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
 
                         MainActivity.fridgeDoc = newCurrentFridgeDoc;
-                        memberListAdapter.fridgeDoc = newCurrentFridgeDoc;
                         memberListAdapter.syncMemberList();
                         userDoc.update("currentFridge", newCurrentFridgeDoc);
-
+                        setUpRealTimeListener();
                     }
                 }
             }
@@ -280,6 +283,16 @@ public class FridgeFamilyFragment extends Fragment {
                                                             if (fridges == null || fridges.size() == 0)
                                                                 return;
                                                             fridges.remove(selectedFridge);
+
+                                                            // if it is the current fridge
+                                                            if (task.getResult().get("currentFridge").equals(selectedFridge)) {
+                                                                if (fridges == null || fridges.size() == 0)
+                                                                    memberToBeDeleted.update("currentFridge", null);
+                                                                else {
+                                                                    memberToBeDeleted.update("currentFridge", fridges.get(0));
+                                                                }
+                                                            }
+
                                                             memberToBeDeleted.update("fridges", fridges);
                                                             Toast.makeText(getActivity(), R.string.member_removed, Toast.LENGTH_SHORT).show();
                                                         }
@@ -308,18 +321,18 @@ public class FridgeFamilyFragment extends Fragment {
             }
         });
 
+//        if (MainActivity.familySync){
+//            if (userDoc == null)
+//                Toast.makeText(getContext(), "User Doc ref error", Toast.LENGTH_SHORT).show();
+//            else
+//                syncBothLists();
+//            MainActivity.familySync = false;
+//        }
+//        else
+        MainActivity.showProgress(false);
+        // TODO remove this progress bar
 
-        // avoid abusive syncing
-        if (MainActivity.familySync){
-            if (userDoc == null)
-                Toast.makeText(getContext(), "User Doc ref error", Toast.LENGTH_SHORT).show();
-            else
-                syncBothLists();
-            MainActivity.familySync = false;
-        }
-        else
-            MainActivity.showProgress(false);
-
+        setUpRealTimeListener();
         return view;
     }
 
@@ -476,7 +489,7 @@ public class FridgeFamilyFragment extends Fragment {
                             userDoc.update("currentFridge", null);
                         }
 
-                        MainActivity.contentSync = MainActivity.shopListSync = true;
+//                        MainActivity.contentSync = MainActivity.shopListSync = true;
 
                         // Update fridge list display once removed
                         userDoc.update("fridges", fridges)
@@ -572,5 +585,84 @@ public class FridgeFamilyFragment extends Fragment {
         setupFirstFridge();
         return documentReference;
     }
+
+    public void setUpRealTimeListener(){
+        fridgeDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                swipeRefreshLayout.setRefreshing(true);
+
+                final String TAG = "RealTime Listener";
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
+
+//                String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
+
+                if (snapshot != null && snapshot.exists()) {
+//                    Log.d(TAG, source + " data: " + snapshot.getData());
+                    memberListAdapter.populateAdapter((List<DocumentReference>) snapshot.getData().get("members"));
+
+                } else {
+//                    Log.d(TAG, source + " data: null");
+
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        MainActivity.userDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                swipeRefreshLayout.setRefreshing(true);
+
+                final String TAG = "RealTime Listener";
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
+
+//                String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
+
+                if (snapshot != null && snapshot.exists()) {
+//                    Log.d(TAG, source + " data: " + snapshot.getData());
+                    final DocumentReference currentFridge = (DocumentReference) snapshot.getData().get("currentFridge");
+                    MainActivity.fridgeDoc = currentFridge;
+
+                    final List<Fridge> userFridges = new LinkedList<>();
+                    for(final DocumentReference ref : (List<DocumentReference>) snapshot.getData().get("fridges")){
+
+                        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            public void onComplete(Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()) {
+                                    DocumentSnapshot fridgeData = task.getResult();
+
+                                    userFridges.add(new Fridge(fridgeData.getId(),
+                                            fridgeData.getString("fridgeName")));
+
+                                    fridgeListAdapter.setItems(userFridges);
+
+                                    // Highlight current fridge
+                                    if (currentFridge != null && currentFridge.equals(ref)) {
+                                        fridgeListAdapter.selectedItemPos = userFridges.size() - 1;
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    memberListAdapter.syncMemberList();
+
+                } else {
+//                    Log.d(TAG, source + " data: null");
+
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+
 
 }

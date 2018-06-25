@@ -94,9 +94,9 @@ public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
             Toast.makeText(InviteFridgeMateActivity.this, "No such user exist", Toast.LENGTH_SHORT).show();
             return;
         }
-        // populate member locally
-        memberListAdapter.names.add(newOne);
-        memberListAdapter.notifyDataSetChanged();
+//        // populate member locally
+//        memberListAdapter.names.add(newOne);
+//        memberListAdapter.notifyDataSetChanged();
 
         // add user to the member list on firebase
         fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

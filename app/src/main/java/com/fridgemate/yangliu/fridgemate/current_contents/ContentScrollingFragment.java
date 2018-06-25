@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +28,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.fridgemate.yangliu.fridgemate.FridgeItem;
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
@@ -34,25 +35,31 @@ import com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan.OcrCaptur
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.contentListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.shopListAdapter;
-import static com.fridgemate.yangliu.fridgemate.MainActivity.shopListSync;
+import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
 
 
 public class ContentScrollingFragment extends Fragment implements FridgeItemTouchHelper.FridgeItemTouchHelpListener{
@@ -71,16 +78,12 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     private LinearLayout empty_list_prompt;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
-    private DocumentReference fridgeDoc;
-
-    public static int currentListYPos = 0;
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         snackBarView = view.findViewById(R.id.swiperefresh);
 
         storage = FirebaseStorage.getInstance();
-        fridgeDoc = MainActivity.fridgeDoc;
         empty_list_prompt = view.findViewById(R.id.empty_list);
 
         // List view
@@ -128,7 +131,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
                 syncList();
             }
         });
@@ -164,13 +166,9 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                 ItemTouchHelper.RIGHT, (FridgeItemTouchHelper.FridgeItemTouchHelpListener) this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
-        // avoid abusive syncing
-        if (MainActivity.contentSync){
-            syncList();
-            MainActivity.contentSync = false;
-        }
-        else
-            MainActivity.showProgress(false);
+        // TODO:: remove this progress bar in later version
+        MainActivity.showProgress(false);
+        setUpRealTimeListener();
     }
 
     @Override
@@ -181,6 +179,13 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             empty_list_prompt.setVisibility(View.VISIBLE);
         else
             empty_list_prompt.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // detach real time listener here
     }
 
 
@@ -268,7 +273,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             if (num <= 0)
                 num = 1;
             shopListAdapter.addItem(itemName, num);
-            shopListSync = true;
+//            shopListSync = true;
         }
         else
             Toast.makeText(getContext(), "Move to shopping list error", Toast.LENGTH_SHORT).show();
@@ -324,7 +329,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         // DATABASE restore the item deletion (by delay or make a temporary copy)
         // showing snack bar with Undo option
         final Snackbar snackbar = Snackbar
-                .make(snackBarView, "Item removed!", Snackbar.LENGTH_LONG);
+                .make(snackBarView, "Item is about to be removed!", Snackbar.LENGTH_LONG);
         snackbar.setAction("UNDO", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -370,7 +375,8 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK){
-            syncList();
+            // no need to sync after each addition or edit (because of realtime listener)
+            // syncList();
         }
         else if (requestCode == RESULT_CANCELED){
             Toast.makeText(getContext(), "Item not saved", Toast.LENGTH_SHORT).show();
@@ -380,7 +386,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     }
 
     public void syncList(){
-        // DATABASE: populate the local list
+        swipeRefreshLayout.setRefreshing(true);
         final List<FridgeItem> mItems = new LinkedList<>();
         MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -409,11 +415,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                             contentListAdapter.setItems(mItems);
                             contentListAdapter.notifyDataSetChanged();
 
-                            // After populating, notify user if the list is empty
-                            if (contentListAdapter.getItemCount()==0)
-                                empty_list_prompt.setVisibility(View.VISIBLE);
-                            else
-                                empty_list_prompt.setVisibility(View.GONE);
                             MainActivity.showProgress(false);
                             if (swipeRefreshLayout != null)
                                 swipeRefreshLayout.setRefreshing(false);
@@ -424,16 +425,90 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
     }
 
-    public byte[] getBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
+//    public byte[] getBytes(InputStream inputStream) throws IOException {
+//        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+//        int bufferSize = 1024;
+//        byte[] buffer = new byte[bufferSize];
+//
+//        int len = 0;
+//        while ((len = inputStream.read(buffer)) != -1) {
+//            byteBuffer.write(buffer, 0, len);
+//        }
+//        return byteBuffer.toByteArray();
+//    }
 
-        int len = 0;
-        while ((len = inputStream.read(buffer)) != -1) {
-            byteBuffer.write(buffer, 0, len);
+
+    private static String lastAdded = "";
+    private void setUpRealTimeListener(){
+        // if user doesn't have fridge yet
+        if (fridgeDoc == null){
+            // the fridge is being set up right now, let's give it 10 sec
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run() {
+                    /* Create an Intent that will start the Menu-Activity. */
+                    setUpRealTimeListener();
+                }
+            }, 10000);
+            return;
         }
-        return byteBuffer.toByteArray();
-    }
 
+        // repopulate the content list adapter
+        contentListAdapter.removeAll();
+        final String TAG = "RealTime";
+        fridgeDoc.collection("FridgeItems")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot snapshots,
+                                        @Nullable FirebaseFirestoreException e) {
+                        swipeRefreshLayout.setRefreshing(true);
+                        if (e != null) {
+                            Log.w(TAG, "listen:error", e);
+                            return;
+                        }
+
+                        List<DocumentChange> changes = snapshots.getDocumentChanges();
+
+                        //avoid duplicates adding (this is some weird bug)
+                        if ((changes.get(0).getType()).equals(ADDED)) {
+                            if (lastAdded.equals(changes.get(0).getDocument().getId())) {
+                                swipeRefreshLayout.setRefreshing(false);
+                                return;
+                            }
+                            else
+                                lastAdded = changes.get(0).getDocument().getId();
+                        }
+
+                        for (DocumentChange dc : changes) {
+                            Map<String, Object> a = dc.getDocument().getData();
+                            FridgeItem i = new FridgeItem(
+                                    String.valueOf(a.get("itemName")),
+                                    String.valueOf(a.get("expirationDate")),
+                                    Uri.parse(String.valueOf(a.get("imageID"))),
+                                    String.valueOf(dc.getDocument().getId()),
+                                    Integer.valueOf(String.valueOf(a.get("amount"))));
+                            switch (dc.getType()) {
+                                case ADDED:
+                                    // avoid duplicate adding
+                                    contentListAdapter.add(i);
+                                    lastAdded = i.getDocRef();
+                                    break;
+                                case MODIFIED:
+                                    contentListAdapter.update(i);
+                                    break;
+                                case REMOVED:
+                                    contentListAdapter.remove(i);
+                                    break;
+                            }
+                        }
+                        swipeRefreshLayout.setRefreshing(false);
+                        contentListAdapter.notifyDataSetChanged();
+                        // After populating, notify user if the list is empty
+                        if (contentListAdapter.getItemCount() > 0)
+                            empty_list_prompt.setVisibility(View.GONE);
+                        else
+                            empty_list_prompt.setVisibility(View.VISIBLE);
+                    }
+                });
+    }
 }

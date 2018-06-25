@@ -116,11 +116,10 @@ public class AddItemManual extends TitleWithButtonsActivity {
         mRotateImg = findViewById(R.id.rotateImg);
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         image = null;
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userDoc = db.collection("Users").document(user.getEmail());
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -259,6 +258,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                     Bitmap toRotateBitmap = itemProfile.getDrawingCache();
                                     byte[] imgToUpload = getBitmapAsByteArray(Bitmap.createBitmap(
                                             toRotateBitmap, 0, 0, toRotateBitmap.getWidth(), toRotateBitmap.getHeight(), matrix, true));
+                                    // TODO:: this is may lose some consistency since fridgeItem collection doesn't exist
                                     String imageName = db.collection("fridgeItems").document().getId();
                                     final StorageReference ref = storage.getReference().child(imageName);
                                     UploadTask uploadTask = ref.putBytes(imgToUpload);
@@ -303,12 +303,14 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                                 // ************** if we are adding an item **********************
                                                 else {
                                                     fridgeDoc.collection("FridgeItems")
-                                                            .add(itemData)
-                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                public void onSuccess(DocumentReference documentReference) {
+                                                            .add(itemData).addOnCompleteListener(
+                                                            new OnCompleteListener<DocumentReference>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentReference> task) {
                                                                     finish();
                                                                 }
-                                                            });
+                                                            }
+                                                    );
                                                 }
 
                                             }
