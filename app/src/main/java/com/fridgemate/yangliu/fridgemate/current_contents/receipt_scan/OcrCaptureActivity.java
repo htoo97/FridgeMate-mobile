@@ -176,6 +176,7 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
 
                                 final java.util.Map<String, Object> itemData = new HashMap<>();
                                 itemData.put("itemName", s);
+                                // TODO:: auto--expiration?
                                 itemData.put("expirationDate", "");
                                 SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
                                 Calendar myCalendar = Calendar.getInstance();
@@ -184,6 +185,7 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
                                 itemData.put("lastModifiedBy", userDoc);
                                 itemData.put("fridge", userData.get("currentFridge"));
                                 itemData.put("imageID", "");
+                                itemData.put("amount", 1);
 
                                 fridgeDoc.collection("FridgeItems")
                                                             .add(itemData)

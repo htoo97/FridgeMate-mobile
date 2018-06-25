@@ -7,10 +7,14 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.fridgemate.yangliu.fridgemate.R;
 import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -67,6 +71,8 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
 
         DocumentReference memberDoc = db.collection("Users").document(memberId);
 
+        final ProgressBar mImgLoadProgress = findViewById(R.id.progressBar2);;
+
         memberDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -77,10 +83,24 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
                     finish();
                     return;
                 }
+                mImgLoadProgress.setVisibility(View.VISIBLE);
                 email.setText(emailStr);
                 String imgUri = String.valueOf(memberData.get("profilePhoto"));
                 if (imgUri != null && !imgUri.equals("null") && !imgUri.equals(""))
-                    Glide.with(MemberProfileActivity.this).load(Uri.parse(imgUri)).centerCrop().into(profilePhoto);
+                    Glide.with(MemberProfileActivity.this).load(Uri.parse(imgUri)).listener(
+                            new RequestListener<Uri, GlideDrawable>() {
+                                @Override
+                                public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                    mImgLoadProgress.setVisibility(View.GONE);
+                                    return false;
+                                }
+                            }
+                    ).centerCrop().into(profilePhoto);
                 String statusMessage = String.valueOf(memberData.get("status"));
                 if (!statusMessage.equals("null") && !statusMessage.equals(""))
                     status.setText(statusMessage);

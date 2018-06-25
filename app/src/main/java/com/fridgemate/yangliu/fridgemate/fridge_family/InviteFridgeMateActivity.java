@@ -40,7 +40,7 @@ public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
         setContentLayout(R.layout.activity_invite_fridge_mate);
         setBackArrow();
 
-        setTitle("Invite a Fridge Mate!");
+        setTitle("A New Fridge Mate");
         id = findViewById(R.id.editText);
         Button inviteBtn = findViewById(R.id.invite_friend);
 

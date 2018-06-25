@@ -46,8 +46,9 @@
 
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_image"
-            android:layout_width="192dp"
-            android:layout_height="159dp"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:background="@drawable/round_ghost_add_button"
             android:onClick="selectPhoto"
             app:border_width="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -57,14 +58,33 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/profile_image" />
+
     </android.support.constraint.ConstraintLayout>
 
     <TextView
         android:id="@+id/status"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_margin="20dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorPrimaryDark2"
         android:drawableStart="@drawable/ic_person_pin_black_24dp"
+        android:elevation="3dp"
         android:gravity="start|center"
         android:orientation="horizontal"
         android:paddingEnd="5dp"
@@ -72,17 +92,19 @@
         android:text='@string/example_status'
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintTop_toBottomOf="@+id/Photo" />
 
 
     <TextView
         android:id="@+id/email"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_margin="20dp"
+        android:layout_marginBottom="8dp"
         android:drawableStart="@drawable/ic_email_black_24dp"
         android:gravity="start|center"
         android:orientation="horizontal"
@@ -90,7 +112,8 @@
         android:paddingStart="5dp"
         android:text="@string/example_email"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="18sp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
@@ -102,6 +125,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:layout_marginBottom="8dp"
         android:drawableStart="@drawable/ic_current_fridge_black_24dp"
         android:gravity="start|center"
         android:orientation="horizontal"
@@ -109,6 +133,7 @@
         android:paddingStart="5dp"
         android:text="@string/this_is_null"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
@@ -123,7 +148,7 @@
         android:layout_marginStart="8dp"
         android:layout_weight="1"
         android:text="@string/prompt_current_fridge"
-        android:textSize="12sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_fridge" />

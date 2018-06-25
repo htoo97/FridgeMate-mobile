@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/one_item_frame"
@@ -66,25 +66,34 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/date_view"
+                        android:id="@+id/et_content2"
                         style="@android:style/TextAppearance.DeviceDefault.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:gravity="start|center"
-                        android:paddingEnd="0dp"
-                        android:paddingStart="10dp"
-                        android:text="@string/no_exp"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/amount"
+                        android:textAllCaps="false"
                         android:textSize="14sp" />
 
                     <TextView
-                        android:id="@+id/freshDays"
+                        android:id="@+id/amount"
+                        style="@android:style/TextAppearance.DeviceDefault.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingStart="2dp"
+                        android:text="@string/one" />
+
+                    <TextView
+                        android:id="@+id/freshDays"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        style="@android:style/TextAppearance.DeviceDefault.Small"
                         android:layout_weight="1"
                         android:gravity="end|center_vertical"
                         android:text="@string/fresh"
-                        android:textColor="?colorPrimaryDark"
+                        android:textAlignment="textEnd"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -105,21 +114,31 @@
 
     </android.support.v7.widget.CardView>
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/toGarbage"
+        android:layout_width="33dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/this_is_null"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_delete_sweep_black_24dp" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="33dp"
-            android:layout_height="40dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="36dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_delete_sweep_black_24dp" />
-    </android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/toShopList"
+        android:layout_width="33dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/this_is_null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_shopping_cart_black_24dp" />
 
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>

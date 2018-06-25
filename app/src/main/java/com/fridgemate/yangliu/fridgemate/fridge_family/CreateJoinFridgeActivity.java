@@ -39,7 +39,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
         super.onCreate(savedInstanceState);
         setContentLayout(R.layout.activity_create_join_fridge);
         setBackArrow();
-        setTitle("Create/Join a Fridge Family!");
+        setTitle("New Fridge");
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();

@@ -2,6 +2,7 @@ package com.fridgemate.yangliu.fridgemate.current_contents;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -16,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.fridgemate.yangliu.fridgemate.FridgeItem;
 import com.fridgemate.yangliu.fridgemate.R;
 
+import java.nio.InvalidMarkException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -31,18 +34,24 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final CircleImageView itemImageView;
-        private final TextView wordItemView;
-        private final TextView dateItemView;
+        public final TextView wordItemView;
+        public final TextView amountView;
         private final TextView freshDays;
         private ProgressBar progressBar;
         public CardView viewForeground;
 
+        public ImageView toDelete;
+        public ImageView toShoplist;
+
         private ItemViewHolder(View itemView) {
             super(itemView);
 
+            toDelete = itemView.findViewById(R.id.toGarbage);
+            toShoplist = itemView.findViewById(R.id.toShopList);
+
             freshDays = itemView.findViewById(R.id.freshDays);
             wordItemView = itemView.findViewById(R.id.name_view);
-            dateItemView = itemView.findViewById(R.id.date_view);
+            amountView = itemView.findViewById(R.id.amount);
 
             itemImageView = itemView.findViewById(R.id.item_image);
             viewForeground = itemView.findViewById(R.id.view_foreground);
@@ -93,10 +102,10 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         if (mItemsOnDisplay != null && mItemsOnDisplay.size() != 0) {
             FridgeItem current = mItemsOnDisplay.get(position);
 
-            // set date
-            String expDate = current.getExpDate();
-            if (expDate != null && !expDate.equals(""))
-                holder.dateItemView.setText(expDate);
+            // set amount
+            int num = current.getAmount();
+            if (num > 0)
+                holder.amountView.setText(String.valueOf(num));
 
             // set image
             Uri imageUri = current.getImage();
@@ -113,6 +122,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
 
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
             Date strDate = null;
+            String expDate = current.getExpDate();
             // if item has a expdate
             if (expDate != null && expDate.length() != 0) {
                 try {

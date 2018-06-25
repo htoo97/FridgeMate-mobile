@@ -378,7 +378,7 @@ public class FridgeFamilyFragment extends Fragment {
     }
     private void leaveFridge(final DocumentReference fridge){
 
-        // Remove user from the fridge, delete fridge if they are the only one left
+        // Remove usemr from the fridge, delete fridge if they are the only one left
         if(fridgeListAdapter.getItemCount() == 2){
             Toast.makeText(getContext(), R.string.one_fridge_error, Toast.LENGTH_SHORT).show();
             return;

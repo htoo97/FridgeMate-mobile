@@ -55,14 +55,13 @@ import java.util.Map;
 public class AddItemManual extends TitleWithButtonsActivity {
 
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
-    public static final int NEW_ITEM_ACTIVITY_REQUEST_CODE = 1;
-    public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
     private static final int CAMERA_REQUEST = 1888;
 
     private EditText mEditNameView;
     private EditText mEditDate;
     private ImageView itemProfile;
     private ProgressBar progressBar;
+    private EditText amount;
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -80,9 +79,39 @@ public class AddItemManual extends TitleWithButtonsActivity {
         setBackArrow();
         setTitle("Edit Item Info");
 
+        // amount attribute
+        ImageButton incQuantity = findViewById(R.id.ibn_add1);
+        ImageButton decQuantity = findViewById(R.id.ibn_del1);
+        amount = findViewById(R.id.et_content2);
+        incQuantity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int temp = Integer.parseInt(amount.getText().toString());
+                temp += 1;
+                if (temp>99)
+                    amount.setText("99");
+                else
+                    amount.setText(String.valueOf(temp));
+            }
+        });
+        decQuantity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int temp = Integer.parseInt(amount.getText().toString());
+                if (temp!=1) {
+                    temp -= 1;
+                }
+                else {
+                    temp = 1;
+                }
+                amount.setText(String.valueOf(temp));
+            }
+        });
+
         itemProfile = findViewById(R.id.item_image);
         mEditDate = findViewById(R.id.edit_date);
         mEditNameView = findViewById(R.id.edit_word);
+        mEditNameView.requestFocus();
         progressBar = findViewById(R.id.item_progress_bar);
         mRotateImg = findViewById(R.id.rotateImg);
 
@@ -108,6 +137,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         Intent intent = getIntent();
         final Bundle extras = intent.getExtras();
         String expDate = null;
+        int num;
         if (extras != null) {
             mEditNameView.setText(extras.getString("name"));
             expDate = extras.getString("expDate");
@@ -116,6 +146,10 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 updateProgressBar(expDate);
 
             }
+            num = Integer.parseInt(extras.getString("amount"));
+            if (num > 0)
+                amount.setText(String.valueOf(num));
+
             oldImageUri = extras.getString("image");
             if (oldImageUri != null && !oldImageUri.equals("") && !oldImageUri.equals("null")) {
                 Glide.with(this).load(Uri.parse(oldImageUri)).centerCrop().into(itemProfile);
@@ -191,7 +225,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 // only pressing button once
                 button.setClickable(false);
                 if (TextUtils.isEmpty(mEditNameView.getText())) {
-                    Toast.makeText(AddItemManual.this, "Please name your item", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddItemManual.this, R.string.item_unnamed, Toast.LENGTH_SHORT).show();
                     setResult(RESULT_CANCELED, replyIntent);
                     finish();
                     // animation
@@ -203,7 +237,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                     userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         public void onComplete(Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
-                                final DocumentSnapshot userData = task.getResult();
+//                                final DocumentSnapshot userData = task.getResult();
 
                                 final Map<String, Object> itemData = new HashMap<>();
                                 String name = mEditNameView.getText().toString();
@@ -214,7 +248,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                 itemData.put("lastModifiedDate", mdyFormat.format(myCalendar.getTime()));
                                 itemData.put("purchaseDate", mdyFormat.format(myCalendar.getTime()));
                                 itemData.put("lastModifiedBy", userDoc);
-//                                itemData.put("fridge", userData.get("currentFridge"));
+                                itemData.put("amount", String.valueOf(amount.getText()));
 
                                 // ************** if it has new profile image **********************
                                 if (image != null) {
@@ -233,7 +267,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                         @Override
                                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                                             if (!task.isSuccessful()) {
-                                                throw task.getException();
+                                                throw new Error();
                                             }
 
                                             // Continue with the task to get the download URL
@@ -323,7 +357,6 @@ public class AddItemManual extends TitleWithButtonsActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                // TODO Expiration date  Auto-generated method
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -358,7 +391,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
             if (dayDiff < 0)
                 progressBar.setProgress(0);
             else
-                progressBar.setProgress((int) (dayDiff*7.2));
+                progressBar.setProgress((int)(dayDiff*7.2));
         }
     }
 

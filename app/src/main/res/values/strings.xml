@@ -7,8 +7,10 @@
     <string name="this_is_null">(none)</string>
     <string name="connecting">Internet is not available</string>
     <string name="contents">Contents</string>
-    <string name="family">Fridges &amp; Members</string>
+    <string name="contents_title">Fridge Contents</string>
+    <string name="family">Fridge Mates</string>
     <string name="shoplist">Grocery</string>
+    <string name="shopping_list">Shopping List</string>
     <string name="feedback">Questions / Feedback</string>
     <string name="cantemail">There may be some email client issues.</string>
 
@@ -28,14 +30,15 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <string name="username">username</string>
+    <string name="username">nickname</string>
     <string name="profile_img">profile_img</string>
     <string name="status_hint">"This is my status"</string>
     <string name="example_email">useremail@gmail.com</string>
     <string name="hint_profile">profile_img</string>
     <string name="enter_password">Please enter your password:</string>
-    <string name="no_password_needed">"Leave it empty for Google accounts"</string>
+    <string name="no_password_needed">"Or click CONFIRM if you have logged in with a Google/Facebook account"</string>
     <string name="cant_deactivate">Deactivate Failed</string>
+    <string name="user_deleted">All data have been deleted</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -44,7 +47,7 @@
     <string name="reset_password">Reset Password</string>
     <string name="Register">Create New Account</string>
     <string name="log_in_success">user login successfully</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_in_short">Sign in with Email</string>
     <string name="action_log_out">Log Out</string>
     <string name="error_invalid_email">Format: example@ucsd.edu</string>
     <string name="error_invalid_password">Passwords must be a minimum of 6 characters.</string>
@@ -59,6 +62,9 @@
     <string name="error_load_data">Your user data could not be verified. Please login again.</string>
     <string name="title_activity_create_account">Sign up</string>
     <string name="title_activity_forgot_password">Reset Password</string>
+    <string name="facebook_app_id">1304113589725229</string>
+    <string name="fb_login_protocol_scheme">fb1304113589725229</string>
+
 
     <!-- Strings related to the fridge contents -->
     <string name="hint_name">Item Name</string>
@@ -69,13 +75,15 @@
     <string name="title_activity_settings">Settings</string>
     <string name="no_items">You have no items in this fridge!</string>
     <string name="exp_date">Expiration Date:</string>
-    <string name="exp_bar">Expiration Bar:</string>
+    <string name="exp_bar">Fresh Bar:</string>
     <string name="name">Name:</string>
     <string name="no_exp">No Expiration</string>
     <string name="fresh">Fresh</string>
     <string name="expired">Expired</string>
     <string name="one_day">1 Day</string>
     <string name="hint_image">item_image</string>
+    <string name="toShopList">Item moved to shopping list</string>
+    <string name="item_unnamed">Please name the item</string>
 
 
     <!-- Strings related to the whole fridge family-->
@@ -83,7 +91,7 @@
     <string name="leave_fridge">Leave</string>
     <string name="rename_fridge">Rename</string>
     <string name="fridge_setup_message">Setting up your very own fridge&#8230;</string>
-    <string name="fridge_setup_complete">Swipe down to see the contents of your fridge.</string>
+    <string name="fridge_setup_complete">Swipe down to see the contents.</string>
     <string name="delete_fridge_warning">Warning: If you leave this fridge, it will be permanently deleted!</string>
     <string name="leave_fridge_warning">Are you sure you want to leave this fridge?</string>
     <string name="one_fridge_error">You can\'t leave your only fridge!</string>
@@ -92,17 +100,22 @@
     <string name="join_fridge_success">Successfully joined %1$s!</string>
     <string name="join_fridge_hint">Paste fridge ID here</string>
     <string name="fridge_quote">If music must be the food of love, play on.</string>
-    <string name="join">Join</string>
-    <string name="create">Create</string>
-    <string name="paste_id_prompt">(Long clicking on fridge icon -> you can get your Fridge ID)</string>
+    <string name="join">Join This Fridge</string>
+    <string name="create">Create New Fridge</string>
+    <string name="paste_id_prompt">(Long clicking on a fridge icon)</string>
     <string name="invite">Invite</string>
-    <string name="mate_quote">My best friend is the one who brings out the best in me.\n</string>
+    <string name="mate_quote">My best friend is the one who brings out the best in me.</string>
     <string name="quote_name">- Henry Ford</string>
     <string name="type_id_prompt">Type ID here</string>
     <string name="type_email_prompt">Type email here</string>
     <string name="example_status">"Hey yall!"</string>
     <string name="prompt_current_fridge">(Current Fridge ID)</string>
     <string name="member_removed">Member removed</string>
+    <string name="join_option">Option 1: Join a fridge</string>
+    <string name="create_option">Option 2: Create a fridge</string>
+    <string name="invite_option">Invite a new member to your fridge:</string>
+
+
 
     <!-- Strings related to the Quick Add-->
     <string name="itemName">item</string>
@@ -111,7 +124,7 @@
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Ocr dependencies cannot be downloaded due to low device storage</string>
-    <string name="ocr_guide">Tap to Add. Pinch/Stretch to zoom</string>
+    <string name="ocr_guide">Scan and Click on the names of your grocery.</string>
 
     <!-- Strings related to the Recipe Suggestion-->
     <string name="endorse">Powered By recipepuppy</string>
@@ -128,5 +141,7 @@
     <string name="fridge_all">Fridge Them (0)</string>
     <string name="amount">Amount:</string>
     <string name="select">Select</string>
+    <string name="hint_shoplist_item">Item to buy</string>
+    <string name="all_fridged">Moved to Contents</string>
 
 </resources>

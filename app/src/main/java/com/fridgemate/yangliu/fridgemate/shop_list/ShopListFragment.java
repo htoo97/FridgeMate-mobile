@@ -26,11 +26,12 @@ public class ShopListFragment extends Fragment {
 
     public static SwipeRefreshLayout shopListRefresh;
 
+
     private EditText name;
     @SuppressLint("StaticFieldLeak")
     public static Button addSelectedToFrdige;
     private TextView amount;
-
+    private SwipeRefreshLayout snackBarView;
 
     public ShopListFragment() {}
 
@@ -39,6 +40,7 @@ public class ShopListFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_shop_list, container, false);
 
+        snackBarView = view.findViewById(R.id.swiperefresh);
         name = view.findViewById(R.id.et_content1);
         ImageButton incQuantity = view.findViewById(R.id.ibn_add1);
         ImageButton decQuantity = view.findViewById(R.id.ibn_del1);
@@ -102,6 +104,7 @@ public class ShopListFragment extends Fragment {
             public void onClick(View v) {
                 addSelectedToFrdige.setClickable(false);
                 shopListAdapter.addSelectedToFridge();
+                Toast.makeText(getContext(), R.string.all_fridged, Toast.LENGTH_SHORT).show();
             }
         });
 

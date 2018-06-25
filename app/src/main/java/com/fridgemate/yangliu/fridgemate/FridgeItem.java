@@ -18,16 +18,19 @@ public class FridgeItem  implements Comparable<FridgeItem>{
 
     private Uri image;
 
+    private int amount;
+
     public FridgeItem() {
     }
 
     // Getters and setters
     // NonNull: -> return value can never be null.
-    public FridgeItem(@NonNull String name, String expDate, Uri image, String ref){
+    public FridgeItem(@NonNull String name, String expDate, Uri image, String ref, int amount){
         this.itemName = name;
         this.expDate = expDate;
         this.image = image;
         this.docRef = ref;
+        this.amount = amount;
     }
 
 
@@ -37,6 +40,7 @@ public class FridgeItem  implements Comparable<FridgeItem>{
         this.image = item.getImage();
         this.itemId= item.getItemId();
         this.docRef = item.getDocRef();
+        this.amount = item.getAmount();
     }
 
     public int getItemId() {
@@ -113,5 +117,15 @@ public class FridgeItem  implements Comparable<FridgeItem>{
     }
 
 
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
 
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
 }

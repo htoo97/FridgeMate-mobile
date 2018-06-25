@@ -6,13 +6,13 @@
     <color name="icon">#2e3131</color>
     <color name="colorPrimary">#8c9497</color>
     <color name="colorBadAccent">#d05c5c5c</color>
-    <color name="colorBad">#75bfbebd</color>
+    <color name="colorBad">#c3b4b3b3</color>
     <color name="BarBackground">#e9eae8</color>
     <color name="colorAccent">#60e5fa</color>
     <color name="colorAccentTransparent">#9c135863</color>
-    <color name="colorAccentLight">#ccf8fa</color>
+    <color name="colorAccentLight">#b3edef</color>
 
-    <color name="colorPrimaryDark2">#71beb7</color>
+    <color name="colorPrimaryDark2">#ccf8fa</color>
     <color name="icon2">#71c4c1</color>
     <color name="colorPrimary2">#27323c</color>
     <color name="colorBadAccent2">#5cbca7</color>

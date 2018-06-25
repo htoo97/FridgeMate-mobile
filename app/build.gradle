@@ -16,7 +16,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 10
-        versionName "1.6"
+        versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -47,7 +47,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:15.1.0'
     implementation 'com.google.android.gms:play-services-vision:15.0.0'
     implementation 'com.google.firebase:firebase-database:15.0.1'
-
+    // facebook authentication
+    implementation 'com.facebook.android:facebook-login:[4,5)'
     // unit testing
 //    testImplementation 'junit:junit:4.12'
 //    androidTestImplementation 'com.android.support.test:runner:1.0.2'

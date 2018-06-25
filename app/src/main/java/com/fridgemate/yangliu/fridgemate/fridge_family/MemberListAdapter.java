@@ -76,7 +76,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.startAnimation(fadeOutAnim);
-            swipeRefreshLayout.setVisibility(View.INVISIBLE);
+            swipeRefreshLayout.setVisibility(View.GONE);
         }
         MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

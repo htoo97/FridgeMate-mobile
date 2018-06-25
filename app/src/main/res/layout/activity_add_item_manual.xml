@@ -9,6 +9,125 @@
     android:orientation="vertical">
 
 
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_margin="16dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintStart_toStartOf="parent"
+        custom:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/imageView2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="35dp"
+                android:backgroundTint="?android:progressBackgroundTint"
+                android:contentDescription="@string/this_is_null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_camera_alt_black_24dp"
+                tools:layout_editor_absoluteX="25dp"
+                tools:layout_editor_absoluteY="25dp" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/item_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/hint_image"
+                android:transitionName="item_image" />
+
+            <ImageButton
+                android:id="@+id/rotateImg"
+                android:layout_width="45dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/transparent"
+                android:contentDescription="@string/this_is_null"
+                android:visibility="invisible"
+                custom:layout_constraintBottom_toBottomOf="parent"
+                custom:layout_constraintEnd_toEndOf="parent"
+                custom:srcCompat="@drawable/ic_rotate_right_black_24dp" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/amount"
+                android:textAppearance="@style/TextAppearance.Design.Hint"
+                android:textSize="14sp"
+                custom:layout_constraintStart_toStartOf="parent"
+                custom:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/ibn_add1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@android:color/transparent"
+                android:contentDescription="@string/this_is_null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_add_gray_24dp"
+                custom:layout_constraintBottom_toBottomOf="parent"
+                custom:layout_constraintEnd_toEndOf="parent"
+                custom:layout_constraintStart_toEndOf="@+id/et_content2"
+                custom:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/et_content2"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_toStartOf="@+id/ibn_add1"
+                android:gravity="center"
+                android:hint="@string/one"
+                android:inputType="numberSigned"
+                android:text="@string/one"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                custom:layout_constraintBottom_toBottomOf="parent"
+                custom:layout_constraintEnd_toEndOf="parent"
+                custom:layout_constraintStart_toStartOf="parent"
+                custom:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/ibn_del1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@android:color/transparent"
+                android:contentDescription="@string/this_is_null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_remove_black_24dp"
+                custom:layout_constraintBottom_toBottomOf="parent"
+                custom:layout_constraintEnd_toStartOf="@+id/et_content2"
+                custom:layout_constraintStart_toStartOf="parent"
+                custom:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+    </LinearLayout>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -22,157 +141,96 @@
             android:layout_marginTop="8dp"
             android:text="@string/exp_date"
             android:textAppearance="@style/TextAppearance.Design.Hint"
+            android:textSize="14sp"
             custom:layout_constraintBottom_toTopOf="@+id/edit_date"
             custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toBottomOf="@+id/item_progress_bar" />
+            custom:layout_constraintTop_toBottomOf="@+id/edit_word" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/exp_bar"
             android:textAppearance="@style/TextAppearance.Design.Hint"
-            custom:layout_constraintBottom_toTopOf="@+id/item_progress_bar"
+            android:textSize="14sp"
+            custom:layout_constraintBottom_toBottomOf="@+id/item_progress_bar"
             custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-            custom:layout_constraintVertical_bias="1.0" />
+            custom:layout_constraintTop_toTopOf="@+id/item_progress_bar"
+            custom:layout_constraintVertical_bias="0.0" />
 
         <EditText
             android:id="@+id/edit_date"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="46dp"
             android:layout_margin="16dp"
-            android:inputType="date"
+            android:layout_marginTop="20dp"
             android:clickable="true"
             android:focusable="false"
-            android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-light"
             android:hint="@string/hint_date"
+            android:inputType="date"
             android:textSize="18sp"
-            custom:layout_constraintBottom_toBottomOf="parent"
-            custom:layout_constraintBottom_toTopOf="@id/button_save"
             custom:layout_constraintEnd_toEndOf="parent"
-            custom:layout_constraintHorizontal_bias="0.0"
             custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toBottomOf="@+id/item_progress_bar"
-            custom:layout_constraintVertical_bias="0.29000002" />
+            custom:layout_constraintTop_toBottomOf="@+id/edit_word" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="center_vertical"
+            android:text="@string/name"
+            android:textAppearance="@style/TextAppearance.Design.Hint"
+            android:textSize="14sp"
+            custom:layout_constraintBottom_toTopOf="@+id/edit_word"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/edit_word"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="sans-serif-light"
+            android:hint="@string/hint_name"
+            android:inputType="textAutoComplete"
+            android:textSize="22sp"
+            custom:layout_constraintEnd_toEndOf="parent"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/item_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
+            android:layout_margin="18dp"
+            android:progress="100"
+            android:transitionName="progress_bar"
+            custom:layout_constraintEnd_toEndOf="parent"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toBottomOf="@+id/edit_date" />
 
         <Button
             android:id="@+id/button_save"
             style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
+            android:layout_margin="8dp"
             android:elevation="4dp"
             android:text="@string/button_save"
             custom:layout_constraintBottom_toBottomOf="parent"
             custom:layout_constraintEnd_toEndOf="parent"
             custom:layout_constraintHorizontal_bias="0.0"
             custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toBottomOf="@+id/edit_date"
-            custom:layout_constraintVertical_bias="0.0" />
-
-        <LinearLayout
-            android:id="@+id/linearLayout3"
-            android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:layout_margin="16dp"
-            android:orientation="horizontal"
-            custom:layout_constraintEnd_toEndOf="parent"
-            custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toTopOf="parent"
-            android:baselineAligned="false">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
-
-                <ImageButton
-                    android:id="@+id/imageView2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="25dp"
-                    android:backgroundTint="?android:progressBackgroundTint"
-                    android:contentDescription="@string/this_is_null"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_camera_alt_black_24dp" />
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/item_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/hint_image"
-                    android:transitionName="item_image" />
-
-            </FrameLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingEnd="0dp"
-                android:paddingStart="10dp">
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="0dp"
-                    android:text="@string/name"
-                    android:textAppearance="@style/TextAppearance.Design.Hint" />
-
-                <EditText
-                    android:id="@+id/edit_word"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:hint="@string/hint_name"
-                    android:inputType="textAutoComplete"
-                    android:textSize="18sp"
-                    custom:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-                    tools:layout_editor_absoluteX="16dp" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/item_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="32dp"
-            android:progress="100"
-            android:transitionName="progress_bar"
-            custom:layout_constraintBottom_toBottomOf="parent"
-            custom:layout_constraintEnd_toEndOf="parent"
-            custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-            custom:layout_constraintVertical_bias="0.094" />
+            custom:layout_constraintTop_toBottomOf="@+id/item_progress_bar" />
 
 
     </android.support.constraint.ConstraintLayout>
-
-    <ImageButton
-        android:id="@+id/rotateImg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp"
-        android:backgroundTint="?android:progressBackgroundTint"
-        android:visibility="invisible"
-        custom:srcCompat="@drawable/ic_rotate_right_black_24dp" />
 
 </LinearLayout>

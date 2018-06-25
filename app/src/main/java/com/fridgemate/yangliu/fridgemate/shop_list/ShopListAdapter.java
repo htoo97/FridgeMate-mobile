@@ -3,6 +3,7 @@ package com.fridgemate.yangliu.fridgemate.shop_list;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
@@ -24,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static com.fridgemate.yangliu.fridgemate.MainActivity.contentListAdapter;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.userDoc;
 import static com.fridgemate.yangliu.fridgemate.shop_list.ShopListFragment.addSelectedToFrdige;
 
@@ -112,14 +115,11 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (mSelectedItems.get(i)){
                 // DATABASE:: add this to the fridge database
                 final Map<String, Object> itemData = new HashMap<>();
-                String itemName = "";
-                if (mShopList.get(i).second == 0)
-                    itemName = String.valueOf(currItem.first);
-                else
-                    itemName = String.valueOf(currItem.second) + " " + currItem.first;
-
+                String itemName = currItem.first;
                 itemData.put("itemName", itemName);
                 itemData.put("expirationDate","");
+                itemData.put("amount",currItem.second);
+
                 fridgeDoc.collection("FridgeItems").add(itemData);
                 addedItems.add(currItem);
 
@@ -148,7 +148,7 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         addSelectedToFrdige.setClickable(true);
     }
 
-    void addItem(final String name, final Integer amount){
+    public void addItem(final String name, final Integer amount){
         // DATABASE: Add to the database
         mShopList.add(new Pair<String, Integer>(name,amount));
         mSelectedItems.add(false);
@@ -219,8 +219,10 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             mSelectedItems = new LinkedList<Boolean>();
                             if (dataList != null) {
                                 for (int i = 0; i < dataList.size(); ++i) {
-                                    String[] data = dataList.get(i).split("#");
-                                    mShopList.add(new Pair<String, Integer>(data[0], Integer.valueOf(data[1])));
+                                    String itemName = dataList.get(i);
+                                    int splitIndex = itemName.lastIndexOf("#");
+
+                                    mShopList.add(new Pair<String, Integer>(itemName.substring(0,splitIndex), Integer.valueOf(itemName.substring(splitIndex+1))));
                                     mSelectedItems.add(false);
                                 }
                                 notifyDataSetChanged();
@@ -229,7 +231,8 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 ShopListFragment.shopListRefresh.setRefreshing(false);
                         }
                     });
-                    ShopListFragment.addSelectedToFrdige.setText(R.string.fridge_all);
+                    if (ShopListFragment.addSelectedToFrdige != null)
+                        ShopListFragment.addSelectedToFrdige.setText(R.string.fridge_all);
                     sumAmount = 0;
                     MainActivity.showProgress(false);
                 }

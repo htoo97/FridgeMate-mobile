@@ -32,11 +32,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.cocosw.bottomsheet.BottomSheet;
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import com.fridgemate.yangliu.fridgemate.authentication.LoginActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -48,6 +54,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -74,6 +81,8 @@ public class EditProfile extends TitleWithButtonsActivity {
     private EditText status;
     private Button saveBtn;
     private ImageButton mRotateImg;
+
+    private ProgressBar mImgLoadProgress;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -149,7 +158,7 @@ public class EditProfile extends TitleWithButtonsActivity {
 
 //        ConstraintLayout mEditFormView = findViewById(R.id.edit_profile_form);
 //        ProgressBar mProgressView = findViewById(R.id.progress);
-
+        mImgLoadProgress = findViewById(R.id.profileImgLoading);;
         name = findViewById(R.id.user_name);
         status = findViewById(R.id.status);
         profilePhoto = findViewById(R.id.profile_image);
@@ -160,6 +169,7 @@ public class EditProfile extends TitleWithButtonsActivity {
         }
         else
             profilePhoto.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+
 
         TextView email = findViewById(R.id.email);
         name.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -175,8 +185,23 @@ public class EditProfile extends TitleWithButtonsActivity {
                     status.setText((CharSequence) userData.get("status"));
                     oldProfileUri = String.valueOf(userData.get("profilePhoto"));
                     if (oldProfileUri  != null && !oldProfileUri.equals("null"))
-                        Glide.with(EditProfile.this).load(Uri.parse(oldProfileUri)).centerCrop()
-                                .into(profilePhoto);
+                        mImgLoadProgress.setVisibility(View.VISIBLE);
+                        Glide.with(EditProfile.this).load(Uri.parse(oldProfileUri)).listener(
+                                new RequestListener<Uri, GlideDrawable>() {
+                                    @Override
+                                    public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                        mImgLoadProgress.setVisibility(View.GONE);
+                                        return false;
+                                    }
+                                }
+                        ).centerCrop().into(profilePhoto);
+
+
                 }
             }
         });
@@ -304,7 +329,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                 if (ActivityCompat.checkSelfPermission(EditProfile.this,android.Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(EditProfile.this,new String[]
-                            {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_CAMERA_PERMISSION_CODE);
+                            {Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_CAMERA_PERMISSION_CODE);
                 }
                 switch (which) {
                     case R.id.local://从相册里面取照片
@@ -382,9 +407,12 @@ public class EditProfile extends TitleWithButtonsActivity {
                             authenticateAndDelteAcc();
                         }
                         else {
-                            // it means it's a google account
-                            googleAuthDelete();
-
+                            // if it's a google account
+                            if (user.getProviders().get(0).equals(GoogleAuthProvider.PROVIDER_ID))
+                                googleAuthDelete();
+                            // facebook account FacebookAuthProvider.PROVIDER_ID
+                            else
+                                fbAuthDelete();
                         }
                     }
                 });
@@ -419,6 +447,7 @@ public class EditProfile extends TitleWithButtonsActivity {
     }
 
     private void deleteAcc(){
+        mImgLoadProgress.setVisibility(View.VISIBLE);
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -427,8 +456,11 @@ public class EditProfile extends TitleWithButtonsActivity {
                 // delete user's profile image
                 if (userData.get("profilePhoto") != null) {
                     String profilelUri = (String) Objects.requireNonNull(userData.get("profilePhoto"));
-                    if (profilelUri != null && !profilelUri.equals("") && !profilelUri.equals("null"))
-                        storage.getReferenceFromUrl(profilelUri).delete();
+                    if (profilelUri != null && !profilelUri.equals("") && !profilelUri.equals("null")) {
+                        // if the profile is from the firebase storage
+                        if (profilelUri.contains("firebasestorage"))
+                            storage.getReferenceFromUrl(profilelUri).delete();
+                    }
                 }
 
                 // delete (or update) user's fridges
@@ -459,7 +491,8 @@ public class EditProfile extends TitleWithButtonsActivity {
                                                     for (DocumentSnapshot each: itemSnapshots){
                                                         String uri = (String) each.get("imageID");
                                                         if (uri != null && !uri.equals("") && !uri.equals("null")){
-                                                            storage.getReferenceFromUrl(uri).delete();
+                                                            if (uri.contains("firebasestorage"))
+                                                                storage.getReferenceFromUrl(uri).delete();
                                                         }
                                                     }
                                                 }
@@ -488,7 +521,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                             user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(EditProfile.this, "ALl data have been deleted", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(EditProfile.this, R.string.user_deleted, Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(EditProfile.this,LoginActivity.class);
                                     startActivity(intent);
                                 }
@@ -510,7 +543,12 @@ public class EditProfile extends TitleWithButtonsActivity {
         startActivityForResult(signInIntent, 101);
     }
 
-
+    private void fbAuthDelete(){
+        // TODO:: reauthenticate?
+        //        credential = FacebookAuthProvider.getCredential(AccessToken.getCurrentAccessToken().toString());
+        deleteAcc();
+        LoginManager.getInstance().logOut();
+    }
 
 
     private static final int CAMERA_REQUEST = 1888;
@@ -527,7 +565,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                 authenticateAndDelteAcc();
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Toast.makeText(this, "Sign in failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Re-Sign in failed", Toast.LENGTH_SHORT).show();
             }
         }
         // photo change

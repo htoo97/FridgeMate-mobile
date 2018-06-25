@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-public class Setting extends TitleWithButtonsActivity {
+public class themeActivity extends TitleWithButtonsActivity {
     private final boolean MIRROR = false;
     private final boolean SHAPE = true;
 
@@ -15,13 +15,13 @@ public class Setting extends TitleWithButtonsActivity {
     private Button saveBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (SaveSharedPreference.getTheme(Setting.this) == MIRROR)
+        if (SaveSharedPreference.getTheme(themeActivity.this) == MIRROR)
             setTheme(R.style.AppTheme);
         else
             setTheme(R.style.AppTheme2);
 
         super.onCreate(savedInstanceState);
-        setContentLayout(R.layout.activity_setting);
+        setContentLayout(R.layout.activity_theme);
         setBackArrow();
         setTitle("Themes");
 
@@ -32,7 +32,7 @@ public class Setting extends TitleWithButtonsActivity {
         waterTheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SaveSharedPreference.setTheme(Setting.this, MIRROR);
+                SaveSharedPreference.setTheme(themeActivity.this, MIRROR);
                 finish();
                 startActivity(intent);
             }
@@ -41,7 +41,7 @@ public class Setting extends TitleWithButtonsActivity {
         shapeTheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SaveSharedPreference.setTheme(Setting.this,SHAPE);
+                SaveSharedPreference.setTheme(themeActivity.this,SHAPE);
                 finish();
                 startActivity(intent);
             }

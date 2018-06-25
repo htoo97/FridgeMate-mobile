@@ -3,7 +3,9 @@ package com.fridgemate.yangliu.fridgemate.current_contents;
 import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 /**
  * Created by ravi on 29/09/17. Modified by Yang
@@ -55,6 +57,21 @@ public class FridgeItemTouchHelper extends ItemTouchHelper.SimpleCallback {
 
         getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, dX, dY,
                 actionState, isCurrentlyActive);
+
+        // set visibility of the two options (delete and move to shopping list)
+        final ImageView d =  ((ContentListAdapter.ItemViewHolder) viewHolder).toDelete;
+        final ImageView s =  ((ContentListAdapter.ItemViewHolder) viewHolder).toShoplist;
+        if (dX < 0){
+            if (s.getVisibility() == View.VISIBLE)
+                s.setVisibility(View.GONE);
+            if (d.getVisibility() == View.GONE)
+                d.setVisibility(View.VISIBLE);
+        }else {
+            if (d.getVisibility() == View.VISIBLE)
+                d.setVisibility(View.GONE);
+            if (s.getVisibility() == View.GONE)
+                s.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

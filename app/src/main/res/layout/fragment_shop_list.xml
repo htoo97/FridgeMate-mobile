@@ -25,7 +25,7 @@
             android:layout_weight="1"
             android:backgroundTint="?android:toolbarStyle"
             android:gravity="start|center_vertical"
-            android:hint="@string/hint_name"
+            android:hint="@string/hint_shoplist_item"
             android:inputType="text"
             android:paddingEnd="0dp"
             android:paddingStart="5dip"

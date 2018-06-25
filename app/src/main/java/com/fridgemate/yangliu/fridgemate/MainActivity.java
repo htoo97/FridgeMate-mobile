@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.login.LoginManager;
 import com.fridgemate.yangliu.fridgemate.authentication.LoginActivity;
 import com.fridgemate.yangliu.fridgemate.current_contents.ContentListAdapter;
 import com.fridgemate.yangliu.fridgemate.current_contents.ContentScrollingFragment;
@@ -53,6 +54,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -180,8 +182,14 @@ public class MainActivity extends AppCompatActivity {
                     if (profileUri != null && !profileUri.equals("null")){
                         Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
                     }
-                    else
-                        profileImg.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+                    else{
+                        profileUri = String.valueOf(getIntent().getExtras().get("photo"));
+                        if (profileUri != null && !profileUri.equals(""))
+                            Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
+                        else
+                            profileImg.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+                    }
+
 
                     // only allow user to change tab after syncing
                     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -214,17 +222,16 @@ public class MainActivity extends AppCompatActivity {
 
                                         final Map<String, Object> itemData = new HashMap<>();
                                         // capitalize name
-                                        itemData.put("itemName", "Carrot");
-                                        itemData.put("expirationDate", "06/30/2018");
-
+                                        itemData.put("itemName", "Carrots");
+                                        itemData.put("amount", "7");
+                                        itemData.put("expirationDate", "07/30/2018");
+                                        itemData.put("imageID","https://diabetesmealplans.com/wp-content/uploads/2015/11/carrots.jpg");
+                                        List<String> shopList = new LinkedList<>();
+                                        shopList.add("Apples#10");
+                                        shopList.add("Banana#1");
+                                        fridgeDoc.update("shoppingList",shopList);
                                         fridges.add(fridgeDoc);
-                                        fridgeDoc.collection("FridgeItems")
-                                                .add(itemData)
-                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                    public void onSuccess(DocumentReference documentReference) {
-                                                        //finish();
-                                                    }
-                                                });
+                                        fridgeDoc.collection("FridgeItems").add(itemData);
 
                                         userDoc.update(
                                                 "currentFridge", fridgeDoc,
@@ -234,6 +241,9 @@ public class MainActivity extends AppCompatActivity {
                                                     public void onSuccess(Void aVoid) {
                                                         Toast.makeText(MainActivity.this,
                                                                 R.string.fridge_setup_complete, Toast.LENGTH_LONG).show();
+                                                        shopListAdapter.syncItems();
+                                                        shopListSync = false;
+                                                        contentSync = true;
                                                     }
                                                 });
                                     }
@@ -244,6 +254,9 @@ public class MainActivity extends AppCompatActivity {
                         memberListAdapter.syncMemberList();
                         FridgeFamilyFragment.syncFridgeList();
                         familySync = false;
+
+                        shopListAdapter.syncItems();
+                        shopListSync = false;
                     }
                 }
             }
@@ -277,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivityForResult(intent, PROFILE_EDIT_REQUEST_CODE);
                         return true;
                     case R.id.setting:
-                        intent = new Intent(MainActivity.this, Setting.class);
+                        intent = new Intent(MainActivity.this, themeActivity.class);
                         startActivityForResult(intent,THEME_CHANGE_REQUEST_CODE);
                         return true;
                     case R.id.feedback:
@@ -301,6 +314,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                         mAuth.signOut();
+                                        LoginManager.getInstance().logOut();
                                         Intent i = new Intent(MainActivity.this, LoginActivity.class);
                                         startActivity(i);
                                         finish();
@@ -335,6 +349,10 @@ public class MainActivity extends AppCompatActivity {
                     if (!document.exists()) {
                         Map<String, Object> userData = new HashMap<>();
                         userData.put("email", email);
+                        String profileURI = String.valueOf(getIntent().getExtras().get("photo"));
+                        if (profileURI != null && !profileURI.equals(""))
+                            userData.put("profilePhoto", profileURI);
+
 
                         db.collection("Users").document(email)
                                 .set(userData);
@@ -372,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment(),"content");
                     fragmentTransaction.commit();
-                    mToolbar.setTitle(R.string.contents);
+                    mToolbar.setTitle(R.string.contents_title);
                     return true;
                 case R.id.navigation_dashboard:
                     mToolbar.setElevation(0);
@@ -386,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.main_container, new ShopListFragment(),"wishlist");
                     fragmentTransaction.commit();
-                    mToolbar.setTitle(R.string.shoplist);
+                    mToolbar.setTitle(R.string.shopping_list);
                     return true;
             }
             return false;
