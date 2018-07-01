@@ -1,6 +1,7 @@
 package com.fridgemate.yangliu.fridgemate.shop_list;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -28,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import java.util.List;
 
 import static com.fridgemate.yangliu.fridgemate.MainActivity.shopListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.user;
 
 public class ShopListFragment extends Fragment {
 
@@ -38,16 +41,16 @@ public class ShopListFragment extends Fragment {
     @SuppressLint("StaticFieldLeak")
     public static Button addSelectedToFrdige;
     private TextView amount;
-    private SwipeRefreshLayout snackBarView;
 
     public ShopListFragment() {}
+
+    final int REQUEST_NEW_ACCOUNT = 233;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_shop_list, container, false);
 
-        snackBarView = view.findViewById(R.id.swiperefresh);
         name = view.findViewById(R.id.et_content1);
         ImageButton incQuantity = view.findViewById(R.id.ibn_add1);
         ImageButton decQuantity = view.findViewById(R.id.ibn_del1);
@@ -104,6 +107,12 @@ public class ShopListFragment extends Fragment {
         addItemToShopList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (user.isAnonymous()){
+                    Intent i = new Intent(getContext(), RedirectToLogInActivity.class);
+                    startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                    return;
+                }
+
                 String itemName = String.valueOf(name.getText());
                 if (itemName.length() != 0) {
                     // capitalize item name
@@ -119,6 +128,7 @@ public class ShopListFragment extends Fragment {
                 else
                     Toast.makeText(getContext(), "Please give it a name", Toast.LENGTH_SHORT).show();
                 name.setText("");
+                amount.setText("");
             }
         });
         addSelectedToFrdige  = view.findViewById(R.id.add_selected_to_fridge);
@@ -126,6 +136,11 @@ public class ShopListFragment extends Fragment {
         addSelectedToFrdige.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (user.isAnonymous()){
+                    Intent i = new Intent(getContext(), RedirectToLogInActivity.class);
+                    startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                    return;
+                }
                 addSelectedToFrdige.setClickable(false);
                 shopListAdapter.addSelectedToFridge();
             }

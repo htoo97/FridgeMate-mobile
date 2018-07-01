@@ -20,6 +20,8 @@ public class IntroActivity extends AppIntro {
 
         // Note here that we DO NOT use setContentView();
 
+        setDoneText("Log In");
+        setSkipText("Skip to Log In");
         // Add your slide fragments here.
         // AppIntro will automatically generate the dots indicator and buttons.
 //        addSlide(firstFragment);
@@ -89,11 +91,14 @@ public class IntroActivity extends AppIntro {
 //        setVibrateIntensity(30);
     }
 
+    final int CLOSE_ALL = 23333;
+
     @Override
     public void onSkipPressed(Fragment currentFragment) {
         super.onSkipPressed(currentFragment);
         Intent i = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(i);
+        setResult(CLOSE_ALL);
         finish();
     }
 
@@ -102,6 +107,7 @@ public class IntroActivity extends AppIntro {
         super.onDonePressed(currentFragment);
         Intent i = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(i);
+        setResult(CLOSE_ALL);
         finish();
     }
 

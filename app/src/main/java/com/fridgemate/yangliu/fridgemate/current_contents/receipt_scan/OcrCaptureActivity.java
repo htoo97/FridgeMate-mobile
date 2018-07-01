@@ -58,6 +58,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.support.v7.widget.RecyclerView;
 
+import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -81,6 +82,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.user;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.userDoc;
 
 /**
  * Activity for the Ocr Detecting app.  This app detects text and displays the value with the
@@ -112,12 +117,17 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
     OcrItemListAdapter adapter;
     private Button addListToFridgeBtn;
 
+    final int REQUEST_NEW_ACCOUNT = 233;
+    final int CLOSE_ALL = 23333;
 
-    private com.google.firebase.auth.FirebaseAuth mAuth;
-    private FirebaseUser user;
-    private FirebaseFirestore db;
-    private DocumentReference  userDoc;
-    private DocumentReference fridgeDoc;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_NEW_ACCOUNT && resultCode == CLOSE_ALL){
+            setResult(CLOSE_ALL);
+            finish();
+        }
+    }
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -145,23 +155,15 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         recyclerView.setAdapter(adapter);
         ViewCompat.setNestedScrollingEnabled(recyclerView, false);
 
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        db = FirebaseFirestore.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        userDoc = db.collection("Users").document(user.getEmail());
-        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    final DocumentSnapshot userData = task.getResult();
-                    fridgeDoc = userData.getDocumentReference("currentFridge");
-                }
-            }
-        });
-
         addListToFridgeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (user.isAnonymous()){
+                    Intent i = new Intent(OcrCaptureActivity.this, RedirectToLogInActivity.class);
+                    startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                    return;
+                }
+
                 if (adapter.mData == null || adapter.mData.size() == 0)
                     return;
                 addListToFridgeBtn.setClickable(false);

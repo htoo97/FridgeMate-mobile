@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.fridgemate.yangliu.fridgemate.Fridge;
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
 import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
 import com.fridgemate.yangliu.fridgemate.current_contents.RecyclerItemClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -59,31 +60,28 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeListAdapter;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.memberListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.user;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.userDoc;
 
 
 public class FridgeFamilyFragment extends Fragment {
 
     protected static SwipeRefreshLayout swipeRefreshLayout;
-    private RecyclerView mfridgeListView;
-
-    private FirebaseUser user;
     private FirebaseFirestore db;
-    private DocumentReference userDoc;
 
 
     public FridgeFamilyFragment() { }
+
+    final int REQUEST_NEW_ACCOUNT = 233;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_fridge_family, container, false);
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
-        userDoc = setUpDatabase();
 
         // fridge list set up
-        mfridgeListView = (RecyclerView) view.findViewById(R.id.fridgeList);
+        RecyclerView mfridgeListView = (RecyclerView) view.findViewById(R.id.fridgeList);
         mfridgeListView.setHasFixedSize(true);
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -95,6 +93,14 @@ public class FridgeFamilyFragment extends Fragment {
                         new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                if (user.isAnonymous()){
+                    Intent i = new Intent(getContext(), RedirectToLogInActivity.class);
+                    startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                    return;
+                }
+
+
+
                 if (position == fridgeListAdapter.selectedItemPos)
                     return;
                 // only when it is not the adding-member footer
@@ -118,7 +124,10 @@ public class FridgeFamilyFragment extends Fragment {
                                 .document(fridgeListAdapter.mFridges.get(position).getFridgeid());
 
                         MainActivity.fridgeDoc = newCurrentFridgeDoc;
-                        memberListAdapter.syncMemberList();
+
+                        // (bug) double sync's this actually messes up Glide
+                        //memberListAdapter.syncMemberList();
+
                         userDoc.update("currentFridge", newCurrentFridgeDoc);
                         setUpRealTimeListener();
                     }
@@ -148,6 +157,7 @@ public class FridgeFamilyFragment extends Fragment {
 
                                     // Set up the input
                                     final EditText input = new EditText(getContext());
+                                    input.setText(oldName);
                                     LinearLayout linearLayout = new LinearLayout(getContext());
                                     LinearLayout.LayoutParams layoutParams =
                                             new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -211,7 +221,7 @@ public class FridgeFamilyFragment extends Fragment {
                 if (position != memberListAdapter.getItemCount() - 1) {
 
                     Intent intent = new Intent(view.getContext(), MemberProfileActivity.class);
-                    if (memberListAdapter.names.get(position) == null || memberListAdapter.names.get(position).get() == null)
+                    if (memberListAdapter.names.get(position) == null)
                         return;
                     intent.putExtra("memberId", memberListAdapter.names.get(position).getId());
                     // get image cache
@@ -286,7 +296,7 @@ public class FridgeFamilyFragment extends Fragment {
 
                                                             // if it is the current fridge
                                                             if (task.getResult().get("currentFridge").equals(selectedFridge)) {
-                                                                if (fridges == null || fridges.size() == 0)
+                                                                if (fridges.size() == 0)
                                                                     memberToBeDeleted.update("currentFridge", null);
                                                                 else {
                                                                     memberToBeDeleted.update("currentFridge", fridges.get(0));
@@ -510,7 +520,7 @@ public class FridgeFamilyFragment extends Fragment {
         //  int currentFridge = SaveSharedPreference.getCurrentFridge(getContext());
         final List<Fridge> userFridges = new ArrayList<>();
 
-        MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     final DocumentSnapshot userData = task.getResult();
@@ -521,6 +531,7 @@ public class FridgeFamilyFragment extends Fragment {
                     if(userData.get("fridges") != null){
                         fridges = (List)userData.get("fridges");
 
+                        assert fridges != null;
                         for(final DocumentReference ref : fridges){
                             ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 public void onComplete(Task<DocumentSnapshot> task) {
@@ -550,42 +561,6 @@ public class FridgeFamilyFragment extends Fragment {
 
     }
 
-    // Set up database functions when app opened
-    private DocumentReference setUpDatabase(){
-        if (user == null){
-            Toast.makeText(getContext(), R.string.error_load_data,
-                    Toast.LENGTH_LONG).show();
-            FirebaseAuth.getInstance().signOut();
-            return null;
-        }
-
-        final String email = user.getEmail();
-
-        assert email != null;
-        DocumentReference documentReference = db.collection("Users").document(email);
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    // Create document for user if doesn't already exist
-                    DocumentSnapshot document = task.getResult();
-                    if (!document.exists()) {
-                        Map<String, Object> userData = new HashMap<>();
-                        userData.put("email", email);
-
-                        db.collection("Users").document(email)
-                                .set(userData);
-                    }
-                } else {
-                    Log.d("set_up_database", "get failed with ", task.getException());
-                }
-            }
-        });
-
-        userDoc = documentReference;
-        setupFirstFridge();
-        return documentReference;
-    }
-
     public void setUpRealTimeListener(){
         fridgeDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -593,9 +568,9 @@ public class FridgeFamilyFragment extends Fragment {
                                 @Nullable FirebaseFirestoreException e) {
                 swipeRefreshLayout.setRefreshing(true);
 
-                final String TAG = "RealTime Listener";
+                final String TAG = "Member list Listener";
                 if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
+                    Log.w(TAG, "failed.", e);
                     return;
                 }
 
@@ -612,15 +587,15 @@ public class FridgeFamilyFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        MainActivity.userDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        userDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
                                 @Nullable FirebaseFirestoreException e) {
                 swipeRefreshLayout.setRefreshing(true);
 
-                final String TAG = "RealTime Listener";
+                final String TAG = "fridge list Listener";
                 if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
+                    Log.w(TAG, "failed.", e);
                     return;
                 }
 
@@ -654,10 +629,9 @@ public class FridgeFamilyFragment extends Fragment {
                     }
                     memberListAdapter.syncMemberList();
 
-                } else {
-//                    Log.d(TAG, source + " data: null");
-
                 }
+                //               else     Log.d(TAG, source + " data: null");
+
                 swipeRefreshLayout.setRefreshing(false);
             }
         });

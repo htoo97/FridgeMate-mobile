@@ -30,10 +30,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AdditionalUserInfo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -44,6 +46,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -52,10 +55,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.fridgemate.yangliu.fridgemate.MainActivity.userDoc;
+
 public class AddItemManual extends TitleWithButtonsActivity {
 
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     private static final int CAMERA_REQUEST = 1888;
+    private static final int LOAD_IMAGE_REQUEST = 1889;
 
     private EditText mEditNameView;
     private EditText mEditDate;
@@ -65,12 +71,19 @@ public class AddItemManual extends TitleWithButtonsActivity {
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
-    private DocumentReference  userDoc;
     private DocumentReference fridgeDoc;
     private ImageButton mRotateImg;
 
+
+    private ImageButton cameraBtn;
+    private ImageButton storageBtn;
+
     private Bitmap image; // indicator of a new image added
     private String oldImageUri; // indicator of there exist an old image
+
+
+    final int REQUEST_NEW_ACCOUNT = 233;
+    final int CLOSE_ALL = 23333;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,12 +128,11 @@ public class AddItemManual extends TitleWithButtonsActivity {
         progressBar = findViewById(R.id.item_progress_bar);
         mRotateImg = findViewById(R.id.rotateImg);
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         image = null;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        userDoc = db.collection("Users").document(user.getEmail());
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -192,17 +204,15 @@ public class AddItemManual extends TitleWithButtonsActivity {
         });
 
         // set up camera button
-        itemProfile.setOnClickListener(
+        cameraBtn = findViewById(R.id.cameraBtn);
+        cameraBtn.setOnClickListener(
                 new View.OnClickListener(){
                     @Override
                     public void onClick(View v) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (checkSelfPermission(Manifest.permission.CAMERA)
-                                    != PackageManager.PERMISSION_GRANTED) {
-                                requestPermissions(new String[]{Manifest.permission.CAMERA},
-                                        MY_CAMERA_PERMISSION_CODE);
-                                if((checkSelfPermission(Manifest.permission.CAMERA)
-                                        == PackageManager.PERMISSION_GRANTED)){
+                            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                                if((checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)){
                                     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                     startActivityForResult(cameraIntent, CAMERA_REQUEST);
                                 }
@@ -216,10 +226,32 @@ public class AddItemManual extends TitleWithButtonsActivity {
 
         );
 
+        // set up import from storage button
+        storageBtn = findViewById(R.id.from_phone);
+        storageBtn.setOnClickListener(
+                new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        galleryIntent.setType("image/*");
+                        startActivityForResult(galleryIntent, LOAD_IMAGE_REQUEST);
+                    }
+                }
+
+        );
+
         // set up save button
         final Button button = findViewById(R.id.button_save);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+
+                if (mAuth.getCurrentUser().isAnonymous()){
+                    Intent i = new Intent(AddItemManual.this, RedirectToLogInActivity.class);
+                    startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                    return;
+                }
+
                 Intent replyIntent = getIntent();
                 // only pressing button once
                 button.setClickable(false);
@@ -399,18 +431,38 @@ public class AddItemManual extends TitleWithButtonsActivity {
 
     // camera functions
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_NEW_ACCOUNT && resultCode == CLOSE_ALL){
+            setResult(CLOSE_ALL);
+            finish();
+            return;
+        }
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bundle photoCache = data.getExtras();
             if (photoCache != null){
-            Bitmap photo = (Bitmap)photoCache.get("data");
-            byte[] ba = getBitmapAsByteArray(photo);
-            photo = BitmapFactory.decodeByteArray(ba, 0, ba.length);
-            //itemProfile.setImageBitmap(photo);
-            Glide.with(AddItemManual.this).load(ba).asBitmap().centerCrop().into(itemProfile);
-            image = photo;
-            mRotateImg.setVisibility(View.VISIBLE);
+                Bitmap photo = (Bitmap)photoCache.get("data");
+                byte[] ba = getBitmapAsByteArray(photo);
+                photo = BitmapFactory.decodeByteArray(ba, 0, ba.length);
+                //itemProfile.setImageBitmap(photo);
+                Glide.with(AddItemManual.this).load(ba).asBitmap().centerCrop().into(itemProfile);
+                image = photo;
+                mRotateImg.setVisibility(View.VISIBLE);
             }
-
+        }else if (requestCode == LOAD_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            Uri imageUri = data.getData();
+            if (imageUri != null && !imageUri.equals("")) {
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                byte[] ba = getBitmapAsByteArray(bitmap);
+                bitmap = BitmapFactory.decodeByteArray(ba, 0, ba.length);
+                //itemProfile.setImageBitmap(photo);
+                Glide.with(AddItemManual.this).load(ba).asBitmap().centerCrop().into(itemProfile);
+                image = bitmap;
+                mRotateImg.setVisibility(View.VISIBLE);
+            }
         }
     }
 

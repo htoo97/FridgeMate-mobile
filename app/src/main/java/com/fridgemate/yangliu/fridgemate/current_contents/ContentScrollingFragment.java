@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.fridgemate.yangliu.fridgemate.FridgeItem;
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
 import com.fridgemate.yangliu.fridgemate.current_contents.receipt_scan.OcrCaptureActivity;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,20 +45,16 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.contentListAdapter;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.mAuth;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.shopListAdapter;
 import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
 
@@ -188,6 +185,12 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         // detach real time listener here
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        lastAdded = "";
+    }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -254,6 +257,12 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof ContentListAdapter.ItemViewHolder) {
+            if (mAuth.getCurrentUser().isAnonymous()){
+                Intent i = new Intent(getContext(), RedirectToLogInActivity.class);
+                startActivityForResult(i,1);
+                return;
+            }
+
             if (direction == ItemTouchHelper.LEFT) {
                 deleteItem(position);
             }
@@ -470,7 +479,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
                         List<DocumentChange> changes = snapshots.getDocumentChanges();
 
                         //avoid duplicates adding (this is some weird bug)
-                        if ((changes.get(0).getType()).equals(ADDED)) {
+                        if (changes.size() > 0 &&(changes.get(0).getType()).equals(ADDED)) {
                             if (lastAdded.equals(changes.get(0).getDocument().getId())) {
                                 swipeRefreshLayout.setRefreshing(false);
                                 return;
@@ -481,12 +490,16 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
                         for (DocumentChange dc : changes) {
                             Map<String, Object> a = dc.getDocument().getData();
+                            int amt = 1;
+                            String num  = String.valueOf(a.get("amount"));
+                            if (!num.equals("null") && !num.equals(""))
+                                amt = Integer.valueOf(String.valueOf(a.get("amount")));
                             FridgeItem i = new FridgeItem(
                                     String.valueOf(a.get("itemName")),
                                     String.valueOf(a.get("expirationDate")),
                                     Uri.parse(String.valueOf(a.get("imageID"))),
                                     String.valueOf(dc.getDocument().getId()),
-                                    Integer.valueOf(String.valueOf(a.get("amount"))));
+                                    amt);
                             switch (dc.getType()) {
                                 case ADDED:
                                     // avoid duplicate adding

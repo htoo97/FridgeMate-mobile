@@ -80,6 +80,10 @@ public class LoginActivity extends AppCompatActivity {
     CallbackManager mCallbackManager;
     LoginButton mFBBtn;
 
+    //anym auth
+    private Button anonymBtn;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +201,35 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         }
+
+        //************* anonymous login authentication **********//
+        anonymBtn = findViewById(R.id.anonym_log_in);
+        anonymBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signInAnonymously().addOnCompleteListener(
+                        new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    if (user!= null){
+                                        // Only sign in if user's email is verified
+                                        if (user.isAnonymous()) {
+                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                            startActivity(i);
+                                            finish();
+
+                                        } else {
+                                            Toast.makeText(getApplication(), R.string.error_general, Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                );
+            }
+        });
 
     }
 

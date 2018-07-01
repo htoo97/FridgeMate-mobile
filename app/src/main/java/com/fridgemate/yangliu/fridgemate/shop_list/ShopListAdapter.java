@@ -1,7 +1,9 @@
 package com.fridgemate.yangliu.fridgemate.shop_list;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -25,10 +28,13 @@ import java.util.List;
 import java.util.Map;
 
 import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.user;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.userDoc;
 import static com.fridgemate.yangliu.fridgemate.shop_list.ShopListFragment.addSelectedToFrdige;
 
 public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private final int REQUEST_NEW_ACCOUNT = 233;
 
     class shopItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -45,6 +51,12 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (user.isAnonymous()){
+                        Intent i = new Intent(v.getContext(), RedirectToLogInActivity.class);
+                        ((Activity) v.getContext()).startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                        return;
+                    }
+
                     int pos = getAdapterPosition();
                     removeItem(pos);
                 }

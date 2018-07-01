@@ -25,23 +25,39 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <ImageButton
-                android:id="@+id/imageView2"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="35dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:backgroundTint="?android:progressBackgroundTint"
-                android:contentDescription="@string/this_is_null"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_camera_alt_black_24dp"
+                android:orientation="horizontal"
                 custom:layout_constraintBottom_toBottomOf="parent"
                 custom:layout_constraintEnd_toEndOf="parent"
                 custom:layout_constraintStart_toStartOf="parent"
-                custom:layout_constraintTop_toTopOf="parent" />
+                custom:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/from_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:backgroundTint="?android:progressBackgroundTint"
+                    android:contentDescription="@string/this_is_null"
+                    android:scaleType="centerInside"
+                    custom:srcCompat="@drawable/ic_recipe_icon" />
+
+                <ImageButton
+                    android:id="@+id/cameraBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:backgroundTint="?android:progressBackgroundTint"
+                    android:contentDescription="@string/this_is_null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_camera_alt_black_24dp" />
+            </LinearLayout>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/item_image"

@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -64,10 +65,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static long shortAnimTime;
     private Toolbar mToolbar;
+    private ConstraintLayout profileImgLayout;
     private CircleImageView profileImg;
     private TextView name;
     private DrawerLayout mDrawLayout;
-    private ActionBarDrawerToggle mToggle;
     public static ProgressBar loadProgress;
     FragmentTransaction fragmentTransaction;
 
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         // set up slide menu user profiles
         mDrawLayout = findViewById(R.id.drawerLayout);
-        mToggle = new ActionBarDrawerToggle(this,mDrawLayout,R.string.open,R.string.close);
+        ActionBarDrawerToggle mToggle = new ActionBarDrawerToggle(this, mDrawLayout, R.string.open, R.string.close);
         mToggle.setDrawerIndicatorEnabled(true);
         mDrawLayout.addDrawerListener(mToggle);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -131,10 +132,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.navigation_view);
         View headerView =  navigationView.getHeaderView(0);
         profileImg = headerView.findViewById(R.id.profile_image);
-        // allow user to click the profile only after a connection to the database
-        profileImg.setClickable(false);
         profileImg.setDrawingCacheEnabled(true);
-        profileImg.setOnClickListener(new View.OnClickListener() {
+        profileImgLayout = headerView.findViewById(R.id.profile_layout);
+        // allow user to click the profile only after a connection to the database
+        profileImgLayout.setClickable(false);
+        profileImgLayout.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View v) {
@@ -185,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
                     fragmentTransaction.commit();
 
-
                     // load user profile image
                     String profileUri = (String) task.getResult().get("profilePhoto");
                     if (profileUri != null && !profileUri.equals("null"))
@@ -193,8 +194,10 @@ public class MainActivity extends AppCompatActivity {
                     else {
                         // load from google/faceboook account
                         profileUri = String.valueOf(getIntent().getExtras().get("photo"));
-                        if (profileUri != null && !profileUri.equals("") && !profileUri.equals("null"))
+                        if (profileUri != null && !profileUri.equals("") && !profileUri.equals("null")) {
                             Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
+                            userDoc.update("profilePhoto",profileUri);
+                        }
                         else
                             profileImg.setImageDrawable(getResources().getDrawable(R.drawable.profile));
                     }
@@ -331,12 +334,20 @@ public class MainActivity extends AppCompatActivity {
 
     // Set up database functions when app opened
     private DocumentReference setUpDatabase(){
+
         if (user == null){
             Toast.makeText(getApplication(), R.string.error_load_data,
                     Toast.LENGTH_LONG).show();
             mAuth.signOut();
             return null;
         }
+
+
+        // make anonymous account access fridgematehelp@gmail.com
+        if (user.isAnonymous()){
+            return db.collection("Users").document("fridgematehelp@gmail.com");
+        }
+
 
         final String email = user.getEmail();
 
@@ -357,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
 
                         db.collection("Users").document(email)
                                 .set(userData);
-                        profileImg.setClickable(true);
+                        profileImgLayout.setClickable(true);
                     }
                 } else {
                     Log.d("set_up_database", "get failed with ", task.getException());
@@ -439,8 +450,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    final int CLOSE_ALL = 23333;
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // close all temp pages that anonymous account used
+        if (resultCode == CLOSE_ALL)
+            finish();
+
         // update the image when edited the profile
         if (requestCode == PROFILE_EDIT_REQUEST_CODE){
             if (resultCode == RESULT_OK) {
@@ -457,7 +475,6 @@ public class MainActivity extends AppCompatActivity {
                 });
                 name.setText(user.getDisplayName());
             }
-
         }else if (requestCode == THEME_CHANGE_REQUEST_CODE){
                 recreate();
 

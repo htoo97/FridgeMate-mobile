@@ -24,6 +24,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.fridgemate.yangliu.fridgemate.MainActivity.userDoc;
+
 public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
 
     private EditText fridgeInput;
@@ -31,8 +33,6 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
     private Button joinBtn;
 
     private FirebaseFirestore db;
-
-    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +49,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
         joinBtn = findViewById(R.id.invite_friend);
         createBtn = findViewById(R.id.create_fridge);
 
-        email = user.getEmail();
-        final DocumentReference userDoc = db.collection("Users").document(email);
+        assert user != null;
 
         joinBtn.setOnClickListener(new View.OnClickListener() {
             // Join the selected fridge ID
@@ -97,6 +96,7 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                                     Toast.LENGTH_LONG).show();
                             // allow syncing again
 //                            MainActivity.familySync = true;
+                            finish();
                         }
                         else {
                             Toast.makeText(CreateJoinFridgeActivity.this,
@@ -120,8 +120,6 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
 
     // Add fridge to user's list of fridges
     private void addToFridges(final DocumentReference fridge){
-        final DocumentReference userDoc = db.collection("Users").document(email);
-
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(Task<DocumentSnapshot> task) {
                 final DocumentSnapshot userData = task.getResult();

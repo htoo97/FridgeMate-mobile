@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.memberListAdapter;
 
 public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
@@ -30,7 +31,6 @@ public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
     private EditText id;
 
     private FirebaseFirestore db;
-    private DocumentReference fridgeDoc;
 
     private static final String members = "members";
 
@@ -51,40 +51,57 @@ public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
         db = FirebaseFirestore.getInstance();
         DocumentReference userDoc = MainActivity.userDoc;
 
-        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            public void onComplete(Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    final DocumentSnapshot userData = task.getResult();
-                    fridgeDoc= userData.getDocumentReference("currentFridge");
-                }
-            }
-        });
+//        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            public void onComplete(Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    final DocumentSnapshot userData = task.getResult();
+//                    fridgeDoc= userData.getDocumentReference("currentFridge");
+//                }
+//            }
+//        });
         inviteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 final String newcomerId = String.valueOf(id.getText());
 
+                // check if user is yourself
                 if (newcomerId.equals(email)){
                     Toast.makeText(InviteFridgeMateActivity.this, "Opps, you can't add yourself again", Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
-                // Sanitize newcomerId. must be a valid User email
-                db.collection("Users").whereEqualTo("email",newcomerId)
-                        .limit(1).get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    if (task.getResult().isEmpty())
-                                        addUser(null);
-                                    else {
-                                        addUser(db.collection("Users").document(newcomerId));
-                                     finish();
-                                    }
-                                }
+
+                // check if user is already in the fridge
+                fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        List<DocumentReference> memberRefList = (List<DocumentReference>) task.getResult().get("members");
+                        for(DocumentReference memberRef : memberRefList){
+                            if (memberRef.getId().equals(newcomerId)){
+                                Toast.makeText(InviteFridgeMateActivity.this, "Opps, you can't add this person again", Toast.LENGTH_SHORT).show();
+                                finish();
+                                return;
                             }
-                        });
+                        }
+                        // Sanitize newcomerId. must be a valid User email
+                        db.collection("Users").whereEqualTo("email",newcomerId)
+                                .limit(1).get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            if (task.getResult().isEmpty())
+                                                addUser(null);
+                                            else {
+                                                addUser(db.collection("Users").document(newcomerId));
+                                                finish();
+                                            }
+                                        }
+                                    }
+                                });
+                    }
+                });
+
             }
         });
     }

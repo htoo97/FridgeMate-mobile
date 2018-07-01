@@ -1,5 +1,6 @@
 package com.fridgemate.yangliu.fridgemate.fridge_family;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,9 +20,11 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
 import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
 
 import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.user;
 import static com.fridgemate.yangliu.fridgemate.fridge_family.FridgeFamilyFragment.swipeRefreshLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -111,7 +114,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         });
     }
-
+    final int REQUEST_NEW_ACCOUNT = 233;
     private static final int FOOTER_VIEW = 1;
     public class FooterViewHolder extends RecyclerView.ViewHolder {
         FooterViewHolder(final View itemView) {
@@ -119,6 +122,13 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    if (user.isAnonymous()){
+                        Intent i = new Intent(v.getContext(), RedirectToLogInActivity.class);
+                        ((Activity) v.getContext()).startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                        return;
+                    }
+
                     Intent intent = new Intent(v.getContext(), InviteFridgeMateActivity.class);
                     v.getContext().startActivity(intent);
                 }

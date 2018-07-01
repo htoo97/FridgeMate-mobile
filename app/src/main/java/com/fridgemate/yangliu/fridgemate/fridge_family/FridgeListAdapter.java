@@ -1,5 +1,6 @@
 package com.fridgemate.yangliu.fridgemate.fridge_family;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -14,18 +15,18 @@ import android.widget.TextView;
 
 import com.fridgemate.yangliu.fridgemate.Fridge;
 import com.fridgemate.yangliu.fridgemate.R;
+import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
 import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
-
 import java.util.List;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.user;
 
 public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 //    public static final int EDIT_ITEM_ACTIVITY_REQUEST_CODE = 2;
 
-    class ItemViewHolder extends RecyclerView.ViewHolder {
+    private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final LinearLayout frame;
-        private final ImageView imageView;
         private final TextView name;
         private final Drawable unpressed;
         private final Drawable pressed;
@@ -33,7 +34,6 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private ItemViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name_view);
-            imageView = itemView.findViewById(R.id.fridge_image);
 
             // on select stroker
             frame = itemView.findViewById(R.id.fridgeFamilyCanvas);
@@ -53,6 +53,8 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         selectedItemPos = SaveSharedPreference.getCurrentFridge(context);
     }
 
+    private final int REQUEST_NEW_ACCOUNT = 233;
+
     private static final int FOOTER_VIEW = 1;
     public class FooterViewHolder extends RecyclerView.ViewHolder {
         FooterViewHolder(final View itemView) {
@@ -60,6 +62,13 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    if (user.isAnonymous()){
+                        Intent i = new Intent(v.getContext(), RedirectToLogInActivity.class);
+                        ((Activity) v.getContext()).startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                        return;
+                    }
+
                     Intent intent = new Intent(v.getContext(), CreateJoinFridgeActivity.class);
                     itemView.getContext().startActivity(intent);
                 }

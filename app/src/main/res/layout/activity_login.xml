@@ -118,7 +118,6 @@
                     android:elevation="3dp"
                     android:text="@string/action_sign_in_short"
                     android:textAllCaps="false"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -127,7 +126,7 @@
                     android:id="@+id/create_account"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:gravity="center_horizontal"
                     android:text="@string/Register"
                     android:textColor="@color/colorAccentTransparent"
@@ -139,7 +138,7 @@
                     android:id="@+id/forgot_password"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:gravity="center_horizontal"
                     android:text="@string/forgot_password"
                     android:textColor="@color/colorAccentTransparent"
@@ -155,6 +154,7 @@
                     android:layout_height="35dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
+                    android:layout_marginTop="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/forgot_password" />
@@ -165,10 +165,24 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="12sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/googleBtn" />
+
+                <Button
+                    android:id="@+id/anonym_log_in"
+                    style="@android:style/Widget.DeviceDefault.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Try without an Account"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fb_button" />
             </android.support.constraint.ConstraintLayout>
 
             <ProgressBar

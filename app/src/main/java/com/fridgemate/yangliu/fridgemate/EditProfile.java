@@ -15,8 +15,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
-
-import android.support.v4.app.ActivityCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -41,7 +39,6 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.cocosw.bottomsheet.BottomSheet;
-import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.fridgemate.yangliu.fridgemate.authentication.LoginActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -54,7 +51,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -70,6 +66,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.userDoc;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -87,7 +84,6 @@ public class EditProfile extends TitleWithButtonsActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private FirebaseStorage storage;
-    private DocumentReference userDoc;
 
     private AuthCredential credential;
 
@@ -99,7 +95,7 @@ public class EditProfile extends TitleWithButtonsActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         // set theme
-        if (SaveSharedPreference.getTheme(this) == false)
+        if (!SaveSharedPreference.getTheme(this))
             setTheme(R.style.AppTheme);
         else
             setTheme(R.style.AppTheme2);
@@ -107,6 +103,9 @@ public class EditProfile extends TitleWithButtonsActivity {
         setContentLayout(R.layout.activity_edit_profile);
         setBackArrow();
         setTitle("Edit Profile");
+
+        // make keyboard push up the window for Edit text
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         // set up rotate button
         mRotateImg = findViewById(R.id.rotateImg);
@@ -139,7 +138,6 @@ public class EditProfile extends TitleWithButtonsActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         storage = FirebaseStorage.getInstance();
-        userDoc = MainActivity.userDoc;
 
         if (userDoc == null) {
             Toast.makeText(this, "User documents loading errors", Toast.LENGTH_SHORT).show();
@@ -170,18 +168,26 @@ public class EditProfile extends TitleWithButtonsActivity {
         else
             profilePhoto.setImageDrawable(getResources().getDrawable(R.drawable.profile));
 
-
-        TextView email = findViewById(R.id.email);
+        final TextView email = findViewById(R.id.email);
         name.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        // populate local data from the firebase
-        name.setText(user.getDisplayName());
 
         userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()){
                     DocumentSnapshot userData = task.getResult();
+
+                    // populate local data from the firebase
+                    if (!userData.get("name").equals("null"))
+                        name.setText((CharSequence) userData.get("name"));
+                    else
+                        name.setText(user.getDisplayName());
+
+                    if (!userData.get("email").equals("null"))
+                        email.setText((CharSequence) userData.get("email"));
+                    else
+                        email.setText(user.getEmail());
+
                     status.setText((CharSequence) userData.get("status"));
                     oldProfileUri = String.valueOf(userData.get("profilePhoto"));
                     if (oldProfileUri  != null && !oldProfileUri.equals("null"))
@@ -206,12 +212,17 @@ public class EditProfile extends TitleWithButtonsActivity {
             }
         });
 
-        // Uri i = user.getPhotoUrl();
-        // profilePhoto.setImageBitmap();
-        email.setText(user.getEmail());
+
         saveBtn = findViewById(R.id.save_user_profile);
         saveBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                // user can only make modification when logged in with an account
+                if (user.isAnonymous()){
+                    Intent i = new Intent(EditProfile.this, RedirectToLogInActivity.class);
+                    startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                    return;
+                }
+
                 final Intent replyIntent = getIntent();
 
                 saveBtn.setClickable(false);
@@ -326,10 +337,10 @@ public class EditProfile extends TitleWithButtonsActivity {
         new BottomSheet.Builder(this).title("Options").sheet(R.menu.menu_profile_photo).listener(new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (ActivityCompat.checkSelfPermission(EditProfile.this,android.Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(EditProfile.this,new String[]
-                            {Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_CAMERA_PERMISSION_CODE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                            || (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED))
+                        requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_CAMERA_PERMISSION_CODE);
                 }
                 switch (which) {
                     case R.id.local://从相册里面取照片
@@ -340,16 +351,9 @@ public class EditProfile extends TitleWithButtonsActivity {
                         break;
                     case R.id.camera://调用相机拍照
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (checkSelfPermission(android.Manifest.permission.CAMERA)
-                                    != PackageManager.PERMISSION_GRANTED) {
-                                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-                            } else if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                    != PackageManager.PERMISSION_GRANTED) {
-                                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                        MY_CAMERA_PERMISSION_CODE);
-                            } else {
+                            if((checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+                                    &&(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))
                                 takeAPhoto();
-                            }
                         }
                 }
             }
@@ -374,12 +378,20 @@ public class EditProfile extends TitleWithButtonsActivity {
         return true;
     }
 
+    final int REQUEST_NEW_ACCOUNT = 233;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.delete_account:
                 // DATABASE: deactivate user account
+
+                // user can only make modification when logged in with an account
+                if (user.isAnonymous()){
+                    Intent i = new Intent(EditProfile.this, RedirectToLogInActivity.class);
+                    startActivityForResult(i,REQUEST_NEW_ACCOUNT);
+                    return false;
+                }
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(EditProfile.this);
                 builder.setTitle(R.string.enter_password);
@@ -555,6 +567,8 @@ public class EditProfile extends TitleWithButtonsActivity {
     private static final int LOAD_IMAGE_REQUEST = 1889;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
 
+    final int CLOSE_ALL = 23333;
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 101) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -566,6 +580,12 @@ public class EditProfile extends TitleWithButtonsActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Toast.makeText(this, "Re-Sign in failed", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if (requestCode == REQUEST_NEW_ACCOUNT){
+            if (resultCode == CLOSE_ALL) {
+                setResult(CLOSE_ALL);
+                finish();
             }
         }
         // photo change
@@ -594,6 +614,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                     Toast.makeText(getApplicationContext(), "You have not selected and image", Toast.LENGTH_SHORT).show();
 
             }
+            mImgLoadProgress.setVisibility(View.GONE);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

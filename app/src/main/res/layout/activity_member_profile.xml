@@ -12,23 +12,46 @@
     <requestFocus android:id="@+id/requestFocus" />
 
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/Photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/down2"
-        android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
 
+        <ImageView
+            android:id="@+id/color_layer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="0dp"
+            android:alpha="0.5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/this_is_null"
+            app:srcCompat="@color/transparent" />
+
+        <ImageView
+            android:id="@+id/background"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0.2"
+            android:contentDescription="@string/this_is_null"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@color/transparent" />
+
         <TextView
             android:id="@+id/user_name"
             android:layout_width="378dp"
             android:layout_height="46dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
@@ -41,13 +64,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_image"
-            app:layout_constraintVertical_bias="0.428" />
+            app:layout_constraintTop_toBottomOf="@+id/profile_image" />
 
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_image"
             android:layout_width="160dp"
             android:layout_height="160dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/round_ghost_add_button"
             android:onClick="selectPhoto"
             app:border_width="0dp"
@@ -79,9 +102,8 @@
         android:id="@+id/status"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:layout_margin="20dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginStart="25dp"
         android:background="@color/colorPrimaryDark2"
         android:drawableStart="@drawable/ic_person_pin_black_24dp"
         android:elevation="3dp"
@@ -94,9 +116,10 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Photo" />
+        app:layout_constraintTop_toBottomOf="@+id/Photo"
+        app:layout_constraintVertical_bias="0.41" />
 
 
     <TextView
@@ -135,9 +158,9 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/status" />
+        app:layout_constraintTop_toBottomOf="@+id/status"
+        app:layout_constraintVertical_bias="0.0" />
 
 
     <TextView
