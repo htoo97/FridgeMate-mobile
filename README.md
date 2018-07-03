@@ -24,7 +24,7 @@ Requirements:
 System  : Android 5.0+, connected to WiFi, Google Services Framework installed
 RAM     : >= 1 GB
 Size    : 40MB
-Version : Release 2.0
+Version : Release 2.1
 ```
 
 ## Known Bug(s)
