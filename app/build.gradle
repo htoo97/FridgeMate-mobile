@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+//Crashlytics
+apply plugin: 'io.fabric'
 
 android {
     signingConfigs {
@@ -15,8 +17,8 @@ android {
         applicationId "com.fridgemate.yangliu.fridgemate"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 12
-        versionName "2.1"
+        versionCode 16
+        versionName "2.1+"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -40,13 +42,14 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     // firebase
-    implementation 'com.google.firebase:firebase-auth:15.1.0'
-    implementation 'com.google.android.gms:play-services-vision:15.0.0'
-    implementation 'com.google.firebase:firebase-database:15.0.1'
+    implementation 'com.google.firebase:firebase-auth:16.0.2'
+    implementation 'com.google.android.gms:play-services-vision:15.0.2'
+    implementation 'com.google.firebase:firebase-database:16.0.1'
     // facebook authentication
     implementation 'com.facebook.android:facebook-login:[4,5)'
     // unit testing
@@ -70,7 +73,7 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.2'
     // profile image bottom up menu
     api 'com.cocosw:bottomsheet:1.+@aar'
-    implementation 'com.google.firebase:firebase-firestore:16.0.0'
+    implementation 'com.google.firebase:firebase-firestore:17.0.2'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
     implementation 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
@@ -78,6 +81,8 @@ dependencies {
     implementation 'com.android.support:support-dynamic-animation:27.1.1'
     // tutorial
     implementation 'com.github.apl-devs:appintro:v4.2.3'
+    //Crashlytics
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

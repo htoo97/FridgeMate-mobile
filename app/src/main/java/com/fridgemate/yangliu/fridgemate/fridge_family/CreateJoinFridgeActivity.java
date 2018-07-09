@@ -8,11 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
 import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -64,8 +62,8 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                 }
 
                 joinBtn.setClickable(false);
-                final DocumentReference fridgeDoc = db.collection("Fridges").document(fridge);
-                fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                final DocumentReference newfridgeDoc = db.collection("Fridges").document(fridge);
+                newfridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         DocumentSnapshot fridgeData = task.getResult();
@@ -82,21 +80,18 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                                 joinBtn.setClickable(true);
                                 return;
                             }
+                            else {
 
-                            // Add user to fridge's members
-                            members.add(userDoc);
-                            fridgeDoc.update("members", members);
-
-                            // Add fridge to user's list of fridges
-                            addToFridges(fridgeDoc);
-
-                            String fridgeName = fridgeData.getString("fridgeName");
-                            Toast.makeText(CreateJoinFridgeActivity.this,
-                                    getResources().getString(R.string.join_fridge_success, fridgeName),
-                                    Toast.LENGTH_LONG).show();
-                            // allow syncing again
-//                            MainActivity.familySync = true;
-                            finish();
+                                newfridgeDoc.update("joinRequest",userDoc).addOnCompleteListener(
+                                        new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Toast.makeText(CreateJoinFridgeActivity.this, R.string.sent_join, Toast.LENGTH_SHORT).show();
+                                                finish();
+                                            }
+                                        }
+                                );
+                            }
                         }
                         else {
                             Toast.makeText(CreateJoinFridgeActivity.this,
@@ -117,28 +112,6 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
             }
         });
     }
-
-    // Add fridge to user's list of fridges
-    private void addToFridges(final DocumentReference fridge){
-        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            public void onComplete(Task<DocumentSnapshot> task) {
-                final DocumentSnapshot userData = task.getResult();
-
-                List fridges = (List)userData.get("fridges");
-                fridges.add(fridge);
-
-                userDoc.update("fridges", fridges);
-//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void aVoid) {
-//                            finish();
-//                            FridgeFamilyFragment.syncFridgeList();
-//                        }
-//                    });
-            }
-        });
-    }
-
 
     // Return to previous screen on back button
     @Override

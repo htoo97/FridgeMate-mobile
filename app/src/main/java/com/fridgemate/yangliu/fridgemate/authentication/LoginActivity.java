@@ -1,7 +1,9 @@
 package com.fridgemate.yangliu.fridgemate.authentication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -139,7 +141,8 @@ public class LoginActivity extends AppCompatActivity {
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                if(hasInternet())
+                    attemptLogin();
             }
         });
 
@@ -174,8 +177,10 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGoogleBtn.setClickable(false);
-                signIn();
+                if(hasInternet()) {
+                    mGoogleBtn.setClickable(false);
+                    signIn();
+                }
 
             }
         });
@@ -186,7 +191,8 @@ public class LoginActivity extends AppCompatActivity {
         mFBBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fbSignIn();
+                if(hasInternet())
+                    fbSignIn();
             }
         });
 
@@ -207,30 +213,41 @@ public class LoginActivity extends AppCompatActivity {
         anonymBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth.signInAnonymously().addOnCompleteListener(
-                        new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    if (user!= null){
-                                        // Only sign in if user's email is verified
-                                        if (user.isAnonymous()) {
-                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                            startActivity(i);
-                                            finish();
+                if(hasInternet()) {
+                    mAuth.signInAnonymously().addOnCompleteListener(
+                            new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        if (user != null) {
+                                            // Only sign in if user's email is verified
+                                            if (user.isAnonymous()) {
+                                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                startActivity(i);
+                                                finish();
 
-                                        } else {
-                                            Toast.makeText(getApplication(), R.string.error_general, Toast.LENGTH_LONG).show();
+                                            } else {
+                                                Toast.makeText(getApplication(), R.string.error_general, Toast.LENGTH_LONG).show();
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                );
+                    );
+                }
             }
         });
 
+    }
+
+    private boolean hasInternet(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm.getActiveNetworkInfo() == null) {
+            Toast.makeText(LoginActivity.this, R.string.connecting, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     private void fbSignIn(){
@@ -431,15 +448,9 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
 
             // avoid abusive loggin
-            new Handler().postDelayed(new Runnable(){
-                @Override
-                public void run() {
-                    mEmailSignInButton.setClickable(false);
-                }
-            }, 900);
+            mEmailSignInButton.setClickable(true);
             focusView.requestFocus();
         } else {
-            mEmailSignInButton.setClickable(false);
             // perform the user login attempt.
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -484,6 +495,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                 Toast.makeText(getApplication(), errorMessage,
                                         Toast.LENGTH_LONG).show();
+
+                                mEmailSignInButton.setClickable(true);
                             }
                         }
                     });

@@ -97,30 +97,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         // set up fall in animation
         LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.fall_in_layout);
         recyclerView.setLayoutAnimation(animation);
-
-        // on item Click (modifying item)
-        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(ContentScrollingFragment.this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(view.getContext(), AddItemManual.class);
-                Bundle extras = new Bundle();
-                FridgeItem i = contentListAdapter.mItemsOnDisplay.get(position);
-                extras.putString("name",i.getItemName());
-                extras.putString("expDate",i.getExpDate());
-                extras.putString("image",i.getImage().toString());
-                extras.putString("docRef",i.getDocRef());
-                extras.putString("amount", String.valueOf(i.getAmount()));
-                intent.putExtras(extras);
-                Objects.requireNonNull(getActivity()).setResult(RESULT_OK, intent);
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.item_image), "item_image");
-                startActivityForResult(intent, EDIT_ITEM_ACTIVITY_REQUEST_CODE, options.toBundle());
-            }
-
-            @Override
-            public void onItemLongClick(View view, int position) {
-                // ...
-            }
-        }));
+        setupContentListOnClickListener(recyclerView);
 
         // swipe refresh
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
@@ -166,6 +143,32 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         // TODO:: remove this progress bar in later version
         MainActivity.showProgress(false);
         setUpRealTimeListener();
+    }
+
+    private void setupContentListOnClickListener(RecyclerView recyclerView){
+        // on item Click (modifying item)
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(ContentScrollingFragment.this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(view.getContext(), AddItemManual.class);
+                Bundle extras = new Bundle();
+                FridgeItem i = contentListAdapter.mItemsOnDisplay.get(position);
+                extras.putString("name",i.getItemName());
+                extras.putString("expDate",i.getExpDate());
+                extras.putString("image",i.getImage().toString());
+                extras.putString("docRef",i.getDocRef());
+                extras.putString("amount", String.valueOf(i.getAmount()));
+                intent.putExtras(extras);
+                Objects.requireNonNull(getActivity()).setResult(RESULT_OK, intent);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.item_image), "item_image");
+                startActivityForResult(intent, EDIT_ITEM_ACTIVITY_REQUEST_CODE, options.toBundle());
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+                // ...
+            }
+        }));
     }
 
     @Override

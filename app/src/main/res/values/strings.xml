@@ -5,7 +5,7 @@
     <string name="fridge_name">Fridge Name</string>
     <string name="forget_password">You will receive an email to reset your password.</string>
     <string name="this_is_null">(none)</string>
-    <string name="connecting">Internet is not available</string>
+    <string name="connecting">Please connect to the Internet</string>
     <string name="contents">Contents</string>
     <string name="contents_title">Fridge Contents</string>
     <string name="family">Fridge Mates</string>
@@ -13,6 +13,10 @@
     <string name="shopping_list">Shopping List</string>
     <string name="feedback">Questions / Feedback</string>
     <string name="cantemail">There may be some email client issues.</string>
+    <string name="userDoc_error">User doc loading Error</string>
+
+    <!-- Strings related to the Anonymous login -->
+    <string name="sample_name">Banana</string>
 
     <!-- Strings related to the Intro -->
     <string name="app_intro">Intro</string>
@@ -20,6 +24,8 @@
 
     <!-- Strings related to the setting -->
     <string name="theme">Themes</string>
+    <string name="shape">Shape</string>
+    <string name="mirror">Mirror</string>
 
 
     <!-- Strings related to welcome screen-->
@@ -39,6 +45,7 @@
     <string name="no_password_needed">"Or click CONFIRM if you have logged in with a Google/Facebook account"</string>
     <string name="cant_deactivate">Deactivate Failed</string>
     <string name="user_deleted">All data have been deleted</string>
+    <string name="image_not_detected">You have not selected and image</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -97,7 +104,7 @@
     <string name="one_fridge_error">You can\'t leave your only fridge!</string>
     <string name="join_fridge_error">No such fridge ID could be found.</string>
     <string name="join_fridge_duplicate">You are already in this Fridge Family!</string>
-    <string name="join_fridge_success">Successfully joined %1$s!</string>
+    <string name="join_fridge_success">Join Successful!</string>
     <string name="join_fridge_hint">Paste fridge ID here</string>
     <string name="fridge_quote">If music must be the food of love, play on.</string>
     <string name="join">Join This Fridge</string>
@@ -114,6 +121,10 @@
     <string name="join_option">Option 1: Join a fridge</string>
     <string name="create_option">Option 2: Create a fridge</string>
     <string name="invite_option">Invite a new member to your fridge:</string>
+    <string name="no_user">No such user exists</string>
+    <string name="double_add">Opps, you can\'t add this person again</string>
+    <string name="sent_invite">Invitation sent!</string>
+    <string name="sent_join">Joining request sent!</string>
 
     <!-- Strings related to the Quick Add-->
     <string name="itemName">item</string>

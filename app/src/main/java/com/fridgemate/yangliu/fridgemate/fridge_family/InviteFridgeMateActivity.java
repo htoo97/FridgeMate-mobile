@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,16 +50,8 @@ public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
         assert user != null;
         final String email = user.getEmail();
         db = FirebaseFirestore.getInstance();
-        DocumentReference userDoc = MainActivity.userDoc;
 
-//        userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            public void onComplete(Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    final DocumentSnapshot userData = task.getResult();
-//                    fridgeDoc= userData.getDocumentReference("currentFridge");
-//                }
-//            }
-//        });
+        // this button doesn some screening of the email input
         inviteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -66,7 +59,7 @@ public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
 
                 // check if user is yourself
                 if (newcomerId.equals(email)){
-                    Toast.makeText(InviteFridgeMateActivity.this, "Opps, you can't add yourself again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(InviteFridgeMateActivity.this, R.string.double_add, Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
@@ -78,7 +71,7 @@ public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
                         List<DocumentReference> memberRefList = (List<DocumentReference>) task.getResult().get("members");
                         for(DocumentReference memberRef : memberRefList){
                             if (memberRef.getId().equals(newcomerId)){
-                                Toast.makeText(InviteFridgeMateActivity.this, "Opps, you can't add this person again", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(InviteFridgeMateActivity.this, R.string.double_add, Toast.LENGTH_SHORT).show();
                                 finish();
                                 return;
                             }
@@ -91,8 +84,9 @@ public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                         if (task.isSuccessful()) {
                                             if (task.getResult().isEmpty())
-                                                addUser(null);
+                                                Toast.makeText(InviteFridgeMateActivity.this, R.string.no_user, Toast.LENGTH_SHORT).show();
                                             else {
+                                                // email is valid, perform adding
                                                 addUser(db.collection("Users").document(newcomerId));
                                                 finish();
                                             }
@@ -107,40 +101,34 @@ public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
     }
 
     private void addUser(final DocumentReference newOne){
-        if (newOne == null) {
-            Toast.makeText(InviteFridgeMateActivity.this, "No such user exist", Toast.LENGTH_SHORT).show();
-            return;
-        }
-//        // populate member locally
-//        memberListAdapter.names.add(newOne);
-//        memberListAdapter.notifyDataSetChanged();
-
-        // add user to the member list on firebase
-        fridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    List<DocumentReference> membersList = new ArrayList<>();
-                    final DocumentSnapshot fridgeData = task.getResult();
-                    if (fridgeData.get(members) != null) {
-                        membersList.addAll(((List) Objects.requireNonNull(fridgeData.get(members))));
+        if (newOne == null) return;
+        // send invites
+        newOne.get().addOnCompleteListener(
+                new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            List<DocumentReference> pending = (List<DocumentReference>) task.getResult().get("pendingInvites");
+                            if (pending != null && pending.size() > 0) {
+                                if (!pending.contains(fridgeDoc)) {
+                                    pending.add(fridgeDoc);
+                                }
+                            }
+                            else{
+                                pending = new LinkedList<>();
+                                pending.add(fridgeDoc);
+                            }
+                            newOne.update("pendingInvites", pending).addOnCompleteListener(
+                                    new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Toast.makeText(getApplicationContext(), R.string.sent_invite, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                            );
+                        }
                     }
-                        membersList.add(newOne);
-                        fridgeDoc.update(members, membersList);
                 }
-            }
-        });
-
-        // add fridge to the member's fridge list on firebase
-        newOne.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                List<DocumentReference> fridges = (List<DocumentReference>) task.getResult().get("fridges");
-                assert fridges != null;
-                fridges.add(fridgeDoc);
-                newOne.update("fridges",fridges);
-            }
-        });
-        Toast.makeText(getApplicationContext(), "Invited!", Toast.LENGTH_SHORT).show();
+        );
     }
 }

@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         // set theme
         if (!SaveSharedPreference.getTheme(this))
             setTheme(R.style.AppTheme);
@@ -154,8 +155,12 @@ public class MainActivity extends AppCompatActivity {
         });
         name = headerView.findViewById(R.id.user_name);
         String displayName = user.getDisplayName();
-        if(displayName == null || displayName.equals("")) displayName = user.getEmail();
+        if(displayName == null || displayName.equals(""))
+            displayName = user.getEmail();
         name.setText(displayName);
+        if (user.isAnonymous()){
+            name.setText(R.string.sample_name);
+        }
 
         //bottom navigation
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -233,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                                         // capitalize name
                                         itemData.put("itemName", "Carrot");
                                         itemData.put("amount", "7");
-                                        itemData.put("expirationDate", "07/30/2018");
+                                        itemData.put("expirationDate", "07/30/2019");
                                         itemData.put("imageID", "https://diabetesmealplans.com/wp-content/uploads/2015/11/carrots.jpg");
                                         List<String> shopList = new LinkedList<>();
                                         shopList.add("Apple#10");
@@ -352,6 +357,11 @@ public class MainActivity extends AppCompatActivity {
         final String email = user.getEmail();
 
         assert email != null;
+        if (db == null ||db.collection("Users") == null){
+            Toast.makeText(this, R.string.connecting, Toast.LENGTH_SHORT).show();
+            finish();
+            return null;
+        }
         DocumentReference documentReference = db.collection("Users").document(email);
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

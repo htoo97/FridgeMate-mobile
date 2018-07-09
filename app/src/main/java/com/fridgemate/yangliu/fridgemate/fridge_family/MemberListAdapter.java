@@ -15,9 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
 import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
@@ -114,7 +111,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         });
     }
-    final int REQUEST_NEW_ACCOUNT = 233;
+    private final int REQUEST_NEW_ACCOUNT = 233;
     private static final int FOOTER_VIEW = 1;
     public class FooterViewHolder extends RecyclerView.ViewHolder {
         FooterViewHolder(final View itemView) {

@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,7 +16,10 @@ import com.fridgemate.yangliu.fridgemate.Fridge;
 import com.fridgemate.yangliu.fridgemate.R;
 import com.fridgemate.yangliu.fridgemate.RedirectToLogInActivity;
 import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
+
+import java.util.ArrayList;
 import java.util.List;
+
 import static com.fridgemate.yangliu.fridgemate.MainActivity.user;
 
 public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -42,10 +44,10 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    public int selectedItemPos = -1;
+    public int selectedItemPos;
 
     private final LayoutInflater mInflater;
-    public List<Fridge> mFridges;
+    public ArrayList<Fridge> mFridges;
 
 
     public FridgeListAdapter(Context context) {
@@ -131,7 +133,9 @@ public class FridgeListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     void setItems(List<Fridge> items){
-        mFridges= items;
+        if (mFridges != null)
+            mFridges.clear();
+        mFridges = new ArrayList<>(items);
         notifyDataSetChanged();
     }
 

@@ -27,21 +27,17 @@ Size    : 40MB
 Version : Release 2.0
 ```
 
-## Known Bug(s)
-* If User's internet were VERY slow and the User is trying to enter FridgeMate with a new account. The app might crash.
-
 ## Troubleshooting
 * If any unexpected behavior occurs, try refreshing the app by swipe down to refresh.
 * If the issue persists, quit and relaunch the app.
 * For persistent crashes, please submit post an Issue with precice description. Possible bugs will be fixed asap.
 
 
-## Name and Phones for Technical Points contact
+## Technical Points contact
 
 General Questions
 ```
-Yang Liu
-mikerliuyang@gmail.com
+fridgematehelp@gmail.com
 ```
 
 Quick Add, OCR Receipt Recognition:

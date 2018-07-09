@@ -9,7 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -39,7 +40,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.259"
-        app:srcCompat="@drawable/down2" />
+        app:srcCompat="@drawable/down2"
+        android:contentDescription="@string/this_is_null" />
 
     <ImageView
         android:id="@+id/Shape"
@@ -55,7 +57,8 @@
         app:layout_constraintStart_toEndOf="@+id/Water"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.259"
-        app:srcCompat="@drawable/up2" />
+        app:srcCompat="@drawable/up2"
+        android:contentDescription="@string/this_is_null"/>
 
     <TextView
         android:id="@+id/textView2"
@@ -64,7 +67,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Shape"
+        android:text="@string/shape"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/Shape"
@@ -78,7 +81,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Mirror"
+        android:text="@string/mirror"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/Water"

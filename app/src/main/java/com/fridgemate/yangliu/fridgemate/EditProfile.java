@@ -91,7 +91,7 @@ public class EditProfile extends TitleWithButtonsActivity {
     private String oldProfileUri;
     ContentValues cv;
     Uri imageUri;
-    
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         // set theme
@@ -177,8 +177,14 @@ public class EditProfile extends TitleWithButtonsActivity {
                 if (task.isSuccessful()){
                     DocumentSnapshot userData = task.getResult();
 
+                    if (userData == null) {
+                        Toast.makeText(EditProfile.this, R.string.userDoc_error, Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+
                     // populate local data from the firebase
-                    if (!userData.get("name").equals("null"))
+                    if (userData.get("name") == null || !userData.get("name").equals("null"))
                         name.setText((CharSequence) userData.get("name"));
                     else
                         name.setText(user.getDisplayName());
@@ -192,20 +198,22 @@ public class EditProfile extends TitleWithButtonsActivity {
                     oldProfileUri = String.valueOf(userData.get("profilePhoto"));
                     if (oldProfileUri  != null && !oldProfileUri.equals("null"))
                         mImgLoadProgress.setVisibility(View.VISIBLE);
-                        Glide.with(EditProfile.this).load(Uri.parse(oldProfileUri)).listener(
-                                new RequestListener<Uri, GlideDrawable>() {
-                                    @Override
-                                    public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                        return false;
-                                    }
 
-                                    @Override
-                                    public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                        mImgLoadProgress.setVisibility(View.GONE);
-                                        return false;
-                                    }
+                    Glide.with(EditProfile.this)
+                            .load(Uri.parse(oldProfileUri)).listener(
+                            new RequestListener<Uri, GlideDrawable>() {
+                                @Override
+                                public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                    return false;
                                 }
-                        ).centerCrop().into(profilePhoto);
+
+                                @Override
+                                public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                    mImgLoadProgress.setVisibility(View.GONE);
+                                    return false;
+                                }
+                            }
+                    ).centerCrop().into(profilePhoto);
 
 
                 }
@@ -269,32 +277,32 @@ public class EditProfile extends TitleWithButtonsActivity {
                                 // update the name, status, profile
                                 final String nameStr = String.valueOf(name.getText());
                                 userDoc.update("status",String.valueOf(status.getText()),"name",nameStr,"profilePhoto", String.valueOf(newProfile[0]))
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        // delete the old photo // NO need for this online firebase handles it
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                // delete the old photo // NO need for this online firebase handles it
 
-                                        // update this basic stuff that will be depreciated soon
-                                        UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
-                                        builder.setDisplayName(nameStr);
-                                        // Update username
-                                        user.updateProfile(builder.build())
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            Toast.makeText(getApplication(),R.string.profile_updated,
-                                                                    Toast.LENGTH_LONG).show();
-                                                            profilePhoto.setDrawingCacheEnabled(false);
+                                                // update this basic stuff that will be depreciated soon
+                                                UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
+                                                builder.setDisplayName(nameStr);
+                                                // Update username
+                                                user.updateProfile(builder.build())
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    Toast.makeText(getApplication(),R.string.profile_updated,
+                                                                            Toast.LENGTH_LONG).show();
+                                                                    profilePhoto.setDrawingCacheEnabled(false);
 
-                                                            setResult(RESULT_OK,replyIntent);
-                                                            finish();
-                                                            supportFinishAfterTransition();
-                                                        }
-                                                    }
-                                                });
-                                    }
-                                });
+                                                                    setResult(RESULT_OK,replyIntent);
+                                                                    finish();
+                                                                    supportFinishAfterTransition();
+                                                                }
+                                                            }
+                                                        });
+                                            }
+                                        });
 
 
 //
@@ -318,14 +326,14 @@ public class EditProfile extends TitleWithButtonsActivity {
                                         String statusStr = String.valueOf(status.getText());
                                         // update the status, name
                                         userDoc.update("status",  statusStr ,"name",String.valueOf(name.getText()))
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                setResult(RESULT_OK, replyIntent);
-                                                finish();
-                                                supportFinishAfterTransition();
-                                            }
-                                        });
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        setResult(RESULT_OK, replyIntent);
+                                                        finish();
+                                                        supportFinishAfterTransition();
+                                                    }
+                                                });
                                     }
                                 }
                             });
@@ -422,7 +430,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                             // if it's a google account
                             if (user.getProviders().get(0).equals(GoogleAuthProvider.PROVIDER_ID))
                                 googleAuthDelete();
-                            // facebook account FacebookAuthProvider.PROVIDER_ID
+                                // facebook account FacebookAuthProvider.PROVIDER_ID
                             else
                                 fbAuthDelete();
                         }
@@ -590,29 +598,25 @@ public class EditProfile extends TitleWithButtonsActivity {
         }
         // photo change
         else {
-            photoChanged = true;
-            // allow user to rotate after getting a new image
-            mRotateImg.setVisibility(View.VISIBLE);
-            switch (requestCode) {
-                //从相册里面取相片的返回结果
-                case LOAD_IMAGE_REQUEST:
-                    if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK) {
+                photoChanged = true;
+                // allow user to rotate after getting a new image
+                mRotateImg.setVisibility(View.VISIBLE);
+                switch (requestCode) {
+                    //从相册里面取相片的返回结果
+                    case LOAD_IMAGE_REQUEST:
                         imageUri = data.getData();
                         Glide.with(this).load(imageUri).centerCrop()
                                 .into(profilePhoto);
-                    }
-                    break;
+                        break;
 
-                case CAMERA_REQUEST:
-                    if (resultCode == RESULT_OK) {
+                    case CAMERA_REQUEST:
                         Glide.with(this).load(imageUri).centerCrop()
                                 .into(profilePhoto);
-
-                    }
-                    break;
-                default:
-                    Toast.makeText(getApplicationContext(), "You have not selected and image", Toast.LENGTH_SHORT).show();
-
+                        break;
+                    default:
+                        Toast.makeText(getApplicationContext(), R.string.image_not_detected, Toast.LENGTH_SHORT).show();
+                }
             }
             mImgLoadProgress.setVisibility(View.GONE);
         }
