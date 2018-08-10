@@ -18,8 +18,6 @@ public class ForgotPasswordActivity extends TitleWithButtonsActivity {
 
 
     private EditText email;
-    private FirebaseAuth mAuth;
-    private Button forgotBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +28,13 @@ public class ForgotPasswordActivity extends TitleWithButtonsActivity {
 
         email = findViewById(R.id.email_address_find);
 
-        forgotBtn = findViewById(R.id.forgotBtn);
+        Button forgotBtn = findViewById(R.id.forgotBtn);
         forgotBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email_address = String.valueOf(email.getText());
                 if (isEmailValid(email_address))
-                mAuth.getInstance().sendPasswordResetEmail(email_address)
+                FirebaseAuth.getInstance().sendPasswordResetEmail(email_address)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

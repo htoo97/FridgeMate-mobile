@@ -155,6 +155,14 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         recyclerView.setAdapter(adapter);
         ViewCompat.setNestedScrollingEnabled(recyclerView, false);
 
+        // TODO:: anther way to prevent fridgeDoc being null?
+        if (fridgeDoc == null){
+            Toast.makeText(OcrCaptureActivity.this, "Please choose a fridge", Toast.LENGTH_SHORT).show();
+            Intent replyIntent = new Intent();
+            setResult(RESULT_CANCELED, replyIntent);
+            finish();
+        }
+
         addListToFridgeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,7 +177,7 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
                 addListToFridgeBtn.setClickable(false);
                 List<String> toBeAdded = adapter.mData;
                 for (final String s: toBeAdded){
-                    addListToFridgeBtn.setText("Adding.. Please wait");
+                    addListToFridgeBtn.setText(R.string.prompt_adding);
                     // add these names to the fridge as items
                     userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         public void onComplete(Task<DocumentSnapshot> task) {

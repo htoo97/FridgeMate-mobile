@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.List;
 
+import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.shopListAdapter;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.user;
 
@@ -67,7 +68,7 @@ public class ShopListFragment extends Fragment {
                     temp += 1;
                 }
                 if (temp>99)
-                    amount.setText("99");
+                    amount.setText(R.string.amountMax);
                 else
                     amount.setText(String.valueOf(temp));
             }
@@ -163,7 +164,12 @@ public class ShopListFragment extends Fragment {
     }
 
     public void setUpRealTimeListener(){
-        MainActivity.fridgeDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        if (fridgeDoc == null) {
+            Toast.makeText(getContext(), R.string.connecting, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        fridgeDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
                                 @Nullable FirebaseFirestoreException e) {
@@ -177,12 +183,7 @@ public class ShopListFragment extends Fragment {
                         ? "Local" : "Server";
 
                 if (snapshot != null && snapshot.exists()) {
-//                    Log.d(TAG, source + " data: " + snapshot.getData());
                     shopListAdapter.populateAdapter((List<String>) snapshot.getData().get("shoppingList"));
-
-                } else {
-//                    Log.d(TAG, source + " data: null");
-
                 }
             }
         });

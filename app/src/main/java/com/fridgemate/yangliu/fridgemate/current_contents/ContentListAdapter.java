@@ -107,10 +107,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             // set image
             Uri imageUri = current.getImage();
             if (imageUri != null && !String.valueOf(imageUri).equals("null") && !String.valueOf(imageUri).equals("")) {
-//                holder.itemImageView.setImageURI(imageByte);
-                Glide.with(context).load(imageUri).centerCrop()
-                        .into(holder.itemImageView);
-
+                Glide.with(context).load(imageUri).centerCrop().into(holder.itemImageView);
             } else{
                 holder.itemImageView.setImageResource(R.color.white);
             }
@@ -203,8 +200,6 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
         }
         mItems.add(i);
         Collections.sort(mItems);
-//        mItemsOnDisplay.add(i);
-//        Collections.sort(mItemsOnDisplay);
     }
 
     public void update(FridgeItem i){
@@ -214,12 +209,6 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
             }
         }
         Collections.sort(mItems);
-//        for (FridgeItem o : mItemsOnDisplay){
-//            if (o.getDocRef().equals(i.getDocRef())){
-//                o = i;
-//            }
-//        }
-//        Collections.sort(mItemsOnDisplay);
     }
 
     public void restore(){

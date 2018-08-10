@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.fridgemate.yangliu.fridgemate.Fridge;
-import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
 import com.fridgemate.yangliu.fridgemate.SaveSharedPreference;
 import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ThrowOnExtraProperties;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,11 +96,15 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 public void onSuccess(DocumentReference documentReference) {
                                     // Add newly-created fridge to user's list of fridges
-                                    List fridges = new ArrayList<DocumentReference>();
+                                    List<DocumentReference> fridges = new ArrayList<DocumentReference>();
                                     if (userData.get("fridges") != null) {
-                                        fridges = (List) userData.get("fridges");
+                                        fridges = (List<DocumentReference>) userData.get("fridges");
                                     }
                                     // update adapters locally
+                                    if (fridgeListAdapter.mFridges == null) {
+                                        Toast.makeText(CreateFridgeActivity.this, "Please refresh and try again.", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
                                     fridgeListAdapter.mFridges.add(new Fridge(documentReference.getId(),name));
                                     fridgeListAdapter.selectedItemPos = fridgeListAdapter.mFridges.size()-1;
                                     SaveSharedPreference.setCurrentFridge(getApplicationContext(),fridgeListAdapter.selectedItemPos);

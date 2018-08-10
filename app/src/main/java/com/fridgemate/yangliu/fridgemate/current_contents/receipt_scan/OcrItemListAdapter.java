@@ -38,10 +38,8 @@ public class OcrItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public List<String> mData;
     private final LayoutInflater mInflater;
-    private Context context;
 
     OcrItemListAdapter(Context context) {
-        this.context = context;
         mData = new LinkedList<String>();
         mInflater = LayoutInflater.from(context);
     }

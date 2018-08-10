@@ -81,7 +81,6 @@ public class EditProfile extends TitleWithButtonsActivity {
 
     private ProgressBar mImgLoadProgress;
 
-    private FirebaseAuth mAuth;
     private FirebaseUser user;
     private FirebaseStorage storage;
 
@@ -135,7 +134,7 @@ public class EditProfile extends TitleWithButtonsActivity {
         this.getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         storage = FirebaseStorage.getInstance();
 

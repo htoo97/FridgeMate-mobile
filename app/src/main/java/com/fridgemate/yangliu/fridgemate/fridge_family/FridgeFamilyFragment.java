@@ -69,9 +69,9 @@ public class FridgeFamilyFragment extends Fragment {
     private ListenerRegistration memberListRegistration;
     private Context context;
 
-    public FridgeFamilyFragment() { }
+    public FridgeFamilyFragment(){}
 
-    private RecyclerView mRecyclerMemberView, mfridgeListView ;
+    private RecyclerView mRecyclerMemberView;
     final int REQUEST_NEW_ACCOUNT = 233;
 
     @Override
@@ -81,15 +81,12 @@ public class FridgeFamilyFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         // fridge list set up
-        mfridgeListView = (RecyclerView) view.findViewById(R.id.fridgeList);
+        RecyclerView mfridgeListView = (RecyclerView) view.findViewById(R.id.fridgeList);
         mfridgeListView.setHasFixedSize(true);
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mfridgeListView.setLayoutManager(MyLayoutManager);
         mfridgeListView.setAdapter(MainActivity.fridgeListAdapter);
-        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.fall_from_left_layout);
-        mfridgeListView.setLayoutAnimation(animation);
-        mfridgeListView.scheduleLayoutAnimation();
         setupFridgeOnClickListener(mfridgeListView);
 
         // member list set up
@@ -316,8 +313,8 @@ public class FridgeFamilyFragment extends Fragment {
         }
         else{
             setupMemberListRealtimeListener();
+            setupFridgeListRealTimeListener();
         }
-        setupFridgeListRealTimeListener();
     }
 
     private void setupMemberListRealtimeListener(){
@@ -413,7 +410,6 @@ public class FridgeFamilyFragment extends Fragment {
     }
 
     private void setupFridgeListRealTimeListener(){
-        mfridgeListView.scheduleLayoutAnimation();
         userDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable final DocumentSnapshot snapshot,
@@ -520,6 +516,7 @@ public class FridgeFamilyFragment extends Fragment {
                                                     String fridgeName = String.valueOf(fridgeData.get("fridgeName"));
                                                     DocumentReference owner = (DocumentReference) fridgeData.get("owner");
 
+                                                    assert owner != null;
                                                     new AlertDialog.Builder(context)
                                                             .setTitle("New Fridge Invitation")
                                                             .setMessage(owner.getId() + " invited you to join " + fridgeName + '.')
@@ -694,9 +691,6 @@ public class FridgeFamilyFragment extends Fragment {
                                     }
                                     SaveSharedPreference.setCurrentFridge(getContext(), position);
 
-                                    // allow auto sync the content list, shopping list for once
-//                    MainActivity.shopListSync = MainActivity.contentSync = true;
-
                                     // Update current fridge in database
                                     if (fridgeListAdapter.mFridges != null &&
                                             position < fridgeListAdapter.mFridges.size()) {
@@ -705,11 +699,8 @@ public class FridgeFamilyFragment extends Fragment {
 
                                         MainActivity.fridgeDoc = newCurrentFridgeDoc;
 
-                                        // (bug) double sync's this actually messes up Glide
-                                        //memberListAdapter.syncMemberList();
-
                                         userDoc.update("currentFridge", newCurrentFridgeDoc);
-                                        setUpRealTimeListener();
+                                        setupMemberListRealtimeListener();
                                     }
                                 }
                             }

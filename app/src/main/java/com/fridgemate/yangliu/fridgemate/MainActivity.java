@@ -88,11 +88,6 @@ public class MainActivity extends AppCompatActivity {
     public static FridgeListAdapter fridgeListAdapter;
     public static ShopListAdapter shopListAdapter;
 
-    // these indicators were used when FridgeMate didn't have real time listener
-    //    public static boolean contentSync;
-    //    public static boolean shopListSync;
-    //    public static boolean familySync;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -109,9 +104,6 @@ public class MainActivity extends AppCompatActivity {
         loadProgress = findViewById(R.id.spin_progress);
         shortAnimTime = MainActivity.this.getResources().getInteger(android.R.integer.config_shortAnimTime);
         showProgress(true);
-        // these are the indicator: true for needed to sync
-        // allow first time sync when user enters the app
-//        familySync = shopListSync = contentSync = true;
 
         // set up data base
         mAuth = FirebaseAuth.getInstance();
@@ -255,9 +247,6 @@ public class MainActivity extends AppCompatActivity {
                                                     public void onSuccess(Void aVoid) {
                                                         Toast.makeText(MainActivity.this,
                                                                 R.string.fridge_setup_complete, Toast.LENGTH_LONG).show();
-//                                                        shopListAdapter.syncItems();
-//                                                        shopListSync = false;
-//                                                        contentSync = true;
                                                     }
                                                 });
                                     }
@@ -268,10 +257,6 @@ public class MainActivity extends AppCompatActivity {
                         // sync lists when entering the app for better transitions
                         memberListAdapter.syncMemberList();
                         FridgeFamilyFragment.syncFridgeList();
-//                        familySync = false;
-
-//                        shopListAdapter.syncItems();
-//                        shopListSync = false;
                     }
                 }
             }
@@ -283,8 +268,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             finish();
         }
-
-        //final String email = user.getEmail();
 
         // slide menu options function set up
         navigationView = findViewById(R.id.navigation_view);
@@ -326,6 +309,9 @@ public class MainActivity extends AppCompatActivity {
                                         LoginManager.getInstance().logOut();
                                         Intent i = new Intent(MainActivity.this, LoginActivity.class);
                                         startActivity(i);
+                                        if (user.isAnonymous()){
+                                            user.delete();
+                                        }
                                         finish();
                                     }})
                                 .setNegativeButton(android.R.string.no, null).show();
@@ -336,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     // Set up database functions when app opened
     private DocumentReference setUpDatabase(){
@@ -397,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             View view = findViewById(R.id.main_container);
             Animation mLoadAnimation = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
-            mLoadAnimation.setDuration(800);
+            mLoadAnimation.setDuration(1000);
             view.startAnimation(mLoadAnimation);
             showProgress(true);
             // check internet connection
@@ -466,8 +453,18 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         // close all temp pages that anonymous account used
-        if (resultCode == CLOSE_ALL)
-            finish();
+        if (resultCode == CLOSE_ALL) {
+            user.delete().addOnCompleteListener(
+                    new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(i);
+                            finish();
+                        }
+                    }
+            );
+        }
 
         // update the image when edited the profile
         if (requestCode == PROFILE_EDIT_REQUEST_CODE){
@@ -500,30 +497,22 @@ public class MainActivity extends AppCompatActivity {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+        loadProgress.setVisibility(show ? View.GONE : View.VISIBLE);
+        loadProgress.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                loadProgress.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
-            loadProgress.setVisibility(show ? View.GONE : View.VISIBLE);
-            loadProgress.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    loadProgress.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            loadProgress.setVisibility(show ? View.VISIBLE : View.GONE);
-            loadProgress.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    loadProgress.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            loadProgress.setVisibility(show ? View.VISIBLE : View.GONE);
-            loadProgress.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        loadProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+        loadProgress.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                loadProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 }

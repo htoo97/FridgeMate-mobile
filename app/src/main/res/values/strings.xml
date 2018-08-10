@@ -152,5 +152,7 @@
     <string name="select">Select</string>
     <string name="hint_shoplist_item">What to buy?</string>
     <string name="no_fridged">There is Nothing to Fridge</string>
+    <string name="amountMax">99</string>
+    <string name="prompt_adding">Adding.. Please wait</string>
 
 </resources>

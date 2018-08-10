@@ -8,8 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.fridgemate.yangliu.fridgemate.authentication.LoginActivity;
-
 public class RedirectToLogInActivity extends AppCompatActivity {
 
     private AnimationDrawable anim;
@@ -50,8 +48,6 @@ public class RedirectToLogInActivity extends AppCompatActivity {
         toLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(RedirectToLogInActivity.this, LoginActivity.class);
-                startActivity(i);
                 setResult(CLOSE_ALL);
                 finish();
             }

@@ -53,20 +53,14 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private final LayoutInflater mInflater;
-    private int currentFridge = -1;
+    private int currentFridge;
     private Context context;
     public List<DocumentReference> names;
-    private final Animation fadeOutAnim;
-    private final Animation fadeInAnim;
-    //private Animation animation;
 
     public MemberListAdapter(Context context) {
         this.context = context;
         currentFridge = SaveSharedPreference.getCurrentFridge(context);
         mInflater = LayoutInflater.from(context);
-
-        fadeOutAnim = AnimationUtils.loadAnimation(context, R.anim.fade_out);
-        fadeInAnim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
 
         names = new LinkedList<>();
     }
@@ -79,8 +73,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void syncMemberList(){
 
         if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.startAnimation(fadeOutAnim);
-            swipeRefreshLayout.setVisibility(View.GONE);
+            swipeRefreshLayout.setRefreshing(true);
         }
         MainActivity.userDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -105,8 +98,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 notifyDataSetChanged();
 
                 if (swipeRefreshLayout != null) {
-                    swipeRefreshLayout.startAnimation(fadeInAnim);
-                    swipeRefreshLayout.setVisibility(View.VISIBLE);
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
         });

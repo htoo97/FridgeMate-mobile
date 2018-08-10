@@ -75,9 +75,6 @@ public class AddItemManual extends TitleWithButtonsActivity {
     private ImageButton mRotateImg;
 
 
-    private ImageButton cameraBtn;
-    private ImageButton storageBtn;
-
     private Bitmap image; // indicator of a new image added
     private String oldImageUri; // indicator of there exist an old image
 
@@ -102,7 +99,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
                 int temp = Integer.parseInt(amount.getText().toString());
                 temp += 1;
                 if (temp>99)
-                    amount.setText("99");
+                    amount.setText(R.string.amountMax);
                 else
                     amount.setText(String.valueOf(temp));
             }
@@ -204,7 +201,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         });
 
         // set up camera button
-        cameraBtn = findViewById(R.id.cameraBtn);
+        ImageButton cameraBtn = findViewById(R.id.cameraBtn);
         cameraBtn.setOnClickListener(
                 new View.OnClickListener(){
                     @Override
@@ -227,7 +224,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
         );
 
         // set up import from storage button
-        storageBtn = findViewById(R.id.from_phone);
+        ImageButton storageBtn = findViewById(R.id.from_phone);
         storageBtn.setOnClickListener(
                 new View.OnClickListener(){
                     @Override

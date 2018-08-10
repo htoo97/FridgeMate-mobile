@@ -19,8 +19,8 @@
             android:layout_weight="3"
             android:orientation="vertical"
             android:paddingBottom="2dp"
-            android:paddingStart="20dp"
-            android:paddingEnd = "0dp">
+            android:paddingEnd="0dp"
+            android:paddingStart="20dp">
 
             <TextView
                 android:id="@+id/shop_list_item_name"
@@ -64,8 +64,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="7"
-            android:contentDescription="@string/this_is_null"
             android:background="@android:color/transparent"
+            android:contentDescription="@string/this_is_null"
             android:elevation="2dp"
             app:srcCompat="@drawable/ic_delete_black_24dp" />
 

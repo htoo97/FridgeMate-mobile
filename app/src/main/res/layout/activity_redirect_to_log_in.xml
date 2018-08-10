@@ -35,14 +35,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
-                android:text="Add/Edit your fridge contents" />
+                android:text="Manage what's in your fridge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
-                android:text="Have more than one fridges (storage units)" />
+                android:text="Have more fridges" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -63,14 +63,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="10dp"
-                android:text="Write a shopping list" />
+                android:text="Make a shopping list" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="10dp"
-                android:text="Share your fridge with family and friends" />
+                android:text="Invite your roommates to manage the same fridge!" />
 
             <TextView
                 android:layout_width="match_parent"

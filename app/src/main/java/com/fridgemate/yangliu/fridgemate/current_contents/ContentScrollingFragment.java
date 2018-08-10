@@ -100,7 +100,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         setupContentListOnClickListener(recyclerView);
 
         // swipe refresh
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
+        swipeRefreshLayout = view.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setEnabled(true);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -111,10 +111,10 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,R.color.green);
 
         // floating button menu
-        materialDesignFAM = (FloatingActionMenu) view.findViewById(R.id.material_design_android_floating_action_menu);
+        materialDesignFAM = view.findViewById(R.id.material_design_android_floating_action_menu);
         materialDesignFAM.setClosedOnTouchOutside(true);
-        addManual = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.material_design_floating_action_menu_item1);
-        addOCR = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.material_design_floating_action_menu_item2);
+        addManual = view.findViewById(R.id.material_design_floating_action_menu_item1);
+        addOCR = view.findViewById(R.id.material_design_floating_action_menu_item2);
         addManual.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), AddItemManual.class);
@@ -133,11 +133,11 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
         // swipe left to delete initialization
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new FridgeItemTouchHelper(0,
-                ItemTouchHelper.LEFT, (FridgeItemTouchHelper.FridgeItemTouchHelpListener) this);
+                ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
         // swipe right to shopping list initialization
         itemTouchHelperCallback = new FridgeItemTouchHelper(0,
-                ItemTouchHelper.RIGHT, (FridgeItemTouchHelper.FridgeItemTouchHelpListener) this);
+                ItemTouchHelper.RIGHT, this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
         // TODO:: remove this progress bar in later version
@@ -152,6 +152,8 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(view.getContext(), AddItemManual.class);
                 Bundle extras = new Bundle();
+                if (contentListAdapter.mItemsOnDisplay == null || position > contentListAdapter.mItemsOnDisplay.size()-1)
+                    return;
                 FridgeItem i = contentListAdapter.mItemsOnDisplay.get(position);
                 extras.putString("name",i.getItemName());
                 extras.putString("expDate",i.getExpDate());
@@ -184,7 +186,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
         // detach real time listener here
     }
 
@@ -260,7 +261,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof ContentListAdapter.ItemViewHolder) {
-            if (mAuth.getCurrentUser().isAnonymous()){
+            if (Objects.requireNonNull(mAuth.getCurrentUser()).isAnonymous()){
                 Intent i = new Intent(getContext(), RedirectToLogInActivity.class);
                 startActivityForResult(i,1);
                 return;
@@ -386,14 +387,9 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     // having added/edited an item from the fab or modified
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK){
-            // no need to sync after each addition or edit (because of realtime listener)
-            // syncList();
-        }
-        else if (requestCode == RESULT_CANCELED){
+        if (requestCode == RESULT_CANCELED){
             Toast.makeText(getContext(), "Item not saved", Toast.LENGTH_SHORT).show();
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -436,19 +432,6 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         });
 
     }
-
-//    public byte[] getBytes(InputStream inputStream) throws IOException {
-//        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-//        int bufferSize = 1024;
-//        byte[] buffer = new byte[bufferSize];
-//
-//        int len = 0;
-//        while ((len = inputStream.read(buffer)) != -1) {
-//            byteBuffer.write(buffer, 0, len);
-//        }
-//        return byteBuffer.toByteArray();
-//    }
-
 
     private static String lastAdded = "";
     private void setUpRealTimeListener(){

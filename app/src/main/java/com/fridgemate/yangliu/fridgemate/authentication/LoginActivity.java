@@ -96,7 +96,8 @@ public class LoginActivity extends AppCompatActivity {
 
         boolean firstTime = getPreferences(MODE_PRIVATE).getBoolean("Intro", true);
         if (firstTime) {
-            runTutorial(); // here you do what you want to do - an activity tutorial in my case
+            Intent tutorialIntent = new Intent(getApplicationContext(), IntroActivity.class);
+            startActivity(tutorialIntent);
             getPreferences(MODE_PRIVATE).edit().putBoolean("Intro", false).apply();
         }
 
@@ -106,16 +107,14 @@ public class LoginActivity extends AppCompatActivity {
         if (user != null) {
             Log.d("autologin", "Current user: " + user.getEmail());
         }
-        if (user != null && user.isEmailVerified()) {
+        if (user != null && (user.isEmailVerified() || user.isAnonymous())) {
 
             View view = findViewById(android.R.id.content);
             // enter app with animation
             Animation mLoadAnimation = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
             mLoadAnimation.setDuration(800);
             view.startAnimation(mLoadAnimation);
-            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(i);
-            finish();
+            enterApp();
         }
 
         anim = (AnimationDrawable) findViewById(R.id.log_in_layout).getBackground();
@@ -202,9 +201,7 @@ public class LoginActivity extends AppCompatActivity {
             if (mAuth.getCurrentUser()== null)
                 LoginManager.getInstance().logOut();
             else {
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(i);
-                finish();
+                enterApp();
             }
         }
 
@@ -214,6 +211,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(hasInternet()) {
+                    anonymBtn.setClickable(false);
                     mAuth.signInAnonymously().addOnCompleteListener(
                             new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -223,12 +221,10 @@ public class LoginActivity extends AppCompatActivity {
                                         if (user != null) {
                                             // Only sign in if user's email is verified
                                             if (user.isAnonymous()) {
-                                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                                startActivity(i);
-                                                finish();
-
+                                                enterApp();
                                             } else {
                                                 Toast.makeText(getApplication(), R.string.error_general, Toast.LENGTH_LONG).show();
+                                                anonymBtn.setClickable(true);
                                             }
                                         }
                                     }
@@ -241,6 +237,11 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void enterApp(){
+        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(i);
+        finish();
+    }
     private boolean hasInternet(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm.getActiveNetworkInfo() == null) {
@@ -370,6 +371,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        mLoginProgressBar.setVisibility(View.VISIBLE);
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
@@ -391,17 +393,12 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            mLoginProgressBar.setVisibility(View.GONE);
                         }
-                        mLoginProgressBar.setVisibility(View.GONE);
-                        // ...
                     }
                 });
     }
 
-    public void runTutorial(){
-        Intent tutorialIntent = new Intent(getApplicationContext(), IntroActivity.class);
-        startActivity(tutorialIntent);
-    }
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -462,10 +459,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if (user!= null){
                                     // Only sign in if user's email is verified
                                     if (user.isEmailVerified()) {
-
-                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                        startActivity(i);
-                                        finish();
+                                        enterApp();
 
                                     } else {
                                         // Re-send account validation email if not verified
