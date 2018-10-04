@@ -91,47 +91,50 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                         members.add(userDoc);
                         fridgeData.put("members", members);
 
-                        db.collection("Fridges")
-                            .add(fridgeData)
-                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                public void onSuccess(DocumentReference documentReference) {
-                                    // Add newly-created fridge to user's list of fridges
-                                    List<DocumentReference> fridges = new ArrayList<DocumentReference>();
-                                    if (userData.get("fridges") != null) {
-                                        fridges = (List<DocumentReference>) userData.get("fridges");
-                                    }
-                                    // update adapters locally
-                                    if (fridgeListAdapter.mFridges == null) {
-                                        Toast.makeText(CreateFridgeActivity.this, "Please refresh and try again.", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
-                                    fridgeListAdapter.mFridges.add(new Fridge(documentReference.getId(),name));
-                                    fridgeListAdapter.selectedItemPos = fridgeListAdapter.mFridges.size()-1;
-                                    SaveSharedPreference.setCurrentFridge(getApplicationContext(),fridgeListAdapter.selectedItemPos);
-                                    fridgeListAdapter.notifyDataSetChanged();
-                                    memberListAdapter.names.clear();
-                                    memberListAdapter.names.add(userDoc);
-                                    memberListAdapter.notifyDataSetChanged();
+                        try {
 
-                                    // update firebase
-                                    assert fridges != null;
-                                    fridges.add(documentReference);
-                                    // Set as current fridge
-                                    userDoc.update(
-                                        "currentFridge", documentReference,
-                                        "fridges", fridges)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-//                                                MainActivity.memberListAdapter.syncMemberList();
-//                                                MainActivity.contentSync = MainActivity.shopListSync= true;
-//                                                FridgeFamilyFragment.syncFridgeList(); // this step maybe unnecessary since adapter is synced by changing it locally
-                                                finish();
-
+                            db.collection("Fridges")
+                                    .add(fridgeData)
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        public void onSuccess(DocumentReference documentReference) {
+                                            // Add newly-created fridge to user's list of fridges
+                                            List<DocumentReference> fridges = new ArrayList<DocumentReference>();
+                                            if (userData.get("fridges") != null) {
+                                                fridges = (List<DocumentReference>) userData.get("fridges");
                                             }
-                                        });
-                                }
-                            });
+                                            // update adapters locally
+                                            if (fridgeListAdapter.mFridges == null) {
+                                                Toast.makeText(CreateFridgeActivity.this, "Please refresh and try again.", Toast.LENGTH_SHORT).show();
+                                                finish();
+                                            }
+                                            else {
+                                                fridgeListAdapter.mFridges.add(new Fridge(documentReference.getId(), name));
+                                                fridgeListAdapter.selectedItemPos = fridgeListAdapter.mFridges.size() - 1;
+                                                SaveSharedPreference.setCurrentFridge(getApplicationContext(), fridgeListAdapter.selectedItemPos);
+                                                fridgeListAdapter.notifyDataSetChanged();
+                                                memberListAdapter.names.clear();
+                                                memberListAdapter.names.add(userDoc);
+                                                memberListAdapter.notifyDataSetChanged();
+
+                                                // update firebase
+                                                assert fridges != null;
+                                                fridges.add(documentReference);
+                                                // Set as current fridge
+                                                userDoc.update(
+                                                        "currentFridge", documentReference,
+                                                        "fridges", fridges)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                finish();
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                    });
+                        }catch (NullPointerException e){
+                            Toast.makeText(CreateFridgeActivity.this, "There's no connection. Please try again later.", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }

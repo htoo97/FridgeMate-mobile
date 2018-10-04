@@ -313,7 +313,12 @@ public class AddItemManual extends TitleWithButtonsActivity {
                                                 if (extras != null){
                                                     // delete the old image on database if there's any
                                                     if (oldImageUri != null && !oldImageUri.equals("") && !oldImageUri.equals("null")) {
-                                                        storage.getReferenceFromUrl(oldImageUri).delete();
+                                                        try{
+                                                            storage.getReferenceFromUrl(oldImageUri).delete();
+                                                        }
+                                                        catch (IllegalArgumentException e){
+                                                            // If the url is wrong, nothing here to delete
+                                                        }
                                                         oldImageUri = String.valueOf(downloadUri);
                                                     }
                                                     // update the fields

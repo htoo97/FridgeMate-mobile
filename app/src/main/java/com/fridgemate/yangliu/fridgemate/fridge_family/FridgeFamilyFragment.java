@@ -147,7 +147,7 @@ public class FridgeFamilyFragment extends Fragment {
                                 .setMessage(R.string.delete_fridge_warning)
                                 .setIcon(R.drawable.ic_dialog_alert_material)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                    public void onClick(final DialogInterface dialog, int whichButton) {
 
                                         // remove the image of all items
                                         fridge.collection("FridgeItems").get().addOnCompleteListener(
@@ -157,9 +157,14 @@ public class FridgeFamilyFragment extends Fragment {
                                                         QuerySnapshot q = task.getResult();
                                                         for (DocumentSnapshot dr : q.getDocuments()) {
                                                             String imageUri = (String) dr.get("imageID");
-                                                            if (imageUri != null && !imageUri.equals("") && !imageUri.equals("null"))
-                                                                MainActivity.storage.getReferenceFromUrl(imageUri).delete();
-
+                                                            if (imageUri != null && !imageUri.equals("") && !imageUri.equals("null")) {
+                                                                try{
+                                                                    MainActivity.storage.getReferenceFromUrl(imageUri).delete();
+                                                                }
+                                                                catch (IllegalArgumentException e){
+                                                                    Log.d("No such URL in storage", e.toString());
+                                                                }
+                                                            }
                                                             // delete the fridge item document, not recommended
                                                             dr.getReference().delete();
                                                         }
@@ -405,7 +410,7 @@ public class FridgeFamilyFragment extends Fragment {
             }
         });
 
-        Toast.makeText(context, getResources().getString(R.string.join_fridge_success), Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), getResources().getString(R.string.join_fridge_success), Toast.LENGTH_LONG).show();
 
     }
 

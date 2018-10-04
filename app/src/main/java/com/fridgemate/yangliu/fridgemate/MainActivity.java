@@ -179,26 +179,34 @@ public class MainActivity extends AppCompatActivity {
                     mLoadAnimation.setDuration(800);
                     view.startAnimation(mLoadAnimation);
 
-                    // initialize the first tab page
-                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
-                    fragmentTransaction.commit();
+                    try {
+                        // initialize the first tab page
+                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.main_container, new ContentScrollingFragment());
+                        fragmentTransaction.commit();
 
-                    // load user profile image
-                    String profileUri = (String) task.getResult().get("profilePhoto");
-                    if (profileUri != null && !profileUri.equals("null"))
-                        Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
-                    else {
-                        // load from google/faceboook account
-                        profileUri = String.valueOf(getIntent().getExtras().get("photo"));
-                        if (profileUri != null && !profileUri.equals("") && !profileUri.equals("null")) {
+                        // load user profile image
+                        String profileUri = (String) task.getResult().get("profilePhoto");
+                        if (profileUri != null && !profileUri.equals("null"))
                             Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
-                            userDoc.update("profilePhoto",profileUri);
-                        }
-                        else
-                            profileImg.setImageDrawable(getResources().getDrawable(R.drawable.profile));
-                    }
+                        else {
+                            // load from google/faceboook account
 
+                            profileUri = String.valueOf(getIntent().getExtras().get("photo"));
+                            if (profileUri != null && !profileUri.equals("") && !profileUri.equals("null")) {
+                                Glide.with(getApplicationContext()).load(Uri.parse(profileUri)).centerCrop().into(profileImg);
+                                userDoc.update("profilePhoto", profileUri);
+                            } else
+                                profileImg.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+
+
+                        }
+                    }
+                    catch (IllegalStateException e){
+                        // when cannot perform getextras() or getintent() on saveInstanceState
+                        Log.d("exception: ", e.getMessage());
+                        Toast.makeText(MainActivity.this, "Loading failed, please try again. ", Toast.LENGTH_SHORT).show();
+                    }
 
                     // only allow user to change tab after syncing
                     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

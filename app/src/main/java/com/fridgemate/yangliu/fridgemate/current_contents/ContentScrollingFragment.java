@@ -56,6 +56,7 @@ import static com.fridgemate.yangliu.fridgemate.MainActivity.contentListAdapter;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.mAuth;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.shopListAdapter;
+import static com.fridgemate.yangliu.fridgemate.MainActivity.userDoc;
 import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
 
 
@@ -117,9 +118,14 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
         addOCR = view.findViewById(R.id.material_design_floating_action_menu_item2);
         addManual.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), AddItemManual.class);
-                startActivityForResult(intent, NEW_ITEM_ACTIVITY_REQUEST_CODE);
-                materialDesignFAM.close(true);
+                if (userDoc != null){
+                    Intent intent = new Intent(v.getContext(), AddItemManual.class);
+                    startActivityForResult(intent, NEW_ITEM_ACTIVITY_REQUEST_CODE);
+                    materialDesignFAM.close(true);
+                } else{
+                    Toast.makeText(getContext(), "Loading user profile, please wait...", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
         addOCR.setOnClickListener(new View.OnClickListener() {
@@ -333,55 +339,62 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
     private void deleteItem(int position){
         // DATABASE delete the item at position
-        String id = contentListAdapter.mItemsOnDisplay.get(position).getDocRef();
-        final DocumentReference itemDoc = fridgeDoc.collection("FridgeItems").document(id);
+        try {
 
-        final boolean[] deletePermananetly = {true};
+            String id = contentListAdapter.mItemsOnDisplay.get(position).getDocRef();
+            final DocumentReference itemDoc = fridgeDoc.collection("FridgeItems").document(id);
 
-        contentListAdapter.remove(position);
-        // DATABASE restore the item deletion (by delay or make a temporary copy)
-        // showing snack bar with Undo option
-        final Snackbar snackbar = Snackbar
-                .make(snackBarView, "Item is about to be removed!", Snackbar.LENGTH_LONG);
-        snackbar.setAction("UNDO", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // undo is selected, restore the deleted item
-                contentListAdapter.restore();
-                contentListAdapter.notifyDataSetChanged();
-                deletePermananetly[0] = false;
-            }
-        });
-        View snackBarView = snackbar.getView();
-        snackBarView.setBackgroundResource(R.color.colorPrimary);
-        snackbar.show();
-        swipeRefreshLayout.setEnabled(false);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                snackbar.dismiss();
-                if (deletePermananetly[0]) {
-                    // delete its photo
-                    itemDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            String uri = (String) task.getResult().get("imageID");
-                            if (uri != null && !uri.equals("null") && !uri.equals(""))
-                                if (uri.contains("firebasestorage"))
-                                    storage.getReferenceFromUrl(uri).delete();
-                            // delete its info
-                            itemDoc.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    swipeRefreshLayout.setEnabled(true);
-                                }
-                            });
-                        }
-                    });
+            final boolean[] deletePermananetly = {true};
+
+            contentListAdapter.remove(position);
+            // DATABASE restore the item deletion (by delay or make a temporary copy)
+            // showing snack bar with Undo option
+            final Snackbar snackbar = Snackbar
+                    .make(snackBarView, "Item is about to be removed!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // undo is selected, restore the deleted item
+                    contentListAdapter.restore();
+                    contentListAdapter.notifyDataSetChanged();
+                    deletePermananetly[0] = false;
                 }
+            });
+            View snackBarView = snackbar.getView();
+            snackBarView.setBackgroundResource(R.color.colorPrimary);
+            snackbar.show();
+            swipeRefreshLayout.setEnabled(false);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    snackbar.dismiss();
+                    if (deletePermananetly[0]) {
+                        // delete its photo
+                        itemDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                String uri = (String) task.getResult().get("imageID");
+                                if (uri != null && !uri.equals("null") && !uri.equals(""))
+                                    if (uri.contains("firebasestorage"))
+                                        storage.getReferenceFromUrl(uri).delete();
+                                // delete its info
+                                itemDoc.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        swipeRefreshLayout.setEnabled(true);
+                                    }
+                                });
+                            }
+                        });
+                    }
 
-            }
-        }, 2000);
+                }
+            }, 2000);
+        }
+        catch (IndexOutOfBoundsException e){
+            Toast.makeText(getContext(), "Please try again later.", Toast.LENGTH_SHORT).show();
+            Log.d("Index out of bounds", "deleteItem at position: " + position);
+        }
     }
 
     // having added/edited an item from the fab or modified
@@ -409,9 +422,13 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
                                 String num = String.valueOf(document.get("amount"));
                                 int amount = 1;
-                                if (num != "null")
-                                    amount = Integer.parseInt(num);
-
+                                if (num != "null") {
+                                    try{
+                                        amount = Integer.parseInt(num);
+                                    }catch (NumberFormatException e){
+                                        amount = 0;
+                                    }
+                                }
                                 Uri image = Uri.parse(String.valueOf(document.get("imageID")));
                                 FridgeItem i = new FridgeItem(String.valueOf(document.get("itemName")),
                                         String.valueOf(document.get("expirationDate"))
