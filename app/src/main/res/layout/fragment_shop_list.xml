@@ -133,7 +133,7 @@
         android:background="?android:toolbarStyle"
         android:clickable="true"
         android:elevation="1dp"
-        android:focusable="false"
+        android:focusable="true"
         android:text="@string/fridge_all" />
 
 </LinearLayout>

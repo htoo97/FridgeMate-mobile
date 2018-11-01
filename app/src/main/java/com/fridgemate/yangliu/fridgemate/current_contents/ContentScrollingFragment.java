@@ -1,5 +1,6 @@
 package com.fridgemate.yangliu.fridgemate.current_contents;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
@@ -77,6 +78,7 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
     private FirebaseFirestore db;
     private FirebaseStorage storage;
 
+    @SuppressLint("CutPasteId")
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         snackBarView = view.findViewById(R.id.swiperefresh);
@@ -284,19 +286,18 @@ public class ContentScrollingFragment extends Fragment implements FridgeItemTouc
 
     private void moveToShopList(RecyclerView.ViewHolder viewHolder, int position){
         String itemName = String.valueOf(((ContentListAdapter.ItemViewHolder) viewHolder).wordItemView.getText());
-        if (itemName != null && itemName.length() != 0) {
+        if (itemName != null && itemName.length() != 0 && position < contentListAdapter.mItemsOnDisplay.size() && position >= 0) {
             // capitalize item name
             itemName = itemName.substring(0, 1).toUpperCase() + itemName.substring(1);
 
             int num = Integer.valueOf("" + ((ContentListAdapter.ItemViewHolder) viewHolder).amountView.getText());
-            if (num <= 0)
-                num = 1;
+            if (num <= 0) num = 1;
             shopListAdapter.addItem(itemName, num);
-//            shopListSync = true;
         }
-        else
+        else {
             Toast.makeText(getContext(), "Move to shopping list error", Toast.LENGTH_SHORT).show();
-
+            return;
+        }
         String id = contentListAdapter.mItemsOnDisplay.get(position).getDocRef();
         final DocumentReference itemDoc = fridgeDoc.collection("FridgeItems").document(id);
 

@@ -7,20 +7,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.fridgemate.yangliu.fridgemate.authentication.LoginActivity;
-import com.github.paolorotolo.appintro.AppIntro;
+import com.github.paolorotolo.appintro.AppIntro2;
 import com.github.paolorotolo.appintro.AppIntroFragment;
-import com.github.paolorotolo.appintro.model.SliderPage;
-
 //import static android.graphics.Color.*;
 
-public class IntroActivity extends AppIntro {
+public class IntroActivity extends AppIntro2 {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         try {
-            setDoneText("Log In");
-            setSkipText("Skip");
+//            setDoneText("Log In");
+//            setSkipText("Skip");
 
             addSlide(AppIntroFragment.newInstance("Welcome"
                     ,"Here's a quick intro about FridgeMate.", R.drawable.icon1, Color.BLACK));

@@ -44,7 +44,7 @@ public class RedirectToLogInActivity extends AppCompatActivity {
         anim.setExitFadeDuration(2000);
 
 
-        Button toLogIn = (Button) findViewById(R.id.to_log_in);
+        Button toLogIn = findViewById(R.id.to_log_in);
         toLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

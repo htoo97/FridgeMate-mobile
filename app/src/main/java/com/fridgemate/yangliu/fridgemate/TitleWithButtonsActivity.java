@@ -1,7 +1,6 @@
 package com.fridgemate.yangliu.fridgemate;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -57,7 +56,7 @@ public class TitleWithButtonsActivity extends AppCompatActivity {
      */
     public void setToolBar(int layout) {
         hidetoolBar();
-        commonTitleTb = (Toolbar) content.findViewById(layout);
+        commonTitleTb = content.findViewById(layout);
         setSupportActionBar(commonTitleTb);
         //设置actionBar的标题是否显示，对应ActionBar.DISPLAY_SHOW_TITLE。
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);

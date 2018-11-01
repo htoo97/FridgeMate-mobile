@@ -3,7 +3,6 @@ package com.fridgemate.yangliu.fridgemate.current_contents;
 import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 

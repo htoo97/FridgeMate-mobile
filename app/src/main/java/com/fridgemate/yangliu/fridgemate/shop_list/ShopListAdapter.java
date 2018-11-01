@@ -224,14 +224,14 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             List<String> dataList = (List) fridgeData.get("shoppingList");
                             if (mShopList != null)
                                 mShopList.clear();
-                            mShopList = new LinkedList<Pair<String, Integer>>();
-                            mSelectedItems = new LinkedList<Boolean>();
+                            mShopList = new LinkedList<>();
+                            mSelectedItems = new LinkedList<>();
                             if (dataList != null) {
                                 for (int i = 0; i < dataList.size(); ++i) {
                                     String itemName = dataList.get(i);
                                     int splitIndex = itemName.lastIndexOf("#");
 
-                                    mShopList.add(new Pair<String, Integer>(itemName.substring(0,splitIndex), Integer.valueOf(itemName.substring(splitIndex+1))));
+                                    mShopList.add(new Pair<>(itemName.substring(0, splitIndex), Integer.valueOf(itemName.substring(splitIndex + 1))));
                                     mSelectedItems.add(false);
                                 }
                                 notifyDataSetChanged();
@@ -255,14 +255,14 @@ public class ShopListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (mShopList != null)
             mShopList.clear();
-        mShopList = new LinkedList<Pair<String, Integer>>();
-        mSelectedItems = new LinkedList<Boolean>();
+        mShopList = new LinkedList<>();
+        mSelectedItems = new LinkedList<>();
         if (dataList != null) {
             for (int i = 0; i < dataList.size(); ++i) {
                 String itemName = dataList.get(i);
                 int splitIndex = itemName.lastIndexOf("#");
 
-                mShopList.add(new Pair<String, Integer>(itemName.substring(0,splitIndex), Integer.valueOf(itemName.substring(splitIndex+1))));
+                mShopList.add(new Pair<>(itemName.substring(0, splitIndex), Integer.valueOf(itemName.substring(splitIndex + 1))));
                 mSelectedItems.add(false);
             }
             notifyDataSetChanged();

@@ -35,7 +35,6 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AdditionalUserInfo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -96,25 +95,33 @@ public class AddItemManual extends TitleWithButtonsActivity {
         incQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int temp = Integer.parseInt(amount.getText().toString());
-                temp += 1;
-                if (temp>99)
-                    amount.setText(R.string.amountMax);
-                else
-                    amount.setText(String.valueOf(temp));
+                try {
+                    int temp = Integer.parseInt(amount.getText().toString());
+                    temp += 1;
+                    if (temp > 99)
+                        amount.setText(R.string.amountMax);
+                    else
+                        amount.setText(String.valueOf(temp));
+                }catch(NumberFormatException e){
+                    amount.setText("1");
+                }
             }
         });
         decQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int temp = Integer.parseInt(amount.getText().toString());
-                if (temp!=1) {
-                    temp -= 1;
+                try {
+                    int temp = Integer.parseInt(amount.getText().toString());
+                    if (temp!=1) {
+                        temp -= 1;
+                    }
+                    else {
+                        temp = 1;
+                    }
+                    amount.setText(String.valueOf(temp));
+                }catch(NumberFormatException e){
+                    amount.setText("1");
                 }
-                else {
-                    temp = 1;
-                }
-                amount.setText(String.valueOf(temp));
             }
         });
 
@@ -294,7 +301,7 @@ public class AddItemManual extends TitleWithButtonsActivity {
 
                                     uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                         @Override
-                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) {
                                             if (!task.isSuccessful()) {
                                                 throw new Error();
                                             }

@@ -46,7 +46,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
@@ -77,11 +76,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Calendar;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
 import static com.fridgemate.yangliu.fridgemate.MainActivity.user;
@@ -148,7 +144,7 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
         boolean useFlash = false;
 
         // set up ocr items
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvNumbers);
+        RecyclerView recyclerView = findViewById(R.id.rvNumbers);
         int numberOfColumns = 2;
         recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
         adapter = new OcrItemListAdapter(this);
@@ -190,8 +186,8 @@ public final class OcrCaptureActivity extends TitleWithButtonsActivity {
                                 itemData.put("expirationDate", "");
                                 SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
                                 Calendar myCalendar = Calendar.getInstance();
-                                itemData.put("lastModifiedDate", mdyFormat.format(myCalendar.getTime()).toString());
-                                itemData.put("purchaseDate", mdyFormat.format(myCalendar.getTime()).toString());
+                                itemData.put("lastModifiedDate", mdyFormat.format(myCalendar.getTime()));
+                                itemData.put("purchaseDate", mdyFormat.format(myCalendar.getTime()));
                                 itemData.put("lastModifiedBy", userDoc);
                                 itemData.put("fridge", userData.get("currentFridge"));
                                 itemData.put("imageID", "");

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
@@ -54,6 +53,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import org.json.JSONObject;
+
+import java.util.Objects;
 
 /**
  * A login screen that offers login via email/password.
@@ -121,10 +122,10 @@ public class LoginActivity extends AppCompatActivity {
         anim.setEnterFadeDuration(6000);
         anim.setExitFadeDuration(2000);
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = findViewById(R.id.email);
         mEmailView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -145,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mCreateAccount = (Button) findViewById(R.id.create_account);
+        Button mCreateAccount = findViewById(R.id.create_account);
         mCreateAccount.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -474,21 +475,23 @@ public class LoginActivity extends AppCompatActivity {
                                 int errorMessage = R.string.error_login;
 
                                 try {
-                                    throw task.getException();
+                                    throw Objects.requireNonNull(task.getException());
                                 } catch (Exception e) {
-                                    String errorCode = ((FirebaseAuthException) e).getErrorCode();
-                                    Log.d("login_failed", "Exception: " + e.getMessage()
-                                            + ", Error code: " + errorCode);
+                                    try {
+                                        String errorCode = ((FirebaseAuthException) e).getErrorCode();
+                                        Log.d("login_failed", "Exception: " + e.getMessage()
+                                                + ", Error code: " + errorCode);
 
-                                    if (errorCode.equals("ERROR_USER_NOT_FOUND")) {
-                                        errorMessage = R.string.error_no_such_email;
-                                    } else if (errorCode.equals("ERROR_INVALID_EMAIL")) {
-                                        errorMessage = R.string.error_invalid_email;
+                                        if (errorCode.equals("ERROR_USER_NOT_FOUND")) {
+                                            errorMessage = R.string.error_no_such_email;
+                                        } else if (errorCode.equals("ERROR_INVALID_EMAIL")) {
+                                            errorMessage = R.string.error_invalid_email;
+                                        }
+                                    }catch (ClassCastException ignored){
                                     }
                                 }
 
-                                Toast.makeText(getApplication(), errorMessage,
-                                        Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplication(), errorMessage, Toast.LENGTH_LONG).show();
 
                                 mEmailSignInButton.setClickable(true);
                             }

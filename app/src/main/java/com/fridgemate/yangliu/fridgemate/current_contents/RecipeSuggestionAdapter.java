@@ -40,7 +40,7 @@ class RecipeSuggestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     RecipeSuggestionAdapter(Context context) {
         this.context = context;
         mInflater = LayoutInflater.from(context);
-        mData = new LinkedList<RecipeItem>();
+        mData = new LinkedList<>();
     }
 
     @NonNull

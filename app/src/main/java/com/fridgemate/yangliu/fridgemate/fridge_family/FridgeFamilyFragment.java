@@ -81,7 +81,7 @@ public class FridgeFamilyFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         // fridge list set up
-        RecyclerView mfridgeListView = (RecyclerView) view.findViewById(R.id.fridgeList);
+        RecyclerView mfridgeListView = view.findViewById(R.id.fridgeList);
         mfridgeListView.setHasFixedSize(true);
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -101,7 +101,7 @@ public class FridgeFamilyFragment extends Fragment {
         setupMemberOnClickListener(mRecyclerMemberView,llm);
 
         // set up refresh button
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
+        swipeRefreshLayout = view.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setEnabled(true);
         swipeRefreshLayout.setRefreshing(true);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,R.color.green);

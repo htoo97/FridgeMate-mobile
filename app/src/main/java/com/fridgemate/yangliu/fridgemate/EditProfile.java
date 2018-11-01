@@ -155,7 +155,7 @@ public class EditProfile extends TitleWithButtonsActivity {
 
 //        ConstraintLayout mEditFormView = findViewById(R.id.edit_profile_form);
 //        ProgressBar mProgressView = findViewById(R.id.progress);
-        mImgLoadProgress = findViewById(R.id.profileImgLoading);;
+        mImgLoadProgress = findViewById(R.id.profileImgLoading);
         name = findViewById(R.id.user_name);
         status = findViewById(R.id.status);
         profilePhoto = findViewById(R.id.profile_image);
@@ -245,7 +245,7 @@ public class EditProfile extends TitleWithButtonsActivity {
                     }
 
                     float rotated = profilePhoto.getRotation();
-                    byte[] imgToUpload = null;
+                    byte[] imgToUpload;
                     final Uri[] newProfile = new Uri[1];
                     if (rotated % 360 != 0) {
                         Matrix matrix = new Matrix();

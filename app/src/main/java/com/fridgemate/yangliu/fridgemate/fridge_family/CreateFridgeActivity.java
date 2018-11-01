@@ -19,9 +19,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ThrowOnExtraProperties;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,9 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                         Map<String, Object> fridgeData = new HashMap<>();
                         fridgeData.put("fridgeName", name);
                         fridgeData.put("owner", userDoc);
-                        final List<DocumentReference> members = new ArrayList<DocumentReference>();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                        fridgeData.put("create", sdf.format(new Date()));
+                        final List<DocumentReference> members = new ArrayList<>();
                         members.add(userDoc);
                         fridgeData.put("members", members);
 
@@ -98,7 +101,7 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                         public void onSuccess(DocumentReference documentReference) {
                                             // Add newly-created fridge to user's list of fridges
-                                            List<DocumentReference> fridges = new ArrayList<DocumentReference>();
+                                            List<DocumentReference> fridges = new ArrayList<>();
                                             if (userData.get("fridges") != null) {
                                                 fridges = (List<DocumentReference>) userData.get("fridges");
                                             }
@@ -126,6 +129,7 @@ public class CreateFridgeActivity extends TitleWithButtonsActivity {
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
+                                                                Toast.makeText(CreateFridgeActivity.this, "New fridge created!", Toast.LENGTH_SHORT).show();
                                                                 finish();
                                                             }
                                                         });

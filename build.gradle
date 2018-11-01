@@ -23,6 +23,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        // App intro
         maven { url 'https://jitpack.io' }
 
         // Crashlytics

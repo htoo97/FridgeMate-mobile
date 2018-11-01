@@ -110,7 +110,7 @@
             android:name=".IntroActivity"
             android:label="@string/app_intro" />
         <activity android:name=".themeActivity" />
-        <activity android:name=".RedirectToLogInActivity"></activity>
+        <activity android:name=".RedirectToLogInActivity" />
     </application>
 
 </manifest>

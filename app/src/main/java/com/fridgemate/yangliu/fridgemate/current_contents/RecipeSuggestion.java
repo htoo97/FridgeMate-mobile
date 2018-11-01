@@ -54,7 +54,7 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
         callAPI(params);
 
         // set up ocr items
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvNumbers);
+        final RecyclerView recyclerView = findViewById(R.id.rvNumbers);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recipeListAdapter = new RecipeSuggestionAdapter(this);
         recyclerView.setAdapter(recipeListAdapter);
@@ -118,10 +118,10 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
 
                 if (data != null) {
                     try {
-                        List<RecipeItem> dataArr = new LinkedList<RecipeItem>();
+                        List<RecipeItem> dataArr = new LinkedList<>();
 
                         //Testing success
-                        TextView recipeText = (TextView) findViewById(R.id.recipeResponse);
+                        TextView recipeText = findViewById(R.id.recipeResponse);
                         String s = "Recipes with your ingredients: " + "\n";
                         //Loop through recipes, append to textview
                         for (int i=0; i < data.length(); i++) {
@@ -157,7 +157,7 @@ public class RecipeSuggestion extends TitleWithButtonsActivity {
             @Override
             public void onFailure( int statusCode, Header[] headers, String res, Throwable t){
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                textView.setText(R.string.server_err);
+                textView.setText(R.string.no_result);
 
             }
         });

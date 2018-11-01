@@ -17,7 +17,7 @@ android {
         applicationId "com.fridgemate.yangliu.fridgemate"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 20
+        versionCode 21
         versionName "2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

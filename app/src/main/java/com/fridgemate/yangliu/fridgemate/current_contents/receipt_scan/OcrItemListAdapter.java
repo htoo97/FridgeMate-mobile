@@ -40,7 +40,7 @@ public class OcrItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private final LayoutInflater mInflater;
 
     OcrItemListAdapter(Context context) {
-        mData = new LinkedList<String>();
+        mData = new LinkedList<>();
         mInflater = LayoutInflater.from(context);
     }
 

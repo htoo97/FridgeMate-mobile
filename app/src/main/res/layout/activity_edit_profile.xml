@@ -37,7 +37,8 @@
             app:layout_constraintEnd_toEndOf="@+id/profile_image"
             app:layout_constraintStart_toStartOf="@+id/profile_image"
             app:layout_constraintTop_toTopOf="@+id/profile_image"
-            app:srcCompat="@drawable/ic_camera_alt_black_24dp" />
+            app:srcCompat="@drawable/ic_camera_alt_black_24dp"
+            android:contentDescription="profile_photo" />
 
         <EditText
             android:id="@+id/user_name"
@@ -84,7 +85,8 @@
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_rotate_right_black_24dp" />
+            app:srcCompat="@drawable/ic_rotate_right_black_24dp"
+            android:contentDescription="rotate_image_btn" />
 
     </android.support.constraint.ConstraintLayout>
 

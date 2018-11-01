@@ -19,7 +19,6 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.text.Line;
 import com.google.android.gms.vision.text.TextBlock;
 
 /**

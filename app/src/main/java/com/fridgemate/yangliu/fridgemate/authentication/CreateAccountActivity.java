@@ -32,8 +32,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.os.SystemClock.sleep;
-
 /**
  * A login screen that offers login via email/password.
  */
@@ -59,10 +57,10 @@ public class CreateAccountActivity extends TitleWithButtonsActivity {
         db = FirebaseFirestore.getInstance();
 
         // Set up the signup form.
-        mEmailView = (EditText) findViewById(R.id.email);
+        mEmailView = findViewById(R.id.email);
         mEmailView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -77,7 +75,7 @@ public class CreateAccountActivity extends TitleWithButtonsActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.spin_progress);
 
-        Button mSignupButton = (Button) findViewById(R.id.email_signup_button);
+        Button mSignupButton = findViewById(R.id.email_signup_button);
         mSignupButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v){
                 attemptSignUp();

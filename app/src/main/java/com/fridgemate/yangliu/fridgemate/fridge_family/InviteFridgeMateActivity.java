@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.fridgemate.yangliu.fridgemate.MainActivity;
 import com.fridgemate.yangliu.fridgemate.R;
 import com.fridgemate.yangliu.fridgemate.TitleWithButtonsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,13 +18,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.fridgemate.yangliu.fridgemate.MainActivity.fridgeDoc;
-import static com.fridgemate.yangliu.fridgemate.MainActivity.memberListAdapter;
 
 public class InviteFridgeMateActivity extends TitleWithButtonsActivity {
 

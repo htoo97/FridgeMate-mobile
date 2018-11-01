@@ -62,43 +62,46 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
                 }
 
                 joinBtn.setClickable(false);
-                final DocumentReference newfridgeDoc = db.collection("Fridges").document(fridge);
-                newfridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot fridgeData = task.getResult();
-                        if (fridgeData.exists()) {
-                            List members = (List)fridgeData.get("members");
-                            if(members == null){
-                                members = new ArrayList<>();
-                            }
+                try {
+                    final DocumentReference newfridgeDoc = db.collection("Fridges").document(fridge);
+                    newfridgeDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            DocumentSnapshot fridgeData = task.getResult();
+                            if (fridgeData.exists()) {
+                                List members = (List) fridgeData.get("members");
+                                if (members == null) {
+                                    members = new ArrayList<>();
+                                }
 
-                            // Cancel if user is already member of fridge
-                            if(members.contains(userDoc)){
-                                Toast.makeText(CreateJoinFridgeActivity.this,
-                                        R.string.join_fridge_duplicate, Toast.LENGTH_LONG).show();
-                                joinBtn.setClickable(true);
-                                return;
-                            }
-                            else {
+                                // Cancel if user is already member of fridge
+                                if (members.contains(userDoc)) {
+                                    Toast.makeText(CreateJoinFridgeActivity.this,
+                                            R.string.join_fridge_duplicate, Toast.LENGTH_LONG).show();
+                                    joinBtn.setClickable(true);
+                                    return;
+                                } else {
 
-                                newfridgeDoc.update("joinRequest",userDoc).addOnCompleteListener(
-                                        new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                Toast.makeText(CreateJoinFridgeActivity.this, R.string.sent_join, Toast.LENGTH_SHORT).show();
-                                                finish();
+                                    newfridgeDoc.update("joinRequest", userDoc).addOnCompleteListener(
+                                            new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    Toast.makeText(CreateJoinFridgeActivity.this, R.string.sent_join, Toast.LENGTH_SHORT).show();
+                                                    finish();
+                                                }
                                             }
-                                        }
-                                );
+                                    );
+                                }
+                            } else {
+                                Toast.makeText(CreateJoinFridgeActivity.this,
+                                        R.string.join_fridge_error, Toast.LENGTH_LONG).show();
                             }
                         }
-                        else {
-                            Toast.makeText(CreateJoinFridgeActivity.this,
-                                    R.string.join_fridge_error, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                    });
+                }catch(IllegalArgumentException e){
+                    Toast.makeText(CreateJoinFridgeActivity.this, "It looks like this function is not supported; please let us know!", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
@@ -117,7 +120,6 @@ public class CreateJoinFridgeActivity extends TitleWithButtonsActivity {
     @Override
     public boolean onSupportNavigateUp(){
         finish();
-
         return true;
     }
 }

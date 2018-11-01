@@ -67,7 +67,7 @@ public class ContentListAdapter extends RecyclerView.Adapter<ContentListAdapter.
     }
 
     public void filterList(CharSequence keyWord){
-        List<FridgeItem> filteredList = new LinkedList<FridgeItem>();
+        List<FridgeItem> filteredList = new LinkedList<>();
 
         if (mItems != null) {
             if (keyWord == null || keyWord.length() == 0) {

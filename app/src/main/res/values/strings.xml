@@ -62,7 +62,7 @@
     <string name="error_email_not_validated">Please check your email for a new account validation link.</string>
     <string name="error_general">An error has occurred.</string>
     <string name="error_no_such_email">The email you have entered is not connected to an account.</string>
-    <string name="error_login">The following email and password could not be validated.</string>
+    <string name="error_login">The following email or password could not be validated.</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required.</string>
     <string name="email_verification">An email containing a verification link has been sent.</string>
@@ -140,7 +140,6 @@
     <string name="recipe_suggestion">Recommended Recipes</string>
     <string name="loading">Loading recipes&#8230;</string>
     <string name="no_result">Sorry. We couldn\'t find relavant recipe for you at the moment.</string>
-    <string name="server_err">Server Error</string>
     <string name="first_page">This is the first page.</string>
     <string name="last_page">This is the last page.</string>
 

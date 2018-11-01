@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         ActionBarDrawerToggle mToggle = new ActionBarDrawerToggle(this, mDrawLayout, R.string.open, R.string.close);
         mToggle.setDrawerIndicatorEnabled(true);
         mDrawLayout.addDrawerListener(mToggle);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //bottom navigation
-        final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        final BottomNavigationView navigation = findViewById(R.id.navigation);
 
         //list adapters
         contentListAdapter = new ContentListAdapter(this);
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                         Map<String, Object> fridgeData = new HashMap<>();
                         fridgeData.put("fridgeName", "My Fridge");
                         fridgeData.put("owner", userDoc);
-                        List<DocumentReference> members = new ArrayList<DocumentReference>();
+                        List<DocumentReference> members = new ArrayList<>();
                         members.add(userDoc);
                         fridgeData.put("members", members);
 

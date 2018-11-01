@@ -5,10 +5,8 @@ import android.content.ClipboardManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -27,8 +25,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -77,7 +73,7 @@ public class MemberProfileActivity extends TitleWithButtonsActivity {
 
         DocumentReference memberDoc = db.collection("Users").document(memberId);
 
-        final ProgressBar mImgLoadProgress = findViewById(R.id.progressBar2);;
+        final ProgressBar mImgLoadProgress = findViewById(R.id.progressBar2);
 
         // image background
         final ImageView memberProfileBackGround = findViewById(R.id.background);
